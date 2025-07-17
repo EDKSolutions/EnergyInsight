@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { resetPassword, confirmResetPassword, resendResetPasswordCode } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { useCognitoError } from '@/hooks/useCognitoError';
 import Image from 'next/image';
+import { useAuthContext } from '@/context/AuthContext';
 
 export const ForgotPasswordForm = () => {
   const [step, setStep] = useState<'request' | 'confirm'>('request');
@@ -16,6 +16,7 @@ export const ForgotPasswordForm = () => {
   const [cooldown, setCooldown] = useState(0);
   const router = useRouter();
   const { getErrorMessage } = useCognitoError();
+  const { forgotPassword, forgotPasswordSubmit, forgotPasswordResendCode } = useAuthContext();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -47,7 +48,7 @@ export const ForgotPasswordForm = () => {
     setLoading(true);
 
     try {
-      await resetPassword(email);
+      await forgotPassword(email);
       setStep('confirm');
       setSuccess('Verification code sent to your email');
       setCooldown(120); // 2 minutes cooldown
@@ -67,7 +68,7 @@ export const ForgotPasswordForm = () => {
     setLoading(true);
     setError(null);
     try {
-      await resendResetPasswordCode(email);
+      await forgotPasswordResendCode(email);
       setSuccess('New verification code sent to your email');
       setCooldown(120); // 2 minutes cooldown
     } catch (err: unknown) {
@@ -87,7 +88,7 @@ export const ForgotPasswordForm = () => {
 
     setLoading(true);
     try {
-      await confirmResetPassword(email, code, newPassword);
+      await forgotPasswordSubmit(email, code, newPassword);
       setSuccess('Password reset successful! Redirecting to login...');
       setTimeout(() => router.push('/auth/sign-in'), 1500);
     } catch (err: unknown) {

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuth } from '@/hooks/use-auth';
+import type { SignInInput, SignUpInput, ConfirmSignUpInput } from '@aws-amplify/auth';
 
 interface AuthContextType {
   user: {
@@ -13,11 +14,14 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isLoggingOut: boolean;
-  login: (credentials: any) => Promise<any>;
-  register: (userData: any) => Promise<any>;
-  confirmRegistration: (confirmationData: any) => Promise<any>;
+  login: (credentials: SignInInput) => Promise<{ success: boolean; requiresConfirmation?: boolean; requiresPasswordChange?: boolean }>;
+  register: (userData: SignUpInput) => Promise<{ success: boolean; requiresConfirmation?: boolean }>;
+  confirmRegistration: (confirmationData: ConfirmSignUpInput) => Promise<{ success: boolean }>;
   logout: () => Promise<void>;
   checkAuthState: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<{ success: boolean }>;
+  forgotPasswordSubmit: (email: string, code: string, newPassword: string) => Promise<{ success: boolean }>;
+  forgotPasswordResendCode: (email: string) => Promise<{ success: boolean }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

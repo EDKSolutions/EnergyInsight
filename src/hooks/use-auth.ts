@@ -5,6 +5,8 @@ import {
   signOut, 
   getCurrentUser,
   fetchUserAttributes,
+  resetPassword,
+  confirmResetPassword,
   type SignInInput,
   type SignUpInput,
   type ConfirmSignUpInput
@@ -320,6 +322,40 @@ export const useAuth = () => {
     }
   };
 
+  // --- FUNCIONES DE RECUPERACIÓN DE CONTRASEÑA ---
+  const forgotPassword = async (email: string) => {
+    try {
+      await resetPassword({ username: email });
+      toast.success('Código de verificación enviado a tu correo');
+      return { success: true };
+    } catch (error) {
+      toast.error('Error al solicitar recuperación de contraseña');
+      throw error;
+    }
+  };
+
+  const forgotPasswordSubmit = async (email: string, code: string, newPassword: string) => {
+    try {
+      await confirmResetPassword({ username: email, confirmationCode: code, newPassword });
+      toast.success('¡Contraseña restablecida exitosamente!');
+      return { success: true };
+    } catch (error) {
+      toast.error('Error al restablecer la contraseña');
+      throw error;
+    }
+  };
+
+  const forgotPasswordResendCode = async (email: string) => {
+    try {
+      await resetPassword({ username: email });
+      toast.success('Nuevo código enviado a tu correo');
+      return { success: true };
+    } catch (error) {
+      toast.error('Error al reenviar el código');
+      throw error;
+    }
+  };
+
   return {
     ...authState,
     login,
@@ -327,5 +363,8 @@ export const useAuth = () => {
     confirmRegistration,
     logout,
     checkAuthState,
+    forgotPassword,
+    forgotPasswordSubmit,
+    forgotPasswordResendCode,
   };
 }; 
