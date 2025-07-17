@@ -17,6 +17,7 @@ interface AuthContextType {
   login: (credentials: SignInInput) => Promise<{ success: boolean; requiresConfirmation?: boolean; requiresPasswordChange?: boolean }>;
   register: (userData: SignUpInput) => Promise<{ success: boolean; requiresConfirmation?: boolean }>;
   confirmRegistration: (confirmationData: ConfirmSignUpInput) => Promise<{ success: boolean }>;
+  resendSignUpCode: (username: string) => Promise<{ success: boolean }>;
   logout: () => Promise<void>;
   checkAuthState: () => Promise<void>;
   forgotPassword: (email: string) => Promise<{ success: boolean }>;

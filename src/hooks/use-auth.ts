@@ -2,6 +2,7 @@ import {
   signIn, 
   signUp, 
   confirmSignUp, 
+  resendSignUpCode,
   signOut, 
   getCurrentUser,
   fetchUserAttributes,
@@ -356,11 +357,41 @@ export const useAuth = () => {
     }
   };
 
+  const resendSignUpCode = async (username: string) => {
+    try {
+      console.log('Resending sign up code for:', username);
+      
+      await resendSignUpCode(username);
+      
+      console.log('Sign up code resent successfully');
+      toast.success('Verification code resent to your email');
+      return { success: true };
+    } catch (error: unknown) {
+      console.error('Error resending sign up code:', error);
+      
+      if (error instanceof Error) {
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        
+        if (error.name === 'UserNotFoundException') {
+          toast.error('No account found with this email.');
+        } else if (error.name === 'TooManyRequestsException') {
+          toast.error('Too many attempts. Please wait a moment.');
+        } else {
+          toast.error('Error resending verification code. Please try again.');
+        }
+      }
+
+      return { success: false };
+    }
+  };
+
   return {
     ...authState,
     login,
     register,
     confirmRegistration,
+    resendSignUpCode,
     logout,
     checkAuthState,
     forgotPassword,

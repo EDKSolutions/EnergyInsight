@@ -1,24 +1,52 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import AddressAutocomplete from "@/components/ui/AddressAutocomplete";
 import AddressMap from "@/components/ui/AddressMap";
 import { useAuthContext } from "@/context/AuthContext";
 
 export default function DashboardPage() {
   const [selectedAddress, setSelectedAddress] = useState("");
-  const { logout, user } = useAuthContext();
+  const { logout, user, isLoading, isAuthenticated } = useAuthContext();
+  const router = useRouter();
+
+  // Verificar autenticación al cargar la página
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/auth/sign-in?redirect=/dashboard');
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   const handleAddressSelect = (address: string) => {
     setSelectedAddress(address);
-    // Aquí puedes hacer la petición a tu otra API con la dirección seleccionada
-    console.log("Dirección seleccionada:", address);
-    // Ejemplo: fetch('/api/tu-api', { method: 'POST', body: JSON.stringify({ address }) })
   };
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando autenticación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no está autenticado, no mostrar nada (el useEffect se encargará de la redirección)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="max-w-4xl mx-auto mt-8 p-4">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          {user && (
+            <p className="text-gray-600 mt-1">Bienvenido, {user.email}</p>
+          )}
+        </div>
         <button
           onClick={logout}
           className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded shadow"
