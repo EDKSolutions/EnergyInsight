@@ -109,7 +109,7 @@ export const ForgotPasswordForm = () => {
         <div className="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10">
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo.png"
+              src="/images/logo.png"
               alt="EDK"
               width={100}
               height={100}

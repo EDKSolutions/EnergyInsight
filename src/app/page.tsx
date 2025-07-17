@@ -1,10 +1,8 @@
 import Link from "next/link";
-import AmplifyStatus from "../components/AmplifyStatus";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <AmplifyStatus />
       {/* Navigation */}
       <nav className="flex justify-between items-center px-6 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
