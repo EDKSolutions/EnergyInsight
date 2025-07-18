@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { confirmRegistration } from '@/lib/auth';
 import Image from 'next/image';
 import { useCognitoError } from '@/hooks/useCognitoError';
+import { useAuth } from '@/hooks/use-auth';
 
 export const ConfirmSignUpForm = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +12,7 @@ export const ConfirmSignUpForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
   const { getErrorMessage } = useCognitoError();
+  const { confirmRegistration } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,11 +20,12 @@ export const ConfirmSignUpForm = () => {
     setLoading(true);
 
     try {
-      const result = await confirmRegistration(email, code);
-      
-      if (result.isSignUpComplete) {
-        setSuccess('Account confirmed successfully! Redirecting to login...');
+      const result = await confirmRegistration({ username: email, confirmationCode: code });
+      if (result.success) {
+        setSuccess('¡Cuenta confirmada exitosamente! Redirigiendo al login...');
         setTimeout(() => router.push('/auth/sign-in'), 1500);
+      } else {
+        setError('No se pudo confirmar la cuenta. Verifica el código e inténtalo de nuevo.');
       }
     } catch (err: unknown) {
       console.error('Error confirming registration:', err);
@@ -48,7 +50,7 @@ export const ConfirmSignUpForm = () => {
           </div>
           
           <h2 className="text-center text-2xl font-bold text-gray-900 mb-6">
-            Confirm your account
+            Confirma tu cuenta
           </h2>
 
           {error && (
@@ -70,7 +72,7 @@ export const ConfirmSignUpForm = () => {
                 id="email"
                 name="email"
                 className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-                placeholder="Email address"
+                placeholder="Correo electrónico"
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -82,7 +84,7 @@ export const ConfirmSignUpForm = () => {
                 className="absolute left-1 px-3 py-1 bg-white pointer-events-none transition-all duration-200 text-gray-600 text-xs -top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-xs"
                 style={{ lineHeight: '1', paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
               >
-                Email address*
+                Correo electrónico*
               </label>
             </div>
 
@@ -92,7 +94,7 @@ export const ConfirmSignUpForm = () => {
                 id="code"
                 name="code"
                 className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
-                placeholder="Verification code"
+                placeholder="Código de verificación"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 required
@@ -103,7 +105,7 @@ export const ConfirmSignUpForm = () => {
                 className="absolute left-1 px-3 py-1 bg-white pointer-events-none transition-all duration-200 text-gray-600 text-xs -top-2.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2.5 peer-focus:text-gray-600 peer-focus:text-xs"
                 style={{ lineHeight: '1', paddingLeft: '0.75rem', paddingRight: '0.75rem' }}
               >
-                Verification code*
+                Código de verificación*
               </label>
             </div>
 
@@ -112,7 +114,7 @@ export const ConfirmSignUpForm = () => {
               disabled={loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {loading ? 'Confirming...' : 'Confirm account'}
+              {loading ? 'Confirmando...' : 'Confirmar cuenta'}
             </button>
           </form>
         </div>

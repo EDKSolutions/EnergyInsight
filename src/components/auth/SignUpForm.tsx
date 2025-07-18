@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthContext } from '@/context/AuthContext';
+import { v4 as uuidv4 } from 'uuid';
 
 const SignUpForm = () => {
   const router = useRouter();
-  const { register, confirmRegistration, isLoading } = useAuthContext();
+  const { register, confirmRegistration, resendSignUpCode, isLoading } = useAuthContext();
   const [step, setStep] = useState<'signup' | 'confirm'>('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +18,7 @@ const SignUpForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  const [generatedUsername, setGeneratedUsername] = useState<string>('');
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -58,8 +60,11 @@ const SignUpForm = () => {
     }
 
     try {
+      const username = uuidv4();
+      setGeneratedUsername(username);
+      
       const result = await register({
-        username: email.toLowerCase(),
+        username: username, // Genera un username único que NO es un email
         password,
         options: {
           userAttributes: {
@@ -71,7 +76,7 @@ const SignUpForm = () => {
       if (result.requiresConfirmation) {
         setStep('confirm');
         setSuccess('Verification code sent to your email');
-        setCooldown(120); // 2 minutes cooldown
+        setCooldown(60); // 1 minuto cooldown
       } else if (result.success) {
         setSuccess('Account created successfully! Redirecting to Sign In...');
         setTimeout(() => router.push('/auth/sign-in'), 1000);
@@ -89,8 +94,10 @@ const SignUpForm = () => {
 
     setError(null);
     try {
-      // Necesitarías implementar resendSignUpCode en el hook
-      setError('Resend code functionality not implemented yet');
+      const result = await resendSignUpCode(generatedUsername);
+      if (result.success) {
+        setCooldown(60); // 1 minuto cooldown
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred while resending code');
     }
@@ -102,7 +109,7 @@ const SignUpForm = () => {
 
     try {
       const result = await confirmRegistration({
-        username: email.toLowerCase(),
+        username: generatedUsername,
         confirmationCode
       });
 

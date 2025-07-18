@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.4...v0.0.5) (2025-07-18)
+
+### [0.0.4](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.3...v0.0.4) (2025-07-17)
+
+
+### Features
+
+* add forgot password ([df3835c](https://github.com/EDKSolutions/EnergyInsight/commit/df3835c1f9d8d73f817b27a5ca91e57c8764852c))
+
+
+### Bug Fixes
+
+* user signup ([2e7749e](https://github.com/EDKSolutions/EnergyInsight/commit/2e7749e0a0f9dcce8bf8cc4902dfabb2317dab2a))
+
 ### [0.0.3](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.2...v0.0.3) (2025-07-17)
 
 
