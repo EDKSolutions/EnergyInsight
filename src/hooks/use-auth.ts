@@ -2,7 +2,6 @@ import {
   signIn, 
   signUp, 
   confirmSignUp, 
-  resendSignUpCode,
   signOut, 
   getCurrentUser,
   fetchUserAttributes,
@@ -41,9 +40,8 @@ const clearCognitoStorage = () => {
         }
       }
       keysToRemove.forEach(key => window.localStorage.removeItem(key));
-      console.log('Cognito storage cleared');
     } catch (error) {
-      console.error('Error clearing Cognito storage:', error);
+      throw error;
     }
   }
 };
@@ -58,12 +56,9 @@ export const useAuth = () => {
 
   const checkAuthState = useCallback(async () => {
     try {
-      console.log('Checking auth state...');
       const currentUser = await getCurrentUser();
-      console.log('Current user:', currentUser);
       
       const attributes = await fetchUserAttributes();
-      console.log('User attributes:', attributes);
       
       const userData = {
         id: currentUser.userId,
@@ -72,8 +67,6 @@ export const useAuth = () => {
         emailVerified: attributes.email_verified === 'true',
       };
       
-      console.log('Setting auth state with user:', userData);
-      
       setAuthState({
         user: userData,
         isLoading: false,
@@ -81,13 +74,13 @@ export const useAuth = () => {
         isLoggingOut: false,
       });
     } catch (error) {
-      console.log('No authenticated user found:', error);
       setAuthState({
         user: null,
         isLoading: false,
         isAuthenticated: false,
         isLoggingOut: false,
       });
+      throw error;
     }
   }, []);
 
@@ -97,8 +90,6 @@ export const useAuth = () => {
 
   const login = async (credentials: SignInInput) => {
     try {
-      console.log('Attempting to sign in with:', { username: credentials.username });
-      
       // Intentar diferentes flujos de autenticación
       let signInResult;
       
@@ -108,7 +99,6 @@ export const useAuth = () => {
       } catch (error: unknown) {
         if (error instanceof Error && error.name === 'InvalidParameterException' && error.message.includes('USER_PASSWORD_AUTH')) {
           // Si falla, intentar con SRP (Secure Remote Password)
-          console.log('Trying SRP authentication flow...');
           signInResult = await signIn({
             ...credentials,
             options: {
@@ -120,13 +110,9 @@ export const useAuth = () => {
         }
       }
 
-      console.log('Sign in result:', signInResult);
-
       const { isSignedIn, nextStep } = signInResult;
 
       if (isSignedIn) {
-        console.log('User signed in successfully, updating auth state...');
-        
         // Obtener información del usuario inmediatamente
         try {
           const currentUser = await getCurrentUser();
@@ -139,8 +125,6 @@ export const useAuth = () => {
             emailVerified: attributes.email_verified === 'true',
           };
           
-          console.log('Setting auth state with user:', userData);
-          
           setAuthState({
             user: userData,
             isLoading: false,
@@ -150,8 +134,7 @@ export const useAuth = () => {
           
           toast.success('Successfully logged in');
           return { success: true };
-        } catch (error) {
-          console.error('Error getting user data after login:', error);
+        } catch {
           // Aún así, marcar como autenticado
           setAuthState({
             user: null,
@@ -172,12 +155,7 @@ export const useAuth = () => {
 
       return { success: false };
     } catch (error: unknown) {
-      console.error('Error during sign in:', error);
-      
       if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        
         if (error.name === 'UserNotConfirmedException') {
         toast.error('Your account has not been confirmed. Please check your email.');
         return { success: false, requiresConfirmation: true };
@@ -200,11 +178,7 @@ export const useAuth = () => {
 
   const register = async (userData: SignUpInput) => {
     try {
-      console.log('Attempting to register user:', { username: userData.username, email: userData.options?.userAttributes?.email });
-      
       const { isSignUpComplete, userId, nextStep } = await signUp(userData);
-
-      console.log('Registration result:', { isSignUpComplete, userId, nextStep });
 
       if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
         toast.success('User registered successfully. Please verify your email with the confirmation code.');
@@ -216,12 +190,7 @@ export const useAuth = () => {
 
       return { success: false };
     } catch (error: unknown) {
-      console.error('Error during registration:', error);
-      
       if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        
         if (error.name === 'UsernameExistsException') {
         toast.error('User already exists with this email.');
       } else if (error.name === 'InvalidPasswordException') {
@@ -239,11 +208,7 @@ export const useAuth = () => {
 
   const confirmRegistration = async (confirmationData: ConfirmSignUpInput) => {
     try {
-      console.log('Attempting to confirm registration:', { username: confirmationData.username });
-      
       const { isSignUpComplete } = await confirmSignUp(confirmationData);
-
-      console.log('Confirmation result:', { isSignUpComplete });
 
       if (isSignUpComplete) {
         toast.success('Account verified successfully! You can now sign in.');
@@ -252,12 +217,7 @@ export const useAuth = () => {
 
       return { success: false };
     } catch (error: unknown) {
-      console.error('Error during confirmation:', error);
-      
       if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        
         if (error.name === 'CodeMismatchException') {
         toast.error('Incorrect confirmation code.');
       } else if (error.name === 'ExpiredCodeException') {
@@ -273,8 +233,6 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      console.log('Logging out...');
-      
       // Marcar como en proceso de logout
       setAuthState(prev => ({
         ...prev,
@@ -294,7 +252,6 @@ export const useAuth = () => {
       
       // Llamar a signOut de Amplify
       await signOut();
-      console.log('User logged out successfully');
       
       toast.success('Successfully logged out');
       
@@ -302,9 +259,7 @@ export const useAuth = () => {
       if (typeof window !== 'undefined') {
         window.location.href = '/';
       }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      
+    } catch {
       // Aún así, limpiar el estado local y el almacenamiento
       setAuthState({
         user: null,
@@ -359,20 +314,11 @@ export const useAuth = () => {
 
   const resendSignUpCode = async (username: string) => {
     try {
-      console.log('Resending sign up code for:', username);
-      
       await resendSignUpCode(username);
-      
-      console.log('Sign up code resent successfully');
       toast.success('Verification code resent to your email');
       return { success: true };
     } catch (error: unknown) {
-      console.error('Error resending sign up code:', error);
-      
       if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        
         if (error.name === 'UserNotFoundException') {
           toast.error('No account found with this email.');
         } else if (error.name === 'TooManyRequestsException') {

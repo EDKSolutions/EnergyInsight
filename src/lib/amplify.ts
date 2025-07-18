@@ -34,7 +34,6 @@ if (typeof window !== 'undefined') {
       try {
         return Promise.resolve(window.localStorage.getItem(key));
       } catch (error) {
-        console.error('Error getting item from localStorage:', error);
         return Promise.resolve(null);
       }
     },
@@ -42,7 +41,6 @@ if (typeof window !== 'undefined') {
       try {
         return Promise.resolve(window.localStorage.setItem(key, value));
       } catch (error) {
-        console.error('Error setting item in localStorage:', error);
         return Promise.resolve();
       }
     },
@@ -50,7 +48,6 @@ if (typeof window !== 'undefined') {
       try {
         return Promise.resolve(window.localStorage.removeItem(key));
       } catch (error) {
-        console.error('Error removing item from localStorage:', error);
         return Promise.resolve();
       }
     },
@@ -66,8 +63,7 @@ if (typeof window !== 'undefined') {
         }
         keysToRemove.forEach(key => window.localStorage.removeItem(key));
         return Promise.resolve();
-      } catch (error) {
-        console.error('Error clearing Cognito items from localStorage:', error);
+      } catch {
         return Promise.resolve();
       }
     }
@@ -76,12 +72,7 @@ if (typeof window !== 'undefined') {
   try {
     cognitoUserPoolsTokenProvider.setKeyValueStorage(storageAdapter);
     Amplify.configure(config);
-    console.log('Amplify configured successfully');
-    console.log('User Pool ID:', process.env.NEXT_PUBLIC_COGNITO_USER_POOL_ID);
-    console.log('Client ID:', process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID);
-    console.log('Configuration:', config);
   } catch (error) {
-    console.error('Error configuring Amplify:', error);
     throw error;
   }
 }
