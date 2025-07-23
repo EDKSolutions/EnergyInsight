@@ -2,18 +2,14 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
-import { Sidebar } from "@/components/Layouts/sidebar";
-import { SidebarProvider } from "@/components/Layouts/sidebar/sidebar-context";
-import  ToastContext  from "@/context/ToastContext";
-import { Header } from "@/components/Layouts/header";
 
 export default function DashboardPage() {
-  const { logout, user, isLoading, isAuthenticated } = useAuthContext();
+  const { isLoading, isAuthenticated } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/auth/sign-in?redirect=/dashboard');
+      router.push('/auth/sign-in?redirect=/panel/search');
     }
   }, [isLoading, isAuthenticated, router]);
 

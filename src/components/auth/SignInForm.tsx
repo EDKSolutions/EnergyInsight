@@ -16,7 +16,7 @@ const SignInForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Obtener la URL de redirección desde los parámetros de búsqueda
-  const redirectTo = searchParams.get('redirect') || '/dashboard';
+  const redirectTo = searchParams.get('redirect') || '/panel/search';
 
   const validateForm = () => {
     if (!email || !password) {

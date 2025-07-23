@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import AddressAutocomplete from "@/components/ui/AddressAutocomplete";
 import AddressMap from "@/components/ui/AddressMap";
 import { useAuthContext } from "@/context/AuthContext";
-import { nestApiClient } from "@/services/geo-client.services";
+import { nestApiClient } from "@/services/nest_back";
 import { parseGeoAddress } from "@/lib/parseGeoAddress";
 
 export default function DashboardPage() {
@@ -17,7 +17,7 @@ export default function DashboardPage() {
   // Verify authentication when loading the page
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/auth/sign-in?redirect=/dashboard');
+      router.push('/auth/sign-in?redirect=/panel/search');
     }
   }, [isLoading, isAuthenticated, router]);
 

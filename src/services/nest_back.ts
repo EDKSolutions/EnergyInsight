@@ -157,4 +157,7 @@ export const nestApiClient = {
     getAddress: (houseNumber: string, street: string, borough: string, zip: string) => apiClient.get(`/geo-client/address?houseNumber=${houseNumber}&street=${street}&borough=${borough}&zip=${zip}`),
     getAddressUser: (data: {houseNumber: string, street: string, borough: string, zip: string}) => apiClient.post('/geo-client/address/user', data),
   },
+  calculations: {
+    calculate: (data: {houseNumber: string, street: string, borough: string, address: string}) => apiClient.post('/calculations', data),
+  },
 }; 
