@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-23)
+
+
+### Bug Fixes
+
+* delete lock files ([91941bb](https://github.com/EDKSolutions/EnergyInsight/commit/91941bbaea870495a7b66e68d360634499e7ee14))
+
 ### [0.0.5](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.4...v0.0.5) (2025-07-18)
 
 ### [0.0.4](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.3...v0.0.4) (2025-07-17)
