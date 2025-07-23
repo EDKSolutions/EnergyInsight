@@ -2,12 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-### [0.0.6](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-22)
+### [0.0.9](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-22)
 
 
 ### Features
 
 * panel structure when logging in ([d61cb7b](https://github.com/EDKSolutions/EnergyInsight/commit/d61cb7be5fac98a8f0bb61e61a0fc56ed4023070))
+
+### [0.0.8](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.7...v0.0.8) (2025-07-23)
+
+
+### Bug Fixes
+
+* username ([859ed31](https://github.com/EDKSolutions/EnergyInsight/commit/859ed3139b8704fdfba9b07a45595ef76ededd3b))
+
+### [0.0.7](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.7) (2025-07-23)
+
+
+### Bug Fixes
+
+* delete lock files ([91941bb](https://github.com/EDKSolutions/EnergyInsight/commit/91941bbaea870495a7b66e68d360634499e7ee14))
+
+### [0.0.6](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-23)
+
+
+### Bug Fixes
+
+* delete lock files ([91941bb](https://github.com/EDKSolutions/EnergyInsight/commit/91941bbaea870495a7b66e68d360634499e7ee14))
 
 ### [0.0.5](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.4...v0.0.5) (2025-07-18)
 
