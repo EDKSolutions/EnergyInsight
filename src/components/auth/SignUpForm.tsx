@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthContext } from '@/context/AuthContext';
-import { v4 as uuidv4 } from 'uuid';
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -18,7 +17,6 @@ const SignUpForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
-  const [generatedUsername, setGeneratedUsername] = useState<string>('');
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -60,11 +58,10 @@ const SignUpForm = () => {
     }
 
     try {
-      const username = uuidv4();
-      setGeneratedUsername(username);
+      const username = email.toLowerCase();
       
       const result = await register({
-        username: username, // Genera un username único que NO es un email
+        username: username,
         password,
         options: {
           userAttributes: {
@@ -94,7 +91,7 @@ const SignUpForm = () => {
 
     setError(null);
     try {
-      const result = await resendSignUpCode(generatedUsername);
+      const result = await resendSignUpCode(email.toLowerCase());
       if (result.success) {
         setCooldown(60); // 1 minuto cooldown
       }
@@ -109,7 +106,7 @@ const SignUpForm = () => {
 
     try {
       const result = await confirmRegistration({
-        username: generatedUsername,
+        username: email.toLowerCase(),
         confirmationCode
       });
 
