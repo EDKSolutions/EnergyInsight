@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.7...v0.0.8) (2025-07-23)
+
+
+### Bug Fixes
+
+* username ([859ed31](https://github.com/EDKSolutions/EnergyInsight/commit/859ed3139b8704fdfba9b07a45595ef76ededd3b))
+
 ### [0.0.7](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.7) (2025-07-23)
 
 
