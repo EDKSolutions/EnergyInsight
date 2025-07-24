@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.11...v0.0.12) (2025-07-24)
+
+
+### Features
+
+* show spinner button calculate ([9ce6588](https://github.com/EDKSolutions/EnergyInsight/commit/9ce6588b4420ab06799176ecc910e121876b67bc))
+
 ### [0.0.11](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.10...v0.0.11) (2025-07-24)
 
 
