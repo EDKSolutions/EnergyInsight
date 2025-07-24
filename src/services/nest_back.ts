@@ -59,7 +59,16 @@ export const apiClient = {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error Response:', errorText);
-        
+        let errorMessage = `Error en la petición: ${response.status}`;
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (errorJson && errorJson.message) {
+            errorMessage = errorJson.message;
+          }
+        } catch (e) {
+          // No es JSON, usar texto plano
+          errorMessage = errorText;
+        }
         // Handle different error codes
         if (response.status === 401) {
           throw new Error('Token de acceso inválido o expirado');
@@ -70,7 +79,7 @@ export const apiClient = {
         } else if (response.status >= 500) {
           throw new Error('Error interno del servidor');
         } else {
-          throw new Error(`Error en la petición: ${response.status} - ${errorText}`);
+          throw new Error(errorMessage);
         }
       }
 
