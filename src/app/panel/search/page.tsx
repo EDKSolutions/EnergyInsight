@@ -5,11 +5,12 @@ import AddressMap from "@/components/ui/AddressMap";
 import { nestApiClient } from "@/services/nest_back";
 import { parseGeoAddress } from "@/lib/parseGeoAddress";
 import { useState } from "react";
+import { useCalculationResultStore } from "@/store/useCalculationResultStore";
+import { CalculationResult } from "@/types/calculation-result-type";
 
 export default function SearchPage() {
   const [selectedAddress, setSelectedAddress] = useState("");
-  const [addressUserData, setAddressUserData] = useState<Record<string, unknown> | null>(null);
-
+  const { setCalculationResult } = useCalculationResultStore();
   const handleAddressSelect = async (address: string) => {
     setSelectedAddress(address);  
   };
@@ -22,8 +23,7 @@ export default function SearchPage() {
       borough: geo.borough,
       address: selectedAddress
     });
-    setAddressUserData(addressUser as Record<string, unknown>);
-    console.log(addressUserData);
+    setCalculationResult(addressUser as CalculationResult);
   }
 
   return (

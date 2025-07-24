@@ -50,7 +50,7 @@ export const apiClient = {
       }
 
       console.log(`Making ${method} request to: ${url}`);
-      console.log('Headers:', requestHeaders);
+      //console.log('Headers:', requestHeaders);
 
       const response = await fetch(url, requestOptions);
 
@@ -159,5 +159,7 @@ export const nestApiClient = {
   },
   calculations: {
     calculate: (data: {houseNumber: string, street: string, borough: string, address: string}) => apiClient.post('/calculations', data),
+    getCalculations: () => apiClient.get('/calculations/user'),
+    getCalculation: (calculationId: string) => apiClient.get(`/calculations/${calculationId}`),
   },
 }; 
