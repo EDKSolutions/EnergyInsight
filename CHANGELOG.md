@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.11...v0.0.12) (2025-07-24)
+
+
+### Features
+
+* show spinner button calculate ([9ce6588](https://github.com/EDKSolutions/EnergyInsight/commit/9ce6588b4420ab06799176ecc910e121876b67bc))
+
+### [0.0.11](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.10...v0.0.11) (2025-07-24)
+
+
+### Features
+
+* add views calculations ([7967269](https://github.com/EDKSolutions/EnergyInsight/commit/7967269186661bb1e909f06de5a73a7314a3cb52))
+
+### [0.0.10](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.8...v0.0.10) (2025-07-23)
+
+
+### Features
+
+* view search addresses ([0fe3faf](https://github.com/EDKSolutions/EnergyInsight/commit/0fe3faf1a2712d940a760a45e6ed15f074e70d79))
+
+### [0.0.6](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-22)
+
+
+### Features
+
+* panel structure when logging in ([d61cb7b](https://github.com/EDKSolutions/EnergyInsight/commit/d61cb7be5fac98a8f0bb61e61a0fc56ed4023070))
+
+### [0.0.9](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.5...v0.0.6) (2025-07-22)
+
+
+### Features
+
+* panel structure when logging in ([d61cb7b](https://github.com/EDKSolutions/EnergyInsight/commit/d61cb7be5fac98a8f0bb61e61a0fc56ed4023070))
+
 ### [0.0.8](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.7...v0.0.8) (2025-07-23)
 
 

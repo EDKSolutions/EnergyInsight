@@ -81,8 +81,8 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({ onSelect }) =
         <div>
           <input
             {...getInputProps({
-              placeholder: "Buscar dirección en Nueva York...",
-              className: "input border rounded px-2 py-1 w-full",
+              placeholder: "Search for an address in New York...",
+              className: "input border rounded px-4 py-4 w-[500px]",
             })}
           />
           <div className="bg-white border rounded shadow mt-1">

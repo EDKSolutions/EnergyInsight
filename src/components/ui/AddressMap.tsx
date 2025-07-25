@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-// Variable global para evitar cargas múltiples
+// Global variable to avoid multiple loads
 let googleMapsLoadingPromise: Promise<void> | null = null;
 
 interface AddressMapProps {
@@ -56,27 +56,27 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
       return;
     }
 
-    // Crear el mapa si no existe
+    // Create the map if it doesn't exist
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
         zoom: 15,
-        center: { lat: 40.7128, lng: -74.0060 }, // Centro de Nueva York
+        center: { lat: 40.7128, lng: -74.0060 }, // Center of New York
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         streetViewControl: false,
         fullscreenControl: false,
       });
     }
 
-    // Geocodificar la dirección
+    // Geocode the address
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ address }, (results, status) => {
       if (status === "OK" && results && results[0]) {
         const location = results[0].geometry.location;
         
-        // Centrar el mapa en la ubicación
+        // Center the map on the location
         mapInstanceRef.current?.setCenter(location);
         
-        // Crear o actualizar el marcador
+        // Create or update the marker
         if (markerRef.current) {
           markerRef.current.setPosition(location);
         } else {
@@ -88,7 +88,7 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
           });
         }
 
-        // Agregar InfoWindow con la dirección
+        // Add InfoWindow with the address
         const infoWindow = new window.google.maps.InfoWindow({
           content: `<div style=\"padding: 8px;\"><strong>${address}</strong></div>`,
         });
@@ -97,7 +97,7 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
           infoWindow.open(mapInstanceRef.current, markerRef.current);
         });
 
-        // Mostrar InfoWindow automáticamente
+        // Show InfoWindow automatically
         infoWindow.open(mapInstanceRef.current, markerRef.current);
       }
     });
@@ -106,7 +106,7 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
   if (!address) {
     return (
       <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`} style={{ height: "300px" }}>
-        <p className="text-gray-500">Selecciona una dirección para ver el mapa</p>
+        <p className="text-gray-500">Select an address to see the map</p>
       </div>
     );
   }
@@ -114,7 +114,7 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
   if (!isGoogleLoaded) {
     return (
       <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`} style={{ height: "300px" }}>
-        <p className="text-gray-500">Cargando mapa...</p>
+        <p className="text-gray-500">Loading map...</p>
       </div>
     );
   }

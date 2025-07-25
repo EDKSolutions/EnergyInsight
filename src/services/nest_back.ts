@@ -50,7 +50,7 @@ export const apiClient = {
       }
 
       console.log(`Making ${method} request to: ${url}`);
-      console.log('Headers:', requestHeaders);
+      //console.log('Headers:', requestHeaders);
 
       const response = await fetch(url, requestOptions);
 
@@ -59,7 +59,16 @@ export const apiClient = {
       if (!response.ok) {
         const errorText = await response.text();
         console.error('API Error Response:', errorText);
-        
+        let errorMessage = `Error en la petición: ${response.status}`;
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (errorJson && errorJson.message) {
+            errorMessage = errorJson.message;
+          }
+        } catch (e) {
+          // No es JSON, usar texto plano
+          errorMessage = errorText;
+        }
         // Handle different error codes
         if (response.status === 401) {
           throw new Error('Token de acceso inválido o expirado');
@@ -70,7 +79,7 @@ export const apiClient = {
         } else if (response.status >= 500) {
           throw new Error('Error interno del servidor');
         } else {
-          throw new Error(`Error en la petición: ${response.status} - ${errorText}`);
+          throw new Error(errorMessage);
         }
       }
 
@@ -156,5 +165,10 @@ export const nestApiClient = {
   geo: {
     getAddress: (houseNumber: string, street: string, borough: string, zip: string) => apiClient.get(`/geo-client/address?houseNumber=${houseNumber}&street=${street}&borough=${borough}&zip=${zip}`),
     getAddressUser: (data: {houseNumber: string, street: string, borough: string, zip: string}) => apiClient.post('/geo-client/address/user', data),
+  },
+  calculations: {
+    calculate: (data: {houseNumber: string, street: string, borough: string, address: string}) => apiClient.post('/calculations', data),
+    getCalculations: () => apiClient.get('/calculations/user'),
+    getCalculation: (calculationId: string) => apiClient.get(`/calculations/${calculationId}`),
   },
 }; 
