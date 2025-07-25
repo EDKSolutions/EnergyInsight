@@ -14,7 +14,7 @@ import { BellIcon } from "./icons";
 
 const notificationList = [
   {
-    image: "/images/user/user-03.png",
+    image: "/images/user/user-03.jpg",
     title: "New message",
     subTitle: "Devid sent a new message",
   }
