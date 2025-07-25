@@ -6,11 +6,11 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | NextAdmin - Next.js Dashboard Kit",
-    default: "NextAdmin - Next.js Dashboard Kit",
+    template: "%s | Energy Insight",
+    default: "Energy Insight",
   },
   description:
-    "Next.js admin dashboard toolkit with 200+ templates, UI components, and integrations for fast dashboard development.",
+    "Energy Insight is a platform that helps you calculate the energy consumption of your home.",
 };
 
 export default function RootLayout({

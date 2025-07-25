@@ -5,6 +5,7 @@ import Unit from '@/components/calculation/unit'
 import Energy from '@/components/calculation/energy'
 import Data from '@/components/calculation/data'
 import Cards from '@/components/calculation/cards'
+import Calculate from '@/components/calculation/calculate'
 
 const Calculation = ({ c }: { c: CalculationResult }) => {
   return (
@@ -13,6 +14,10 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
       <Cards c={c} />
       <Unit c={c} />
       <Energy c={c} />
+      <Calculate 
+        pluto={c.rawPlutoData}
+        ll84={c.rawLL84Data}
+      />
       <Data />
     </div>  
   )

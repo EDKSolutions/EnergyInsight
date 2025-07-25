@@ -20,7 +20,7 @@ export function UserInfo() {
   const USER = {
     name: user?.name || "Guest User",
     email: user?.email || "guest@example.com",
-    img: "/images/user/user-03.png", // Default avatar
+    img: "/images/user/user-03.jpg", // Default avatar
   };
 
   const handleLogout = async () => {
@@ -64,7 +64,7 @@ export function UserInfo() {
 
         <figure className="flex items-center gap-3">
           <Image
-            src="/images/user/user-03.png"
+            src="/images/user/user-03.jpg"
             className="size-12"
             alt={`Avatar for ${USER.name}`}
             role="presentation"
