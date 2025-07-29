@@ -46,9 +46,9 @@ const Calculate = ({ pluto, ll84 }: { pluto: unknown; ll84: unknown }) => {
                 <CircleMinusIcon className="group-data-[state=closed]:hidden" />
               </div>
             </AccordionTrigger>
-          <AccordionContent className='p-8'>
-            <div className='grid grid-cols-2 gap-4'>
-              <div className='bg-white dark:bg-dark-1 rounded-[5px] border border-stroke shadow-card-3 dark:border-dark-3 dark:shadow-card p-8'>
+          <AccordionContent className='p-4 md:p-8'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='bg-white dark:bg-dark-1 rounded-[5px] border border-stroke shadow-card-3 dark:border-dark-3 dark:shadow-card p-4 md:p-8'>
                 <h2 className='text-lg font-bold mb-4'>Pluto</h2>
                 {renderObject(pluto)}
               </div>

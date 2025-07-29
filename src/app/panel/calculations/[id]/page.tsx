@@ -3,7 +3,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { nestApiClient } from '@/services/nest_back';
 import type { CalculationResult } from '@/types/calculation-result-type';
-import Calculation from '@/components/calculation';
+import CalculationTabs from '@/components/CalculationTabs';
 
 export default function CalculationDetailPage() {
   const { id } = useParams();
@@ -18,7 +18,7 @@ export default function CalculationDetailPage() {
           setCalculation(data as CalculationResult);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch(() => {
           setError('Error loading calculation');
           setLoading(false);
         });
@@ -29,11 +29,7 @@ export default function CalculationDetailPage() {
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
   if (!calculation) return <div className="p-8 text-center">Calculation not found</div>;
 
-  const c = calculation;
-
-  console.log(c);
-
   return (
-    <Calculation c={c} />
+    <CalculationTabs c={calculation}/>
   );
 }
