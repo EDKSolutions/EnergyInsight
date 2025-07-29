@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.13...v0.0.14) (2025-07-29)
+
+
+### Features
+
+* add section tabs and start edit calculo ([ce7b0d0](https://github.com/EDKSolutions/EnergyInsight/commit/ce7b0d083b5104ff9f0ad69705da2d76007d8a43))
+
 ### [0.0.13](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.12...v0.0.13) (2025-07-25)
 
 
