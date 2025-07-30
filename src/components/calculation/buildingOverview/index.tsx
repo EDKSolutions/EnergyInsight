@@ -19,6 +19,7 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
 
   const handleEditClick = () => {
     if (!isEditMode) {
+      console.log('initializeEdit', c);
       initializeEdit(c);
     }
   };

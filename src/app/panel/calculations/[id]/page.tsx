@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { nestApiClient } from '@/services/nest_back';
 import type { CalculationResult } from '@/types/calculation-result-type';
 import CalculationTabs from '@/components/CalculationTabs';
+import { useCalculationResultStore } from '@/store/useCalculationResultStore';
 
 export default function CalculationDetailPage() {
   const { id } = useParams();
-  const [calculation, setCalculation] = useState<CalculationResult | null>(null);
+  const { calculationResult, setCalculationResult } = useCalculationResultStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +16,7 @@ export default function CalculationDetailPage() {
     if (id) {
       nestApiClient.calculations.getCalculation(id as string)
         .then((data) => {
-          setCalculation(data as CalculationResult);
+          setCalculationResult(data as CalculationResult);
           setLoading(false);
         })
         .catch(() => {
@@ -23,13 +24,13 @@ export default function CalculationDetailPage() {
           setLoading(false);
         });
     }
-  }, [id]);
+  }, [id, setCalculationResult]);
 
   if (loading) return <div className="p-8 text-center">Loading...</div>;
   if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
-  if (!calculation) return <div className="p-8 text-center">Calculation not found</div>;
+  if (!calculationResult) return <div className="p-8 text-center">Calculation not found</div>;
 
   return (
-    <CalculationTabs c={calculation}/>
+    <CalculationTabs c={calculationResult}/>
   );
 }

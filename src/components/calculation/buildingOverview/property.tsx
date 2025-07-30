@@ -1,6 +1,5 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
-import EditableField from '@/components/shared/EditableField'
 
 const Property = ({ c }: { c: CalculationResult }) => {
   return (
@@ -17,48 +16,39 @@ const Property = ({ c }: { c: CalculationResult }) => {
         <h1 className="text-2xl font-bold text-left">Property Overview</h1>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <EditableField
-          label="Building Name"
-          field="buildingName"
-          value={c.buildingName}
-        />
-        <EditableField
-          label="Building Class"
-          field="buildingClass"
-          value={c.buildingClass}
-        />
-        <EditableField
-          label="Address"
-          field="address"
-          value={c.address}
-        />
-        <EditableField
-          label="Tax Class"
-          field="taxClass"
-          value={c.taxClass}
-        />
-        <EditableField
-          label="Year Built"
-          field="yearBuilt"
-          value={c.yearBuilt}
-          inputType="number"
-        />
-        <EditableField
-          label="Zoning"
-          field="zoning"
-          value={c.zoning}
-        />
-        <EditableField
-          label="Stories"
-          field="stories"
-          value={c.stories}
-          inputType="number"
-        />
-        <EditableField
-          label="Borough"
-          field="boro"
-          value={c.boro}
-        />
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Building Name:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.buildingName}</div>
+          
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Building Class:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.buildingClass}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Address:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.address}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Tax Class:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.taxClass}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Year Built:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.yearBuilt}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Zoning:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.zoning}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Stories:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.stories}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Borough:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.boro}</div>
+        </div>
       </div>
     </div>
   )

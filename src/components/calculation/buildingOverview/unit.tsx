@@ -1,6 +1,6 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
-
+import EditableInputField from '@/components/shared/EditableInputField'
 const Unit = ({ c }: { c: CalculationResult }) => {
   let unitMix: {
     source?: string;
@@ -41,22 +41,50 @@ const Unit = ({ c }: { c: CalculationResult }) => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
         <div className="flex flex-col items-center justify-between">
-          <div className="text-blue-800 text-3xl dark:text-gray-100">{studio} </div>
+          <div className="text-blue-800 text-3xl dark:text-gray-100">
+            <EditableInputField 
+              field="studio" 
+              value={studio.toString()} 
+              className="text-3xl dark:text-gray-100" 
+              inputType="text" 
+            />
+          </div>
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Studio</span>
           <span className="text-xs text-gray-400">{percent(studio)}</span>
         </div>
         <div className="flex flex-col items-center justify-between">
-          <div className="text-green-600 text-3xl dark:text-gray-100">{oneBed} </div>
+          <div className="text-green-600 text-3xl dark:text-gray-100">
+            <EditableInputField 
+              field="oneBed" 
+              value={oneBed.toString()} 
+              className="text-3xl dark:text-gray-100" 
+              inputType="text" 
+            />
+          </div>
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">1 Bedroom</span>
           <span className="text-xs text-gray-400">{percent(oneBed)}</span>
         </div>
         <div className="flex flex-col items-center justify-between">
-          <div className="text-yellow-400 text-3xl dark:text-gray-100">{twoBed} </div>
+          <div className="text-yellow-400 text-3xl dark:text-gray-100">
+            <EditableInputField 
+              field="twoBed" 
+              value={twoBed.toString()} 
+              className="text-3xl dark:text-gray-100" 
+              inputType="text" 
+            />
+          </div>
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">2 Bedroom</span>
           <span className="text-xs text-gray-400">{percent(twoBed)}</span>
         </div>
         <div className="flex flex-col items-center justify-between">
-          <div className="text-purple-600 text-3xl dark:text-gray-100">{threePlus} </div>
+          <div className="text-purple-600 text-3xl dark:text-gray-100">
+            <EditableInputField 
+              field="threePlus" 
+              value={threePlus.toString()} 
+              className="text-3xl dark:text-gray-100" 
+              inputType="text" 
+            />
+          </div>
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">3+ Bedroom</span>
           <span className="text-xs text-gray-400">{percent(threePlus)}</span>
         </div>

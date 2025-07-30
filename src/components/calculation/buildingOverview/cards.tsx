@@ -1,6 +1,7 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
 import { numberWithCommas, abbreviateNumber } from '@/lib/utils'
+import EditableInputField from '@/components/shared/EditableInputField'
 
 const Cards = ({ c }: { c: CalculationResult }) => {
   return (
@@ -56,7 +57,14 @@ const Cards = ({ c }: { c: CalculationResult }) => {
               </svg>
             </div>
             <div>
-              <p className="text-2xl font-bold">{numberWithCommas(c.ptacUnits)}</p>
+              <div className="text-2xl font-bold">
+                <EditableInputField 
+                  field="ptacUnits" 
+                  value={numberWithCommas(c.ptacUnits)} 
+                  className="text-2xl font-bold" 
+                  inputType="text" 
+                />
+              </div>
               <p className="text-sm text-muted-foreground">Avg age: 18 years</p>
               <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-yellow-500/10 text-yellow-500 border-yellow-500/20 mb-6">
                 AI Estimate
@@ -79,8 +87,15 @@ const Cards = ({ c }: { c: CalculationResult }) => {
               </svg>
             </div>
             <div>
-              <p className="text-2xl font-bold">{numberWithCommas(c.annualEnergy)}</p>
-              <p className="text-sm text-muted-foreground">kWh</p>
+              <div className="text-2xl font-bold">
+                <EditableInputField 
+                  field="annualEnergy" 
+                  value={numberWithCommas(c.annualEnergy)} 
+                  className="text-2xl font-bold" 
+                  inputType="text" 
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">annual energy</p>
               <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
                 AI Estimate
               </div>
@@ -100,11 +115,20 @@ const Cards = ({ c }: { c: CalculationResult }) => {
               </svg>
             </div>
             <div>
-              <p className="text-2xl font-bold">{c.capRate}%</p>
+              <div className="text-2xl font-bold flex">
+                <EditableInputField 
+                  field="capRate" 
+                  value={c.capRate} 
+                  className="text-2xl font-bold" 
+                  inputType="text" 
+                  abbreviate="%"
+                />
+              </div>
               <p className="text-sm text-muted-foreground">cap rate</p>
-              <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground text-xs mt-1">Verified</div>
-            </div>
-            
+              <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                AI Estimate
+              </div>
+            </div>            
           </div>
           <p className='text-sm font-medium mt-2'>
             Cap Rate
@@ -119,7 +143,14 @@ const Cards = ({ c }: { c: CalculationResult }) => {
               </svg>
             </div>
             <div>
-              <p className="text-2xl font-bold">{abbreviateNumber(c.buildingValue)}</p>
+              <div className="text-2xl font-bold">
+                <EditableInputField 
+                  field="buildingValue" 
+                  value={abbreviateNumber(c.buildingValue)} 
+                  className="text-2xl font-bold" 
+                  inputType="text" 
+                />
+              </div>
               <p className="text-sm text-muted-foreground">estimated value</p>
               <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
                 AI Estimate

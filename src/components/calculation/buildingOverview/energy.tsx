@@ -1,5 +1,7 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
+import EditableInputField from '@/components/shared/EditableInputField'
+import { numberWithCommas } from '@/lib/utils'
 
 const Energy = ({ c }: { c: CalculationResult }) => {
   const energyProfile: { electric?: number; gas?: number; [key: string]: unknown } = {};
@@ -29,7 +31,15 @@ const Energy = ({ c }: { c: CalculationResult }) => {
             </div>
             <div className="flex items-center justify-between mb-1">
               <span className="block text-sm font-medium text-blue-700 dark:text-blue-300">Electricity</span>
-              <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">{energyProfile.electric ?? 0}%</span>
+              <span className="text-xs font-semibold text-blue-700 dark:text-blue-200">
+                <EditableInputField 
+                  field="electric" 
+                  value={(energyProfile.electric ?? 0).toString()} 
+                  className="text-xs font-semibold text-blue-700 dark:text-blue-200" 
+                  inputType="text" 
+                  abbreviate="%"
+                />
+              </span>
             </div>
             <div className="w-full bg-blue-100 dark:bg-blue-900 rounded-full h-2">
               <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{ width: `${energyProfile.electric ?? 0}%` }}></div>
@@ -38,7 +48,15 @@ const Energy = ({ c }: { c: CalculationResult }) => {
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="block text-sm font-medium text-yellow-700 dark:text-yellow-300">Natural Gas</span>
-              <span className="text-xs font-semibold text-yellow-700 dark:text-yellow-200">{energyProfile.gas ?? 0}%</span>
+              <span className="text-xs font-semibold text-yellow-700 dark:text-yellow-200">
+                <EditableInputField 
+                  field="gas" 
+                  value={(energyProfile.gas ?? 0).toString()} 
+                  className="text-xs font-semibold text-yellow-700 dark:text-yellow-200" 
+                  inputType="text" 
+                  abbreviate="%"
+                />
+              </span>
             </div>
             <div className="w-full bg-yellow-100 dark:bg-yellow-900 rounded-full h-2">
               <div className="bg-yellow-400 h-2 rounded-full transition-all duration-300" style={{ width: `${energyProfile.gas ?? 0}%` }}></div>
@@ -55,7 +73,13 @@ const Energy = ({ c }: { c: CalculationResult }) => {
                 Site EUI
               </div>  
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                {c.siteEUI + ' kBtu/ft²/year'}
+                <EditableInputField 
+                  field="siteEUI" 
+                  value={c.siteEUI} 
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300" 
+                  inputType="text" 
+                  abbreviate="kBtu/ft²/year"
+                />
               </div>
             </div>
             <div className='flex items-center justify-between w-full'>
@@ -63,15 +87,28 @@ const Energy = ({ c }: { c: CalculationResult }) => {
                 Occupancy Rate
               </div>  
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                {c.occupancyRate + '%'}
+                <EditableInputField 
+                  field="occupancyRate" 
+                  value={c.occupancyRate} 
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300" 
+                  inputType="text" 
+                  abbreviate="%"
+                />
               </div>
             </div>
             <div className='flex items-center justify-between w-full'>
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                 Maintenance Cost
               </div>  
-              <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                {'$'+ c.maintenanceCost + '/unit/year'}
+              <div className='flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300'>
+                $
+                <EditableInputField 
+                  field="maintenanceCost" 
+                  value={numberWithCommas(c.maintenanceCost)} 
+                  className="text-sm font-medium text-gray-700 dark:text-gray-300" 
+                  inputType="text" 
+                  abbreviate=" unit/year"
+                />
               </div>
             </div>
           </div>

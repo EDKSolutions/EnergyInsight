@@ -17,6 +17,7 @@ export const useCalculationEdit = () => {
   // Function to initialize editing with current data
   const initializeEdit = (calculation: CalculationResult) => {
     updateMultipleFields({
+      id: calculation.id, // Add the ID to the store
       buildingName: calculation.buildingName,
       address: calculation.address,
       yearBuilt: calculation.yearBuilt,
