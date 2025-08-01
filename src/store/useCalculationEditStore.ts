@@ -29,22 +29,7 @@ interface CalculationEditStore {
   cancelEdit: () => void;
 }
 
-// Helper function to safely update the calculation result
-const updateCalculationResult = (currentCalculation: CalculationResult, editableFields: Partial<CalculationResult>): CalculationResult => {
-  const updatedCalculation = { ...currentCalculation };
-  
-  // Only update fields that exist in editableFields and are not undefined
-  Object.entries(editableFields).forEach(([key, value]) => {
-    if (value !== undefined && key !== 'id') { // Skip id field
-      const fieldKey = key as keyof CalculationResult;
-      if (fieldKey in updatedCalculation) {
-        (updatedCalculation as Record<string, unknown>)[key] = value;
-      }
-    }
-  });
-  
-  return updatedCalculation;
-};
+
 
 export const useCalculationEditStore = create<CalculationEditStore>((set, get) => ({
   isEditMode: false,
@@ -102,27 +87,24 @@ export const useCalculationEditStore = create<CalculationEditStore>((set, get) =
         modifiedFields.id = editableFields.id;
       }
       
-      console.log('Modified fields only:', modifiedFields);
+      //console.log('Modified fields only:', modifiedFields);
       
       // Send only modified fields to API
       const response = await nestApiClient.calculations.updateCalculation(
         editableFields.id as string, 
         modifiedFields as Record<string, string | number | boolean | null | undefined>
       );
-      console.log('API Response:', response);
       
       // Update the main store with the modified data
       const resultStore = useCalculationResultStore.getState();
       resultStore.setCalculationResult(response as CalculationResult);
 
-      console.log('Updated calculation in store:', resultStore.calculationResult);
       
       // Clear editable fields after saving
       set({ editableFields: {}, originalData: {}, isEditMode: false });
       
       return true;
-    } catch (error) {
-      console.error('Error saving changes:', error);
+    } catch {
       return false;
     }
   },

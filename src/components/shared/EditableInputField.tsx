@@ -8,6 +8,7 @@ interface EditableInputFieldProps {
   inputType?: 'text' | 'number' | 'textarea';
   abbreviate?: string;
   placeholder?: string;
+  onSave?: (value: string) => void; // Callback for custom save logic
 }
 
 const EditableInputField: React.FC<EditableInputFieldProps> = ({
@@ -16,7 +17,8 @@ const EditableInputField: React.FC<EditableInputFieldProps> = ({
   className = '',
   inputType = 'text',
   placeholder,
-  abbreviate = ''
+  abbreviate = '',
+  onSave
 }) => {
   const { isEditMode, editableFields, updateField } = useCalculationEditStore();
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +34,13 @@ const EditableInputField: React.FC<EditableInputFieldProps> = ({
   };
 
   const handleSave = () => {
-    updateField(field, localValue);
+    if (onSave) {
+      // Use custom save logic if provided
+      onSave(localValue);
+    } else {
+      // Use default save logic
+      updateField(field, localValue);
+    }
     setIsEditing(false);
   };
 
@@ -58,7 +66,7 @@ const EditableInputField: React.FC<EditableInputFieldProps> = ({
             onChange={(e) => setLocalValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="flex-1 text-gray-900 text-sm dark:text-gray-100 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 text-gray-900 text-sm dark:text-gray-100 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={2}
           />
         ) : (
