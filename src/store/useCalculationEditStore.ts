@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { CalculationResult } from '@/types/calculation-result-type';
+import { nestApiClient   } from '@/services/nest_back';
+import { useCalculationResultStore } from './useCalculationResultStore';
 
 interface CalculationEditStore {
   // Edit mode state
@@ -7,6 +9,7 @@ interface CalculationEditStore {
   
   // Editable calculation data
   editableFields: Partial<CalculationResult>;
+  originalData: Partial<CalculationResult>; // Store original data for comparison
   
   // Actions
   toggleEditMode: () => void;
@@ -26,9 +29,12 @@ interface CalculationEditStore {
   cancelEdit: () => void;
 }
 
+
+
 export const useCalculationEditStore = create<CalculationEditStore>((set, get) => ({
   isEditMode: false,
   editableFields: {},
+  originalData: {},
   
   toggleEditMode: () => {
     const { isEditMode } = get();
@@ -54,33 +60,56 @@ export const useCalculationEditStore = create<CalculationEditStore>((set, get) =
         ...state.editableFields,
         ...fields,
       },
+      originalData: fields, // Store original data for comparison
     }));
   },
   
   resetEditableFields: () => {
-    set({ editableFields: {} });
+    set({ editableFields: {}, originalData: {} });
   },
   
   saveChanges: async () => {
     try {
-      // Here you can implement the logic to save changes
-      // For example, make an API call
-      const { editableFields } = get();
+      const { editableFields, originalData } = get();
       
-      // Simulate an API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Get only modified fields
+      const modifiedFields: Partial<CalculationResult> = {};
+      Object.entries(editableFields).forEach(([key, value]) => {
+        const fieldKey = key as keyof CalculationResult;
+        // Only include fields that actually changed
+        if (value !== originalData[fieldKey]) {
+          modifiedFields[fieldKey] = value as CalculationResult[keyof CalculationResult];
+        }
+      });
+      
+      // Always include the ID for the API call
+      if (editableFields.id) {
+        modifiedFields.id = editableFields.id;
+      }
+      
+      //console.log('Modified fields only:', modifiedFields);
+      
+      // Send only modified fields to API
+      const response = await nestApiClient.calculations.updateCalculation(
+        editableFields.id as string, 
+        modifiedFields as Record<string, string | number | boolean | null | undefined>
+      );
+      
+      // Update the main store with the modified data
+      const resultStore = useCalculationResultStore.getState();
+      resultStore.setCalculationResult(response as CalculationResult);
+
       
       // Clear editable fields after saving
-      set({ editableFields: {}, isEditMode: false });
+      set({ editableFields: {}, originalData: {}, isEditMode: false });
       
       return true;
-    } catch (error) {
-      console.error('Error saving changes:', error);
+    } catch {
       return false;
     }
   },
   
   cancelEdit: () => {
-    set({ isEditMode: false, editableFields: {} });
+    set({ isEditMode: false, editableFields: {}, originalData: {} });
   },
 })); 

@@ -170,5 +170,6 @@ export const nestApiClient = {
     calculate: (data: {houseNumber: string, street: string, borough: string, address: string}) => apiClient.post('/calculations', data),
     getCalculations: () => apiClient.get('/calculations/user'),
     getCalculation: (calculationId: string) => apiClient.get(`/calculations/${calculationId}`),
+    updateCalculation: (calculationId: string, data: Record<string, string | number | boolean | null | undefined>) => apiClient.put(`/calculations/${calculationId}`, data),
   },
 }; 

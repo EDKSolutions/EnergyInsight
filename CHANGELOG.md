@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.14...v0.0.15) (2025-08-01)
+
+
+### Features
+
+* add functionality to edit calculations ([57fcbce](https://github.com/EDKSolutions/EnergyInsight/commit/57fcbcec4b9e4e43455de91a3d2c0b46b84e1475))
+* add validation of energy editing and units ([32a25e3](https://github.com/EDKSolutions/EnergyInsight/commit/32a25e3755ebf6ad01e9c4154e2b1a51038c2ca2))
+
 ### [0.0.14](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.13...v0.0.14) (2025-07-29)
 
 
