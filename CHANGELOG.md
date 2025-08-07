@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.15...v0.0.16) (2025-08-07)
+
+
+### Features
+
+* emissions template ([6d72bea](https://github.com/EDKSolutions/EnergyInsight/commit/6d72beafcc640c6cc091d0be3e7e144ff6adaf0a))
+
 ### [0.0.15](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.14...v0.0.15) (2025-08-01)
 
 
