@@ -12,17 +12,18 @@ interface AuthContextType {
     emailVerified: boolean;
   } | null;
   isLoading: boolean;
+  isLoadingLogin: boolean;
   isAuthenticated: boolean;
   isLoggingOut: boolean;
-  login: (credentials: SignInInput) => Promise<{ success: boolean; requiresConfirmation?: boolean; requiresPasswordChange?: boolean }>;
-  register: (userData: SignUpInput) => Promise<{ success: boolean; requiresConfirmation?: boolean }>;
-  confirmRegistration: (confirmationData: ConfirmSignUpInput) => Promise<{ success: boolean }>;
-  resendSignUpCode: (username: string) => Promise<{ success: boolean }>;
+  login: (credentials: SignInInput) => Promise<{ success: boolean; requiresConfirmation?: boolean; requiresPasswordChange?: boolean; message?: string }>;
+  register: (userData: SignUpInput) => Promise<{ success: boolean; requiresConfirmation?: boolean; message?: string }>;
+  confirmRegistration: (confirmationData: ConfirmSignUpInput) => Promise<{ success: boolean; message?: string }>;
+  resendSignUpCode: (username: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   checkAuthState: () => Promise<void>;
-  forgotPassword: (email: string) => Promise<{ success: boolean }>;
-  forgotPasswordSubmit: (email: string, code: string, newPassword: string) => Promise<{ success: boolean }>;
-  forgotPasswordResendCode: (email: string) => Promise<{ success: boolean }>;
+  forgotPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
+  forgotPasswordSubmit: (email: string, code: string, newPassword: string) => Promise<{ success: boolean; message?: string }>;
+  forgotPasswordResendCode: (email: string) => Promise<{ success: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

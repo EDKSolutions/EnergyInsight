@@ -8,7 +8,7 @@ import { useAuthContext } from '@/context/AuthContext';
 
 const SignUpForm = () => {
   const router = useRouter();
-  const { register, confirmRegistration, resendSignUpCode, isLoading } = useAuthContext();
+  const { register, confirmRegistration, resendSignUpCode } = useAuthContext();
   const [step, setStep] = useState<'signup' | 'confirm'>('signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +19,11 @@ const SignUpForm = () => {
   const [cooldown, setCooldown] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // Estados de carga específicos
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -60,6 +65,7 @@ const SignUpForm = () => {
     }
 
     try {
+      setIsRegistering(true);
       const username = email.toLowerCase();
       
       const result = await register({
@@ -78,10 +84,15 @@ const SignUpForm = () => {
         setCooldown(60); // 1 minuto cooldown
       } else if (result.success) {
         setSuccess('Account created successfully! Redirecting to Sign In...');
+        setIsRedirecting(true);
         setTimeout(() => router.push('/auth/sign-in'), 1000);
+      } else {
+        setError(result.message || 'An error occurred during registration');
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during registration');
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -107,6 +118,7 @@ const SignUpForm = () => {
     setError(null);
 
     try {
+      setIsConfirming(true);
       const result = await confirmRegistration({
         username: email.toLowerCase(),
         confirmationCode
@@ -114,10 +126,13 @@ const SignUpForm = () => {
 
       if (result.success) {
         setSuccess('Account confirmed successfully! Redirecting to Sign In...');
+        setIsRedirecting(true);
         setTimeout(() => router.push('/auth/sign-in'), 1500);
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during confirmation');
+    } finally {
+      setIsConfirming(false);
     }
   };
 
@@ -126,6 +141,10 @@ const SignUpForm = () => {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
+
+  // Determinar estados de carga para los botones
+  const isSignUpButtonLoading = isRegistering || isRedirecting;
+  const isConfirmButtonLoading = isConfirming || isRedirecting;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -164,13 +183,13 @@ const SignUpForm = () => {
                   type="email"
                   id="email"
                   name="email"
-                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Email address"
                   autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value.toLowerCase())}
                   required
-                  disabled={isLoading}
+                  disabled={isSignUpButtonLoading}
                 />
                 <label
                   htmlFor="email"
@@ -186,19 +205,20 @@ const SignUpForm = () => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
-                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 pr-10"
+                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isSignUpButtonLoading}
                 />
                 <button
                   type="button"
                   tabIndex={-1}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none disabled:opacity-50"
                   onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  disabled={isSignUpButtonLoading}
                 >
                   {showPassword ? (
                     // Ícono de ojo tachado
@@ -227,19 +247,20 @@ const SignUpForm = () => {
                   type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
                   name="confirmPassword"
-                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 pr-10"
+                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isSignUpButtonLoading}
                 />
                 <button
                   type="button"
                   tabIndex={-1}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 focus:outline-none disabled:opacity-50"
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
                   aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  disabled={isSignUpButtonLoading}
                 >
                   {showConfirmPassword ? (
                     // Ícono de ojo tachado
@@ -265,10 +286,36 @@ const SignUpForm = () => {
 
               <button
                 type="submit"
-                disabled={isLoading}
-                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                disabled={isSignUpButtonLoading}
+                className="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 transition-all duration-200"
               >
-                {isLoading ? 'Registering...' : 'Sign Up'}
+                {isSignUpButtonLoading ? (
+                  <>
+                    <svg 
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24"
+                    >
+                      <circle 
+                        className="opacity-25" 
+                        cx="12" 
+                        cy="12" 
+                        r="10" 
+                        stroke="currentColor" 
+                        strokeWidth="4"
+                      ></circle>
+                      <path 
+                        className="opacity-75" 
+                        fill="currentColor" 
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    {isRedirecting ? 'Redirecting...' : 'Registering...'}
+                  </>
+                ) : (
+                  'Sign Up'
+                )}
               </button>
             </form>
           ) : (
@@ -278,12 +325,12 @@ const SignUpForm = () => {
                   type="text"
                   id="confirmationCode"
                   name="confirmationCode"
-                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+                  className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Verification code"
                   value={confirmationCode}
                   onChange={(e) => setConfirmationCode(e.target.value)}
                   required
-                  disabled={isLoading}
+                  disabled={isConfirmButtonLoading}
                 />
                 <label
                   htmlFor="confirmationCode"
@@ -297,17 +344,43 @@ const SignUpForm = () => {
               <div className="flex flex-col space-y-4">
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  disabled={isConfirmButtonLoading}
+                  className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 transition-all duration-200"
                 >
-                  {isLoading ? 'Confirming...' : 'Confirm account'}
+                  {isConfirmButtonLoading ? (
+                    <>
+                      <svg 
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" 
+                        viewBox="0 0 24 24"
+                      >
+                        <circle 
+                          className="opacity-25" 
+                          cx="12" 
+                          cy="12" 
+                          r="10" 
+                          stroke="currentColor" 
+                          strokeWidth="4"
+                        ></circle>
+                        <path 
+                          className="opacity-75" 
+                          fill="currentColor" 
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {isRedirecting ? 'Redirecting...' : 'Confirming...'}
+                    </>
+                  ) : (
+                    'Confirm account'
+                  )}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleResendCode}
-                  disabled={isLoading || cooldown > 0}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  disabled={isConfirmButtonLoading || cooldown > 0}
+                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {cooldown > 0
                     ? `Resend code in ${formatTime(cooldown)}`
@@ -332,6 +405,6 @@ const SignUpForm = () => {
       </div>
     </div>
   );
-}; 
+};
 
 export default SignUpForm;

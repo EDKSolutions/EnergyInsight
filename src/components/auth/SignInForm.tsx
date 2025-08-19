@@ -9,11 +9,12 @@ import { useAuthContext } from '@/context/AuthContext';
 const SignInForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, isLoading } = useAuthContext();
+  const { login, isLoadingLogin } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Obtener la URL de redirección desde los parámetros de búsqueda
   const redirectTo = searchParams.get('redirect') || '/panel/search';
@@ -42,13 +43,20 @@ const SignInForm = () => {
 
       if (result.success) {
         setSuccess('Successfully logged in! Redirecting...');
+        setIsRedirecting(true);
         // Redirigir a la URL especificada o al dashboard por defecto
         setTimeout(() => router.push(redirectTo), 1000);
+      } else {
+        setError(result.message || 'Email or password is incorrect');
       }
     } catch (err: unknown) {
+      console.log(err);
       setError(err instanceof Error ? err.message : 'An error occurred during sign in');
     }
   };
+
+  // Determinar si el botón debe estar deshabilitado y mostrar spinner
+  const isButtonLoading = isLoadingLogin || isRedirecting;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -86,13 +94,13 @@ const SignInForm = () => {
                 type="email"
                 id="email"
                 name="email"
-                className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+                className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Email address"
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value.toLowerCase())}
                 required
-                disabled={isLoading}
+                disabled={isButtonLoading}
               />
               <label
                 htmlFor="email"
@@ -108,12 +116,12 @@ const SignInForm = () => {
                 type="password"
                 id="password"
                 name="password"
-                className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600"
+                className="peer h-12 w-full border-b-2 border-gray-300 text-gray-900 placeholder-transparent focus:outline-none focus:border-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isButtonLoading}
               />
               <label
                 htmlFor="password"
@@ -128,7 +136,7 @@ const SignInForm = () => {
               <div className="text-sm">
                 <Link
                   href="/auth/forgot-password"
-                  className="font-medium text-blue-600 hover:text-blue-500"
+                  className="font-medium text-blue-600 hover:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Forgot your password?
                 </Link>
@@ -137,10 +145,36 @@ const SignInForm = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full flex justify-center py-4 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              disabled={isButtonLoading}
+              className="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600 transition-all duration-200"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isButtonLoading ? (
+                <>
+                  <svg 
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24"
+                  >
+                    <circle 
+                      className="opacity-25" 
+                      cx="12" 
+                      cy="12" 
+                      r="10" 
+                      stroke="currentColor" 
+                      strokeWidth="4"
+                    ></circle>
+                    <path 
+                      className="opacity-75" 
+                      fill="currentColor" 
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  {isRedirecting ? 'Redirecting...' : 'Signing in...'}
+                </>
+              ) : (
+                'Sign in'
+              )}
             </button>
           </form>
 
