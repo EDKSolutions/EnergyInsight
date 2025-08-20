@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.17...v0.0.18) (2025-08-19)
+
+
+### Bug Fixes
+
+* display component errors when registering or logging in ([fc57df5](https://github.com/EDKSolutions/EnergyInsight/commit/fc57df51e9e8b6c26a8183d091504c2bbb8ba637))
+
+### [0.0.17](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.15...v0.0.17) (2025-08-19)
+
+### [0.0.16](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.15...v0.0.16) (2025-08-19)
+
 ### [0.0.15](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.14...v0.0.15) (2025-08-01)
 
 

@@ -24,6 +24,7 @@ interface User {
 interface AuthState {
   user: User | null;
   isLoading: boolean;
+  isLoadingLogin: boolean;
   isAuthenticated: boolean;
   isLoggingOut: boolean;
 }
@@ -50,6 +51,7 @@ export const useAuth = () => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     isLoading: true,
+    isLoadingLogin: false,
     isAuthenticated: false,
     isLoggingOut: false,
   });
@@ -70,6 +72,7 @@ export const useAuth = () => {
       setAuthState({
         user: userData,
         isLoading: false,
+        isLoadingLogin: false,
         isAuthenticated: true,
         isLoggingOut: false,
       });
@@ -77,6 +80,7 @@ export const useAuth = () => {
       setAuthState({
         user: null,
         isLoading: false,
+        isLoadingLogin: false,
         isAuthenticated: false,
         isLoggingOut: false,
       });
@@ -90,6 +94,12 @@ export const useAuth = () => {
 
   const login = async (credentials: SignInInput) => {
     try {
+      // Activar estado de carga
+      setAuthState(prev => ({
+        ...prev,
+        isLoadingLogin: true,
+      }));
+
       // Intentar diferentes flujos de autenticación
       let signInResult;
       
@@ -128,6 +138,7 @@ export const useAuth = () => {
           setAuthState({
             user: userData,
             isLoading: false,
+            isLoadingLogin: false,
             isAuthenticated: true,
             isLoggingOut: false,
           });
@@ -139,6 +150,7 @@ export const useAuth = () => {
           setAuthState({
             user: null,
             isLoading: false,
+            isLoadingLogin: false,
             isAuthenticated: true,
             isLoggingOut: false,
           });
@@ -146,33 +158,51 @@ export const useAuth = () => {
           return { success: true };
         }
       } else if (nextStep.signInStep === 'CONFIRM_SIGN_UP') {
+        setAuthState(prev => ({
+          ...prev,
+          isLoadingLogin: false,
+        }));
         toast.error('Please confirm your account before signing in.');
         return { success: false, requiresConfirmation: true };
       } else if (nextStep.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
+        setAuthState(prev => ({
+          ...prev,
+          isLoadingLogin: false,
+        }));
         toast.error('Password change required. Please contact administrator.');
         return { success: false, requiresPasswordChange: true };
       }
 
+      setAuthState(prev => ({
+        ...prev,
+        isLoadingLogin: false,
+      }));
       return { success: false };
     } catch (error: unknown) {
+      // Desactivar estado de carga en caso de error
+      setAuthState(prev => ({
+        ...prev,
+        isLoadingLogin: false,
+      }));
+      let message = ''
+
       if (error instanceof Error) {
         if (error.name === 'UserNotConfirmedException') {
-        toast.error('Your account has not been confirmed. Please check your email.');
-        return { success: false, requiresConfirmation: true };
-      } else if (error.name === 'NotAuthorizedException') {
-        toast.error('Incorrect email or password.');
+          message = 'Your account has not been confirmed. Please check your email.';
+        } else if (error.name === 'NotAuthorizedException') {
+          message = 'Incorrect email or password.';
       } else if (error.name === 'UserNotFoundException') {
-        toast.error('No account found with this email.');
-      } else if (error.name === 'TooManyRequestsException') {
-        toast.error('Too many attempts. Please wait a moment.');
+          message = 'No account found with this email.';
+        } else if (error.name === 'TooManyRequestsException') {
+          message = 'Too many attempts. Please wait a moment.';
       } else if (error.name === 'InvalidParameterException') {
-        toast.error('Authentication flow not supported. Please contact administrator.');
-      } else {
-        toast.error('Error during sign in. Please try again.');
+          message = 'Authentication flow not supported. Please contact administrator.';
+        } else {
+          message = 'Error during sign in. Please try again.';
       }
       }
 
-      return { success: false };
+      return { success: false, message: message };
     }
   };
 
@@ -190,19 +220,20 @@ export const useAuth = () => {
 
       return { success: false };
     } catch (error: unknown) {
+      let message = ''
       if (error instanceof Error) {
         if (error.name === 'UsernameExistsException') {
-        toast.error('User already exists with this email.');
-      } else if (error.name === 'InvalidPasswordException') {
-        toast.error('Password does not meet security requirements.');
+          message = 'User already exists with this email.';
+        } else if (error.name === 'InvalidPasswordException') {
+          message = 'Password does not meet security requirements.';
       } else if (error.name === 'InvalidParameterException') {
-        toast.error('The provided email is not valid.');
-      } else {
-        toast.error('Error during registration. Please try again.');
+          message = 'The provided email is not valid.';
+        } else {
+          message = 'Error during registration. Please try again.';
       }
       }
 
-      return { success: false };
+      return { success: false, message: message };
     }
   };
 
@@ -217,17 +248,18 @@ export const useAuth = () => {
 
       return { success: false };
     } catch (error: unknown) {
+      let message = ''
       if (error instanceof Error) {
         if (error.name === 'CodeMismatchException') {
-        toast.error('Incorrect confirmation code.');
-      } else if (error.name === 'ExpiredCodeException') {
-        toast.error('Confirmation code has expired.');
+          message = 'Incorrect confirmation code.';
+        } else if (error.name === 'ExpiredCodeException') {
+          message = 'Confirmation code has expired.';
       } else {
-        toast.error('Error during confirmation. Please try again.');
+          message = 'Error during confirmation. Please try again.';
       }
       }
 
-      return { success: false };
+      return { success: false, message: message || 'Error during confirmation. Please try again.' };
     }
   };
 
@@ -246,6 +278,7 @@ export const useAuth = () => {
       setAuthState({
         user: null,
         isLoading: false,
+        isLoadingLogin: false,
         isAuthenticated: false,
         isLoggingOut: false,
       });
@@ -264,6 +297,7 @@ export const useAuth = () => {
       setAuthState({
         user: null,
         isLoading: false,
+        isLoadingLogin: false,
         isAuthenticated: false,
         isLoggingOut: false,
       });
@@ -282,33 +316,39 @@ export const useAuth = () => {
   const forgotPassword = async (email: string) => {
     try {
       await resetPassword({ username: email });
-      toast.success('Código de verificación enviado a tu correo');
       return { success: true };
     } catch (error) {
-      toast.error('Error al solicitar recuperación de contraseña');
-      throw error;
+      let message = ''
+      if (error instanceof Error) {
+        message = 'Error al solicitar recuperación de contraseña';
+      }
+      return { success: false, message: message };
     }
   };
 
   const forgotPasswordSubmit = async (email: string, code: string, newPassword: string) => {
     try {
       await confirmResetPassword({ username: email, confirmationCode: code, newPassword });
-      toast.success('¡Contraseña restablecida exitosamente!');
       return { success: true };
     } catch (error) {
-      toast.error('Error al restablecer la contraseña');
-      throw error;
+      let message = ''
+      if (error instanceof Error) {
+        message = 'Error during password reset. Please try again.';
+      }
+      return { success: false, message: message };
     }
   };
 
   const forgotPasswordResendCode = async (email: string) => {
     try {
       await resetPassword({ username: email });
-      toast.success('Nuevo código enviado a tu correo');
       return { success: true };
     } catch (error) {
-      toast.error('Error al reenviar el código');
-      throw error;
+      let message = ''
+      if (error instanceof Error) {
+        message = 'Error resending verification code. Please try again.';
+      }
+      return { success: false, message: message };
     }
   };
 
@@ -318,17 +358,17 @@ export const useAuth = () => {
       toast.success('Verification code resent to your email');
       return { success: true };
     } catch (error: unknown) {
+      let message = ''
       if (error instanceof Error) {
         if (error.name === 'UserNotFoundException') {
-          toast.error('No account found with this email.');
+          message = 'No account found with this email.';
         } else if (error.name === 'TooManyRequestsException') {
-          toast.error('Too many attempts. Please wait a moment.');
+          message = 'Too many attempts. Please wait a moment.';
         } else {
-          toast.error('Error resending verification code. Please try again.');
+          message = 'Error resending verification code. Please try again.';
         }
       }
-
-      return { success: false };
+      return { success: false, message: message };
     }
   };
 
