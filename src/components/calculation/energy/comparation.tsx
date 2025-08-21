@@ -14,24 +14,31 @@ const Comparation = ({ c }: { c: CalculationResult }) => {
           </div>
         </div>
       </div>
-      <div className="gap-4 w-full"> 
+      <div className="gap-4 w-full overflow-x-auto"> 
         <table className="w-full caption-bottom text-sm">
           <thead className='[&_tr]:border-b'>
             <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
               <th className='h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0'>Metric</th>
               <th className='h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right'>Current PTAC</th>
-              <th className='h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right'>PTHP</th>
+              <th className='h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right'>Proposed PTHP</th>
               <th className='h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right'>Savings</th>
               <th className='h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 text-right'>% Reduction</th>
             </tr>
           </thead>
           <tbody className='[&_tr:last-child]:border-0'>
-            <tr className='border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted'>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Energy Consumption</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>100,000 MMBtu</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>100,000 MMBtu</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>100,000 MMBtu</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>100,000 MMBtu</td>  
+            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Building MMBtu</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingMMBtuTotalPTAC}</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingMMBtuTotalPTHP}</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{(Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)).toFixed(2)}</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)) / Number(c.annualBuildingMMBtuTotalPTAC) * 100).toFixed(2)}%</td>  
+            </tr>
+            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Energy Cost</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingCostPTAC}</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingCostPTHP}</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{(Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)).toFixed(2)}</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)) / Number(c.annualBuildingCostPTAC) * 100).toFixed(2)}%</td>  
             </tr>
           </tbody>
         </table>

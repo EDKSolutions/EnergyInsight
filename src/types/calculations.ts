@@ -29,6 +29,20 @@ export interface Calculation {
     unitMixBreakDown: string;
     updatedAt: string;
     zoning: string;
+    annualBuildingCostPTAC: string;
+    annualBuildingCostPTHP: string;
+    annualBuildingKwhCoolingPTAC: string;
+    annualBuildingKwhCoolingPTHP: string;
+    annualBuildingKwhHeatingPTHP: string;
+    annualBuildingMMBtuCoolingPTAC: string;
+    annualBuildingMMBtuCoolingPTHP: string;
+    annualBuildingMMBtuHeatingPTAC: string;
+    annualBuildingMMBtuHeatingPTHP: string;
+    annualBuildingMMBtuTotalPTAC: string;
+    annualBuildingMMBtuTotalPTHP: string;
+    annualBuildingThermsHeatingPTAC: string;
+    annualEnergySavings: string;
+    totalRetrofitCost: string;
     [key: string]: string | number | unknown[];
   }
 } 

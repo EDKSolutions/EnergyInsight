@@ -2,7 +2,6 @@ import React from 'react'
 import Property from '@/components/calculation/buildingOverview/property'
 import { CalculationResult } from '@/types/calculation-result-type'
 import Unit from '@/components/calculation/buildingOverview/unit'
-import Energy from '@/components/calculation/buildingOverview/energy'
 import Data from '@/components/calculation/buildingOverview/data'
 import Cards from '@/components/calculation/buildingOverview/cards'
 import Calculate from '@/components/calculation/buildingOverview/calculate'
@@ -103,7 +102,6 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
       <Property c={c} />
       <Cards c={c} />
       <Unit c={c} />
-      <Energy c={c} />
       <Calculate 
         pluto={c.rawPlutoData}
         ll84={c.rawLL84Data}
