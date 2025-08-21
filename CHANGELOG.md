@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.20](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.19...v0.0.20) (2025-08-21)
+
+
+### Features
+
+* initialize view energy ([2a09ef2](https://github.com/EDKSolutions/EnergyInsight/commit/2a09ef2804fd32e12622674688b9e2474720052a))
+
 ### [0.0.19](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.18...v0.0.19) (2025-08-20)
 
 ### [0.0.18](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.17...v0.0.18) (2025-08-19)
