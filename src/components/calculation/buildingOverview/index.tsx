@@ -2,11 +2,11 @@ import React from 'react'
 import Property from '@/components/calculation/buildingOverview/property'
 import { CalculationResult } from '@/types/calculation-result-type'
 import Unit from '@/components/calculation/buildingOverview/unit'
-import Energy from '@/components/calculation/buildingOverview/energy'
 import Data from '@/components/calculation/buildingOverview/data'
 import Cards from '@/components/calculation/buildingOverview/cards'
 import Calculate from '@/components/calculation/buildingOverview/calculate'
 import { useCalculationEdit } from '@/hooks/useCalculationEdit'
+import { toast } from 'react-hot-toast'
 
 const Calculation = ({ c }: { c: CalculationResult }) => {
   const { 
@@ -19,7 +19,6 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
 
   const handleEditClick = () => {
     if (!isEditMode) {
-      console.log('initializeEdit', c);
       initializeEdit(c);
     }
   };
@@ -28,10 +27,10 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
     const success = await saveChanges();
     if (success) {
       // Here you could show a success toast
-      console.log('Changes saved successfully');
+      toast.success('Changes saved successfully');
     } else {
       // Here you could show an error toast
-      console.error('Error saving changes');
+      toast.error('Error saving changes');
     }
   };
 
@@ -103,7 +102,6 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
       <Property c={c} />
       <Cards c={c} />
       <Unit c={c} />
-      <Energy c={c} />
       <Calculate 
         pluto={c.rawPlutoData}
         ll84={c.rawLL84Data}

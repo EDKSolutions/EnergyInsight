@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.22](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.21...v0.0.22) (2025-08-22)
+
+
+### Bug Fixes
+
+* async map ([9823756](https://github.com/EDKSolutions/EnergyInsight/commit/9823756e8efec0d130e2107864a33394a6335f69))
+* search autocomplete ([8b6fe88](https://github.com/EDKSolutions/EnergyInsight/commit/8b6fe88256deea3c78a688b998bc86b401393977))
+* update calculation ([9fdf193](https://github.com/EDKSolutions/EnergyInsight/commit/9fdf1939ce300ef614f46add360f4d6f4ebe4328))
+
+### [0.0.21](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.20...v0.0.21) (2025-08-21)
+
+
+### Features
+
+* changes view energy ([0cf0ef3](https://github.com/EDKSolutions/EnergyInsight/commit/0cf0ef356fcc703f9c48a388c4957be93c67a17b))
+
+### [0.0.20](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.19...v0.0.20) (2025-08-21)
+
+
+### Features
+
+* initialize view energy ([2a09ef2](https://github.com/EDKSolutions/EnergyInsight/commit/2a09ef2804fd32e12622674688b9e2474720052a))
+
+### [0.0.19](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.18...v0.0.19) (2025-08-20)
+
 ### [0.0.18](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.17...v0.0.18) (2025-08-19)
 
 

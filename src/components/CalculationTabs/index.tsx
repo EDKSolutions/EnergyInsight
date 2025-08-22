@@ -14,19 +14,19 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
       <Tabs defaultValue="building-overview" className="w-full" variants="styleTwo">
         <TabList>
           <TabTrigger value="building-overview">🏢 Building Overview</TabTrigger>
-          <TabTrigger value="emissions-compliance">🌍 Emissions & Compliance</TabTrigger>
           <TabTrigger value="energy-cost">💸 Energy & Cost</TabTrigger>
+          <TabTrigger value="emissions-compliance">🌍 Emissions & Compliance</TabTrigger>
           <TabTrigger value="retrofit-roi">📊 Retrofit ROI</TabTrigger>
           <TabTrigger value="scenarios">🧪 Scenarios</TabTrigger>
         </TabList>
         <TabContent value="building-overview">
           <Calculation c={c} />
         </TabContent>
+        <TabContent value="energy-cost">
+          <Energy c={c} />
+        </TabContent>
         <TabContent value="emissions-compliance">
           <Emissions />
-        </TabContent>
-        <TabContent value="energy-cost">
-          <Energy />
         </TabContent>
         <TabContent value="retrofit-roi">
           <Retrofit />

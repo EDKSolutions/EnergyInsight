@@ -40,7 +40,9 @@ const Unit = ({ c }: { c: CalculationResult }) => {
     try {
       parsed = JSON.parse(currentUnitMix);
     } catch {
-      parsed = { source: "rule-based", studio: 0, one_bed: 0, two_bed: 0, three_plus: 0 };
+      // Preserve the original source if it exists, otherwise use default
+      const originalSource = unitMix.source || "rule-based";
+      parsed = { source: originalSource, reasoning: unitMix.reasoning, studio: 0, one_bed: 0, two_bed: 0, three_plus: 0 };
     }
 
     const newValue = parseInt(value) || 0;
@@ -68,6 +70,9 @@ const Unit = ({ c }: { c: CalculationResult }) => {
     // Format as JSON string and update the unitMixBreakDown field
     const formattedUnitMix = JSON.stringify(parsed);
     updateField('unitMixBreakDown', formattedUnitMix);
+    
+    // Show success toast
+    toast.success(`${field.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} units updated successfully`);
   };
 
   return (

@@ -41,7 +41,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="flex flex-col h-[70vh] bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
+    <div className="flex flex-col h-[80vh] bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
       <div className="flex flex-col items-center justify-center pt-6 w-full">
         <h1 className="text-2xl font-bold text-center">Search for an address in New York</h1>
         <div className="flex items-center justify-center pt-6 w-[500px] gap-4">
@@ -67,7 +67,7 @@ export default function SearchPage() {
         )}
         <div className="flex flex-col items-center justify-center pt-6">
           <h3 className="text-lg font-medium text-gray-900 mb-3">Location on the map</h3>
-          <div className="w-[700px] min-h-[600px]"> 
+          <div className="w-[700px] min-h-[80vh]"> 
             <AddressMap address={selectedAddress} />
           </div>
         </div>
