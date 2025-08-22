@@ -6,6 +6,7 @@ import Data from '@/components/calculation/buildingOverview/data'
 import Cards from '@/components/calculation/buildingOverview/cards'
 import Calculate from '@/components/calculation/buildingOverview/calculate'
 import { useCalculationEdit } from '@/hooks/useCalculationEdit'
+import { toast } from 'react-hot-toast'
 
 const Calculation = ({ c }: { c: CalculationResult }) => {
   const { 
@@ -18,7 +19,6 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
 
   const handleEditClick = () => {
     if (!isEditMode) {
-      console.log('initializeEdit', c);
       initializeEdit(c);
     }
   };
@@ -27,10 +27,10 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
     const success = await saveChanges();
     if (success) {
       // Here you could show a success toast
-      console.log('Changes saved successfully');
+      toast.success('Changes saved successfully');
     } else {
       // Here you could show an error toast
-      console.error('Error saving changes');
+      toast.error('Error saving changes');
     }
   };
 
