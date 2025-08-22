@@ -1,9 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 
-// Global variable to avoid multiple loads
-let googleMapsLoadingPromise: Promise<void> | null = null;
-
 interface AddressMapProps {
   address: string;
   className?: string;
@@ -16,39 +13,14 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
 
   useEffect(() => {
-    const loadGoogleMaps = async () => {
+    const checkGoogleMaps = () => {
       if (typeof window !== "undefined" && window.google) {
         setIsGoogleLoaded(true);
-        return;
+      } else {
+        setTimeout(checkGoogleMaps, 100);
       }
-      if (googleMapsLoadingPromise) {
-        await googleMapsLoadingPromise;
-        setIsGoogleLoaded(true);
-        return;
-      }
-      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-      if (existingScript) {
-        const checkGoogle = () => {
-          if (window.google) setIsGoogleLoaded(true);
-          else setTimeout(checkGoogle, 100);
-        };
-        checkGoogle();
-        return;
-      }
-      googleMapsLoadingPromise = new Promise((resolve) => {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          setIsGoogleLoaded(true);
-          resolve();
-        };
-        document.head.appendChild(script);
-      });
-      await googleMapsLoadingPromise;
     };
-    loadGoogleMaps();
+    checkGoogleMaps();
   }, []);
 
   useEffect(() => {

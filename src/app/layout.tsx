@@ -20,6 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <script
+          async
+          defer
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&libraries=places&loading=async`}
+        />
+      </head>
       <body>
         <Providers>
           <NextTopLoader color="#5750F1" showSpinner={false} />
