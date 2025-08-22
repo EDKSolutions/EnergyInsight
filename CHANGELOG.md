@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.22](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.21...v0.0.22) (2025-08-22)
+
+
+### Bug Fixes
+
+* async map ([9823756](https://github.com/EDKSolutions/EnergyInsight/commit/9823756e8efec0d130e2107864a33394a6335f69))
+* search autocomplete ([8b6fe88](https://github.com/EDKSolutions/EnergyInsight/commit/8b6fe88256deea3c78a688b998bc86b401393977))
+* update calculation ([9fdf193](https://github.com/EDKSolutions/EnergyInsight/commit/9fdf1939ce300ef614f46add360f4d6f4ebe4328))
+
 ### [0.0.21](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.20...v0.0.21) (2025-08-21)
 
 
