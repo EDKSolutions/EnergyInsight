@@ -8,183 +8,179 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("PRISMA_DATABASE_URL")
+  directUrl = env("POSTGRES_URL")
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
+  id                String                 @id @default(cuid())
+  email             String                 @unique
+  name              String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  deletedAt         DateTime?
   identityProviders UserIdentityProvider[]
 }
 
 model UserIdentityProvider {
-  id         String @id @default(cuid())
+  id         String    @id @default(cuid())
   provider   String
   providerId String
   userId     String
-  user       User   @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
 }
-
 
 /// @DtoCreateOptional
 /// @DtoUpdateOptional  
 model Calculations {
   /// @DtoReadOnly
   /// @example "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6"
-  id                    String            @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   /// @example "1234567890"  
-  bbl                   String
-  
+  bbl String
+
   /// @example "123 Main Street, Manhattan"
-  buildingName          String
-  
+  buildingName String
+
   /// @example "123 Main Street, Manhattan"  
-  address              String
-  
+  address String
+
   /// @example "1930"
-  yearBuilt            String
-  
+  yearBuilt String
+
   /// @example "6"
-  stories              String
-  
+  stories String
+
   /// @example "R4"
-  buildingClass        String
-  
+  buildingClass String
+
   /// @example "2"  
-  taxClass             String
-  
+  taxClass String
+
   /// @example "R6"
-  zoning               String
-  
+  zoning String
+
   /// @example "Manhattan"
-  boro                 String
-  
+  boro String
+
   /// @example "10000"
-  totalSquareFeet      String
-  
+  totalSquareFeet String
+
   /// @example "10"
   totalResidentialUnits String
-  
+
   /// @example "8"  
-  ptacUnits            String
-  
-  
+  ptacUnits String
+
   /// @example "5.5"
-  capRate              String
-  
+  capRate String
+
   /// @example "1000000"
-  buildingValue        String
-  
+  buildingValue String
+
   /// @example "{\"studio\": 2, \"one_bed\": 4, \"two_bed\": 3, \"three_plus\": 1}"
-  unitMixBreakDown     String
-  
+  unitMixBreakDown String
+
   /// @example "{\"electric\": \"60%\", \"gas\": \"40%\"}"  
-  energyProfile        String
-  
+  energyProfile String
 
   // Section 2.2 - Building-Level PTAC Calculations
   /// @DtoReadOnly
   /// @example 1234.56
-  annualBuildingMMBtuCoolingPTAC Float?  // N_ptacUnits × annualUnitMMBtuCoolingPTAC
-  
+  annualBuildingMMBtuCoolingPTAC Float? // N_ptacUnits × annualUnitMMBtuCoolingPTAC
+
   /// @DtoReadOnly  
   /// @example 2550.00
-  annualBuildingMMBtuHeatingPTAC Float?  // N_ptacUnits × annualUnitMMBtuHeatingPTAC
-  
+  annualBuildingMMBtuHeatingPTAC Float? // N_ptacUnits × annualUnitMMBtuHeatingPTAC
+
   /// @DtoReadOnly
   /// @example 3784.56  
-  annualBuildingMMBtuTotalPTAC   Float?  // Sum of cooling + heating MMBtu
+  annualBuildingMMBtuTotalPTAC Float? // Sum of cooling + heating MMBtu
 
   // Section 3 - PTHP Building Calculations
   /// @DtoReadOnly
   /// @example 1200.50
-  annualBuildingMMBtuHeatingPTHP Float?  // PTAC heating MMBtu / COP
-  
+  annualBuildingMMBtuHeatingPTHP Float? // PTAC heating MMBtu / COP
+
   /// @DtoReadOnly  
   /// @example 1234.56
-  annualBuildingMMBtuCoolingPTHP Float?  // Same as PTAC cooling MMBtu
-  
+  annualBuildingMMBtuCoolingPTHP Float? // Same as PTAC cooling MMBtu
+
   /// @DtoReadOnly
   /// @example 2435.06
-  annualBuildingMMBtuTotalPTHP   Float?  // Sum of PTHP cooling + heating MMBtu
-  
+  annualBuildingMMBtuTotalPTHP Float? // Sum of PTHP cooling + heating MMBtu
+
   // Section 4 - Energy Reduction Analysis
   /// @DtoReadOnly
   /// @example 35.67
-  energyReductionPercentage      Float?  // (PTAC - PTHP) / PTAC × 100
-  
+  energyReductionPercentage Float? // (PTAC - PTHP) / PTAC × 100
+
   // Section 5 - Retrofit Cost Calculation  
   /// @DtoReadOnly
   /// @example 68200.00
-  totalRetrofitCost             Float?  // (unitCost + installCost) × units × (1 + contingency)
-  
+  totalRetrofitCost Float? // (unitCost + installCost) × units × (1 + contingency)
+
   // Section 6 - Energy Cost Savings Calculation
   /// @DtoReadOnly
   /// @example 25500.00
   annualBuildingThermsHeatingPTAC Float? // N_ptacUnits × annualUnitThermsHeatingPTAC
-  
+
   /// @DtoReadOnly
   /// @example 160000.00  
-  annualBuildingKwhCoolingPTAC    Float? // N_ptacUnits × annualUnitKwhCoolingPTAC
-  
+  annualBuildingKwhCoolingPTAC Float? // N_ptacUnits × annualUnitKwhCoolingPTAC
+
   /// @DtoReadOnly
   /// @example 21428.57
-  annualBuildingKwhHeatingPTHP    Float? // Calculated from COP conversion
-  
+  annualBuildingKwhHeatingPTHP Float? // Calculated from COP conversion
+
   /// @DtoReadOnly
   /// @example 160000.00
-  annualBuildingKwhCoolingPTHP    Float? // Same as PTAC cooling
-  
+  annualBuildingKwhCoolingPTHP Float? // Same as PTAC cooling
+
   /// @DtoReadOnly  
   /// @example 77000.00
-  annualBuildingCostPTAC         Float? // Cost calculation for PTAC system
-  
+  annualBuildingCostPTAC Float? // Cost calculation for PTAC system
+
   /// @DtoReadOnly
   /// @example 45357.14  
-  annualBuildingCostPTHP         Float? // Cost calculation for PTHP system
-  
+  annualBuildingCostPTHP Float? // Cost calculation for PTHP system
+
   /// @DtoReadOnly
   /// @example 31642.86
-  annualEnergySavings            Float? // PTAC cost - PTHP cost
-  
+  annualEnergySavings Float? // PTAC cost - PTHP cost
+
   /// @example "65.5"
-  siteEUI              String
-  
+  siteEUI String
+
   /// @example "95"  
-  occupancyRate        String
-  
+  occupancyRate String
+
   /// @example "75000"
-  maintenanceCost      String
-  
+  maintenanceCost String
+
   /// @example {"field1": "value1", "field2": "value2"}
-  rawPlutoData         Json?             // Raw PLUTO API response
-  
+  rawPlutoData Json? // Raw PLUTO API response
+
   /// @example {"field1": "value1", "field2": "value2"}  
-  rawLL84Data          Json?             // Raw LL84 API response
-  
+  rawLL84Data Json? // Raw LL84 API response
+
   /// @DtoReadOnly
-  createdAt           DateTime          @default(now())
-  
+  createdAt DateTime @default(now())
+
   /// @DtoReadOnly  
-  updatedAt           DateTime          @updatedAt
-  
+  updatedAt DateTime @updatedAt
+
   /// @DtoRelationIgnore
-  users               UserCalculations[]
+  users UserCalculations[]
 
   @@index([bbl])
 }
-
 
 model UserCalculations {
   id            String       @id @default(uuid())
