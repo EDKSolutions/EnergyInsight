@@ -1,36 +1,177 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Energy Insight - Unified Application
 
-## Getting Started
+Energy Insight is a full-stack Next.js application that analyzes building energy consumption and calculates energy savings potential when upgrading from PTAC (Packaged Terminal Air Conditioner) to PTHP (Packaged Terminal Heat Pump) systems in NYC residential buildings.
 
-First, run the development server:
+## 🏗️ Unified Architecture
+
+This application combines frontend and backend in a single Next.js project:
+
+- **Frontend**: React with AWS Amplify authentication, Tailwind CSS, and Zustand state management
+- **Backend**: Next.js API routes that integrate with NYC Open Data APIs and LangChain AI services
+- **Database**: PostgreSQL with Prisma ORM
+- **AI/ML**: LangChain and OpenAI for building analysis
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+1. Node.js 18+ and pnpm
+2. PostgreSQL 16
+3. Required API keys (see `.env.example`)
+
+### Installation
+
+1. **Clone and install dependencies:**
+   ```bash
+   git clone <repo-url>
+   cd energy-insight-front
+   pnpm install
+   ```
+
+2. **Configure environment variables:**
+   ```bash
+   cp .env.example .env.local
+   # Configure all variables in .env.local
+   ```
+
+3. **Set up database:**
+   ```bash
+   # Create PostgreSQL database
+   createdb energy_insight_db
+   
+   # Apply schema and generate client
+   pnpm run db:push
+   pnpm run db:generate
+   ```
+
+4. **Run application:**
+   ```bash
+   pnpm run dev
+   ```
+
+The application will be available at [http://localhost:3000](http://localhost:3000)
+
+## 📋 Available Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Development
+pnpm run dev               # Development server with Turbopack
+pnpm run build             # Production build
+pnpm run start             # Production server
+
+# Database
+pnpm run db:push           # Apply schema changes
+pnpm run db:generate       # Generate Prisma client
+pnpm run db:studio         # Open Prisma Studio
+
+# Code quality
+pnpm run lint              # ESLint
+pnpm run test              # Jest tests
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Configure in `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Database
+DATABASE_URL="postgresql://user@localhost:5432/energy_insight_db"
 
-## Learn More
+# NYC APIs
+GEO_CLIENT_API_KEY="your-geoclient-key"
 
-To learn more about Next.js, take a look at the following resources:
+# AWS Cognito
+AWS_REGION="us-east-1"
+NEXT_PUBLIC_COGNITO_USER_POOL_ID="your-user-pool-id"
+NEXT_PUBLIC_USER_POOL_CLIENT_ID="your-client-id"
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Google Maps
+NEXT_PUBLIC_GOOGLE_PLACES_API_KEY="your-google-places-key"
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# LangChain/OpenAI
+OPENAI_API_KEY="your-openai-key"
+LANGSMITH_API_KEY="your-langsmith-key"
+```
 
-## Deploy on Vercel
+## 🏛️ API Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Main Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/calculations` - Create new energy calculation
+- `GET /api/calculations/user` - Get user's calculations
+- `GET /api/calculations/[id]` - Get specific calculation
+- `PUT /api/calculations/[id]` - Update calculation
+- `POST /api/geo-client/address` - Resolve address to BBL
+
+### Data Flow
+
+1. User enters NYC address → GeoClient resolves to BBL
+2. System fetches PLUTO + Local Law 84 data from NYC Open Data
+3. LangChain AI service analyzes building characteristics
+4. Energy calculation engine computes PTAC vs PTHP metrics
+5. Results stored in database with user association
+
+## 🛠️ Development
+
+### Database
+
+The project uses Prisma with PostgreSQL. For rapid development:
+
+1. Modify `prisma/schema.prisma`
+2. Run `pnpm run db:push`
+3. Run `pnpm run db:generate`
+
+### Authentication
+
+Uses AWS Amplify with Cognito for JWT authentication. API routes automatically verify valid tokens.
+
+### Global State
+
+- **Zustand stores** handle application state
+- **React Context** for authentication and notifications
+- **API client** handles authenticated calls to local endpoints
+
+## 📁 Project Structure
+
+```
+src/
+├── app/
+│   ├── api/                 # API routes (backend)
+│   │   ├── auth/           # Authentication middleware
+│   │   ├── calculations/   # Calculation endpoints
+│   │   └── geo-client/     # GeoClient integration
+│   ├── auth/               # Authentication pages
+│   ├── panel/              # User panel
+│   └── page.tsx            # Landing page
+├── lib/
+│   ├── services/           # Backend services
+│   ├── ai/                # LangChain services
+│   ├── types/             # TypeScript types
+│   └── prisma.ts          # Database client
+├── components/            # React components
+├── stores/               # Zustand stores
+└── hooks/                # Custom React hooks
+```
+
+## 🚢 Deployment
+
+The application can be deployed on any platform that supports Next.js:
+
+- **Vercel** (recommended)
+- **Railway**
+- **DigitalOcean App Platform**
+- **AWS Amplify Hosting**
+
+Make sure all environment variables are configured in the deployment platform.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

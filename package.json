@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "release": "standard-version",
     "test": "jest",
     "prepare": "husky",
-    "pre-push": "pnpm release"
+    "pre-push": "pnpm release",
+    "db:push": "npx prisma db push",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.13.1",
@@ -31,7 +34,20 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "@langchain/core": "^0.3.66",
+    "@langchain/langgraph": "^0.3.11",
+    "@langchain/openai": "^0.6.2",
+    "@prisma/client": "^6.12.0",
+    "axios": "^1.10.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.2.0",
+    "langchain": "^0.3.30",
+    "langsmith": "^0.1.0",
+    "prisma": "^6.12.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -49,6 +65,8 @@
     "prettier-plugin-tailwindcss": "^0.6.9",
     "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.16",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "prisma-generator-nestjs-dto": "^1.1.4"
   }
 }
