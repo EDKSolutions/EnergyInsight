@@ -33,21 +33,21 @@ if (typeof window !== 'undefined') {
     async getItem(key: string): Promise<string | null> {
       try {
         return Promise.resolve(window.localStorage.getItem(key));
-      } catch (error) {
+      } catch {
         return Promise.resolve(null);
       }
     },
     async setItem(key: string, value: string): Promise<void> {
       try {
         return Promise.resolve(window.localStorage.setItem(key, value));
-      } catch (error) {
+      } catch {
         return Promise.resolve();
       }
     },
     async removeItem(key: string): Promise<void> {
       try {
         return Promise.resolve(window.localStorage.removeItem(key));
-      } catch (error) {
+      } catch {
         return Promise.resolve();
       }
     },

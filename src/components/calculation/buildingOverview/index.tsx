@@ -66,9 +66,9 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={handleSave}
-                  disabled={!hasChanges(c)}
+                  disabled={!hasChanges()}
                   className={`text-sm text-white border rounded-lg p-2 flex items-center gap-2 transition-colors ${
-                    hasChanges(c) 
+                    hasChanges() 
                       ? 'bg-green-600 border-green-600 hover:bg-green-700' 
                       : 'bg-gray-400 border-gray-400 cursor-not-allowed'
                   }`}

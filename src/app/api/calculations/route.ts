@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '../auth/middleware';
-import { createCalculation, getUserCalculations } from '@/lib/services/calculations';
+import { createCalculation } from '@/lib/services/calculations';
 
 export async function POST(request: NextRequest) {
   try {

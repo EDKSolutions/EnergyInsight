@@ -67,7 +67,12 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
         providerId: decoded.sub,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
       },
     });
 

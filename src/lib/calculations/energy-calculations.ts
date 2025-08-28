@@ -9,13 +9,13 @@ import {
   annualUnitMMBtuHeatingPTAC,
   annualUnitMMBtuCoolingPTAC,
   coefficientOfPerformancePTHP,
-  annualUnitKwhCoolingPTHP,
+  //annualUnitKwhCoolingPTHP,
   priceKwhHour,
   priceThermHour,
   pthpUnitCost,
   pthpInstallationCost,
   pthpContingency,
-  MMBTU_PER_THERM,
+  //MMBTU_PER_THERM,
   KWH_PER_MMBTU,
 } from './constants';
 

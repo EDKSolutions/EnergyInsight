@@ -65,7 +65,7 @@ export const apiClient = {
           if (errorJson && errorJson.message) {
             errorMessage = errorJson.message;
           }
-        } catch (e) {
+        } catch {
           // No es JSON, usar texto plano
           errorMessage = errorText;
         }
