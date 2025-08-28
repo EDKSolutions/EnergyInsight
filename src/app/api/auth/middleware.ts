@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 interface CognitoJwtPayload {
   sub: string;
@@ -59,9 +60,24 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
   
   try {
     const decoded = await verifyToken(token);
+
+    const user = await prisma.userIdentityProvider.findFirst({
+      where: {
+        provider: 'cognito',
+        providerId: decoded.sub,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
     return {
-      userId: decoded.sub,
-      email: decoded.email,
+      userId: user?.user.id,
+      email: user?.user.email, 
     };
   } catch (error) {
     console.error('Token verification failed:', error);
