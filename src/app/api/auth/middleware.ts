@@ -66,23 +66,29 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
         provider: 'cognito',
         providerId: decoded.sub,
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
     });
 
     if (!user) {
       return null;
     }
 
+    const userData = await prisma.user.findUnique({
+      where: {
+        id: user.userId,
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    });
+
+    if (!userData) {
+      return null;
+    }
+
     return {
-      userId: user?.user.id,
-      email: user?.user.email, 
+      userId: userData.id,
+      email: userData.email, 
     };
   } catch (error) {
     console.error('Token verification failed:', error);
