@@ -45,3 +45,24 @@ package-lock.json
 yarn.lock
 
 .vscode
+
+# LaTeX build artifacts
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.lot
+docs/*.lof
+docs/*.nav
+docs/*.snm
+docs/*.vrb
+docs/*.bbl
+docs/*.blg
+docs/*.idx
+docs/*.ilg
+docs/*.ind
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.synctex.gz
+
+# Keep PDFs as important deliverables (PDFs are committed to repository)

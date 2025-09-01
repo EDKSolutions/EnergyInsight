@@ -22,6 +22,12 @@ pnpm run db:studio        # Open Prisma Studio GUI
 
 # Release management
 pnpm run release          # Create versioned release with standard-version
+
+# LaTeX documentation generation
+pnpm run latex:build      # Generate energy calculations PDF
+pnpm run latex:watch      # Auto-rebuild PDF on changes
+pnpm run latex:clean      # Clean LaTeX build artifacts
+pnpm run latex:open       # Build and open PDF
 ```
 
 ## Architecture Overview
@@ -90,3 +96,38 @@ The application requires multiple API keys:
 ### Testing
 - Jest configured for testing (though minimal test coverage currently exists)
 - Run `pnpm test` to execute test suite
+
+## LaTeX Documentation
+
+The project includes comprehensive energy calculations documentation in LaTeX format located in `docs/`.
+
+### LaTeX Setup
+- Uses LuaLaTeX compiler for better font handling and Unicode support
+- Main document: `energy-calculations.tex`
+- Includes mathematical equations, diagrams, and technical specifications
+
+### Building Documentation
+```bash
+# Generate PDF from LaTeX source
+pnpm run latex:build
+
+# Development workflow - auto-rebuild on changes
+pnpm run latex:watch
+
+# Build and open PDF in system viewer
+pnpm run latex:open
+
+# Clean build artifacts (aux, log, etc.)
+pnpm run latex:clean
+```
+
+### LaTeX Dependencies
+The system requires:
+- LuaLaTeX compiler (included in BasicTeX or TeX Live)
+- Standard LaTeX packages: amsmath, amsfonts, geometry, xcolor, tikz, pgfplots, listings
+
+### Output
+Generated PDF contains detailed energy calculations methodology, formulas, and analysis used by the application's calculation engine.
+
+### LaTeX Setup on macOS
+For detailed LaTeX installation and setup instructions on macOS, see `latex-macbook-setup.md` in the project root.

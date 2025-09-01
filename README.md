@@ -67,6 +67,12 @@ pnpm run db:studio         # Open Prisma Studio
 # Code quality
 pnpm run lint              # ESLint
 pnpm run test              # Jest tests
+
+# Documentation
+pnpm run latex:build       # Generate energy calculations PDF
+pnpm run latex:watch       # Auto-rebuild PDF on changes
+pnpm run latex:clean       # Clean LaTeX artifacts
+pnpm run latex:open        # Build and open PDF
 ```
 
 ## 🔧 Environment Variables
@@ -163,6 +169,39 @@ The application can be deployed on any platform that supports Next.js:
 - **AWS Amplify Hosting**
 
 Make sure all environment variables are configured in the deployment platform.
+
+## 📖 Documentation
+
+### Energy Calculations PDF
+
+The project includes comprehensive technical documentation for the energy calculation methodology:
+
+- **Location**: `docs/energy-calculations.tex`
+- **Output**: `docs/energy-calculations.pdf`
+- **Content**: Mathematical formulas, calculation methodology, and technical specifications
+
+### Generating Documentation
+
+```bash
+# Generate PDF from LaTeX source
+pnpm run latex:build
+
+# Development workflow with auto-rebuild
+pnpm run latex:watch
+
+# Build and open PDF automatically
+pnpm run latex:open
+
+# Clean build artifacts
+pnpm run latex:clean
+```
+
+### Prerequisites for LaTeX
+
+- LuaLaTeX compiler (installed with BasicTeX or TeX Live)
+- Standard LaTeX packages (amsmath, geometry, tikz, pgfplots, etc.)
+
+The generated PDF provides detailed documentation of the energy calculation algorithms used throughout the application.
 
 ## 🤝 Contributing
 

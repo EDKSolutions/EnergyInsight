@@ -13,7 +13,11 @@
     "pre-push": "pnpm release",
     "db:push": "npx prisma db push",
     "db:generate": "npx prisma generate",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "latex:build": "cd docs && make",
+    "latex:watch": "cd docs && make watch",
+    "latex:clean": "cd docs && make clean",
+    "latex:open": "cd docs && make build-open"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.13.1",
