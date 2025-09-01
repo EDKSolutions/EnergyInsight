@@ -49,7 +49,7 @@ export const useCalculationEdit = () => {
   };
 
   // Function to check if there are pending changes
-  const hasChanges = (originalCalculation: CalculationResult): boolean => {
+  const hasChanges = (): boolean => {
     return Object.keys(editableFields).length > 0;
   };
 

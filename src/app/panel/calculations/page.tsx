@@ -17,7 +17,7 @@ export default function CalculationsPage() {
       setCalculations(calculationsData as Calculation[]);
     };
     fetchCalculations();
-  }, []);
+  }, [setCalculations]);
   return (
     <div className="flex flex-col h-[70vh] bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
       <h1 className="text-2xl font-bold text-center">Calculations</h1>

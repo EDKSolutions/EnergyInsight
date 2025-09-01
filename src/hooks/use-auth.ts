@@ -208,7 +208,7 @@ export const useAuth = () => {
 
   const register = async (userData: SignUpInput) => {
     try {
-      const { isSignUpComplete, userId, nextStep } = await signUp(userData);
+      const { isSignUpComplete, nextStep } = await signUp(userData);
 
       if (nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
         toast.success('User registered successfully. Please verify your email with the confirmation code.');

@@ -7,7 +7,7 @@ interface ApiRequestOptions {
   baseURL?: string;
 }
 
-const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000';
+const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
 
 
 export const apiClient = {
@@ -65,7 +65,7 @@ export const apiClient = {
           if (errorJson && errorJson.message) {
             errorMessage = errorJson.message;
           }
-        } catch (e) {
+        } catch {
           // No es JSON, usar texto plano
           errorMessage = errorText;
         }
