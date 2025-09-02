@@ -308,6 +308,23 @@ LL97 has two compliance periods with different emissions budgets. The annual fee
 
 Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and the 2030-2034 period has more stringent (lower) emissions limits than the 2024-2029 period.
 
+\subsubsection{2034+ Compliance Period}
+\begin{align}
+\code{emissionsBudget2034toFuture} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2034toFuture}_i
+\end{align}
+
+\begin{align}
+\code{annualFeeExceedingBudget2034toFuture} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2034toFuture}) \times \code{feePerTonCO2e}
+\end{align}
+
+For financial modeling purposes, we assume:
+\begin{equation}
+\code{annualFeeExceedingBudget2034toFuture} = \code{annualFeeExceedingBudget2030to2034}
+\end{equation}
+
+This assumption is necessary for downstream financial calculations\footnote{Post-2034 emissions budgets and compliance requirements are to be determined by NYC regulations. This conservative assumption maintains continuity for financial modeling purposes.}.
+
 \subsection{BE Credit Section (Beneficial Electrification)}
 
 \subsubsection{BE Credit Calculation}
@@ -399,10 +416,27 @@ For the 2030-2034 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
 \end{align}
 
+\subsubsection{Annual Fee for 2034+}
+
+For the post-2034 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
+
+\begin{align}
+\code{adjustedTotalBuildingEmissions2034toFuture} &= \code{totalBuildingEmissionsLL84} \nonumber \\
+&\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
+&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
+\end{align}
+
+\begin{align}
+\code{adjustedAnnualFee2034toFuture} &= (\code{adjustedTotalBuildingEmissions2034toFuture} \nonumber\\
+&\quad - \code{emissionsBudget2034toFuture}) \times \code{feePerTonCO2e}
+\end{align}
+
+For modeling purposes, we assume \code{adjustedTotalBuildingEmissions2034toFuture} uses the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2034 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
+
 
 \section{Financial Analysis of PTHP Upgrade}
 
-In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 6) and the LL97 fee avoidance. The following 3 subsections show how calculating this varies depending on which period you are in.
+In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 6) and the LL97 fee avoidance. The following 4 subsections show how calculating this varies depending on which period you are in, noting that LL97 compliance continues post-2034 with ongoing fee avoidance benefits.
 
 \subsection{LL97 Fee Avoidance Calculations}
 
@@ -427,6 +461,13 @@ In order to calculate the financial viability of upgrading from PTAC to PTHP sys
 &\quad - \code{adjustedAnnualFee2030to2034}
 \end{align}
 
+\subsubsection{LL97 Fee Avoidance for 2034+}
+
+\begin{align}
+\code{annualLL97FeeAvoidance2034toFuture} &= \code{annualFeeExceedingBudget2034toFuture} \nonumber \\
+&\quad - \code{adjustedAnnualFee2034toFuture}
+\end{align}
+
 \newpage
 \subsection{Code Implementation}
 
@@ -446,7 +487,7 @@ function getAnnualSavings(year: number): number {
   } else if (year >= 2030 && year <= 2034) {
     return energySavings + annualLL97FeeAvoidance2030to2034;
   } else {
-    return energySavings; // Only energy savings after LL97 periods
+    return energySavings + annualLL97FeeAvoidance2034toFuture;
   }
 }
 \end{lstlisting}
@@ -549,6 +590,296 @@ Cumulative savings grow linearly over time\footnote{Simplified as: $\text{Cumula
 \end{center}
 
 The simple payback period occurs when the green cumulative savings line reaches the loan principal amount of \$500,000. This visualization shows how cumulative savings continue to grow beyond payback, demonstrating the long-term financial benefits of the retrofit investment.
+
+\section{NOI Analysis}
+
+Net Operating Income (NOI) is obtained from external building data APIs\footnote{NOI data sources: Co-ops/Condominiums use direct NYC Open Data API (\code{net\_operating\_income}); Rental Buildings calculate from rentable income: Gross Income = (Building Sq Ft × 0.8 × \$6/sq ft × 12 months) × 1.108; NOI = Gross Income × (1 - 0.55) for OpEx + taxes.} and represents the baseline building income before upgrade improvements.
+
+\subsection{Upgrade Impact on NOI}
+
+The true impact of PTHP upgrades becomes clear when comparing NOI scenarios:
+
+\textbf{Scenario A: No Upgrade (Status Quo)}
+\begin{align}
+\code{noiNoUpgrade2024to2029} &= \code{currentNOI} - \code{annualFeeExceedingBudget2024to2029}
+\end{align}
+\begin{align}
+\code{noiNoUpgrade2030to2034} &= \code{currentNOI} - \code{annualFeeExceedingBudget2030to2034}
+\end{align}
+\begin{align}
+\code{noiNoUpgradePost2034} &= \code{currentNOI} - \code{annualFeeExceedingBudget2034toFuture}
+\end{align}
+
+\textbf{Scenario B: With PTHP Upgrade}
+\begin{align}
+\code{noiWithUpgrade2024to2027} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
+&\quad - \code{adjustedAnnualFee2024to2027}
+\end{align}
+\begin{align}
+\code{noiWithUpgrade2027to2029} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
+&\quad - \code{adjustedAnnualFee2027to2029}
+\end{align}
+\begin{align}
+\code{noiWithUpgrade2030to2034} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
+&\quad - \code{adjustedAnnualFee2030to2034}
+\end{align}
+\begin{align}
+\code{noiWithUpgradePost2034} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
+&\quad - \code{adjustedAnnualFee2034toFuture}
+\end{align}
+
+\subsection{NOI Calculation Functions}
+
+The NOI calculations can be implemented with unified functions that handle all compliance periods:
+
+\begin{lstlisting}
+function calculateAdjustedNOINoUpgrade(year: number): number {
+  const currentNOI = getCurrentNOI(); // from external API
+  
+  if (year >= 2024 && year <= 2029) {
+    return currentNOI - annualFeeExceedingBudget2024to2029;
+  } else if (year >= 2030 && year <= 2034) {
+    return currentNOI - annualFeeExceedingBudget2030to2034;
+  } else {
+    return currentNOI - annualFeeExceedingBudget2034toFuture;
+  }
+}
+
+function calculateAdjustedNOIUpgrade(year: number): number {
+  const currentNOI = getCurrentNOI(); // from external API
+  const energySavings = getEnergySavings();
+  
+  let reducedLL97Penalties = 0;
+  if (year >= 2024 && year <= 2029) {
+    reducedLL97Penalties = adjustedAnnualFee2024to2029; // actual penalties paid after upgrade
+  } else if (year >= 2030 && year <= 2034) {
+    reducedLL97Penalties = adjustedAnnualFee2030to2034; // actual penalties paid after upgrade  
+  } else {
+    reducedLL97Penalties = adjustedAnnualFee2034toFuture; // actual penalties paid after upgrade
+  }
+  
+  return currentNOI + energySavings - reducedLL97Penalties;
+}
+\end{lstlisting}
+
+\subsubsection{Implementation Example}
+
+For a 100,000 sq ft rental building with current NOI of \$1,200,000:
+
+\textbf{Without Upgrade:} Building faces ongoing LL97 penalties
+\begin{itemize}
+    \item 2024-2029: NOI = \$1,200,000 (current NOI) - \$150,000 (LL97 penalties paid) = \$1,050,000
+    \item 2030-2034: NOI = \$1,200,000 (current NOI) - \$300,000 (LL97 penalties paid) = \$900,000
+    \item 2035+: NOI = \$1,200,000 (current NOI) - \$300,000 (LL97 penalties paid) = \$900,000
+\end{itemize}
+
+\textbf{With PTHP Upgrade:} Building gains energy savings + pays reduced penalties
+\begin{itemize}
+    \item 2024-2027: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$15,000 (reduced LL97 penalties) = \$1,224,000
+    \item 2030-2034: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$33,000 (reduced LL97 penalties) = \$1,206,000  
+    \item 2035+: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$33,000 (reduced LL97 penalties) = \$1,206,000
+\end{itemize}
+
+\subsection{NOI Visualization Over Time}
+
+The following chart shows how NOI evolves differently in upgrade vs no-upgrade scenarios across LL97 compliance periods:
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Adjusted NOI by Scenario}},
+    xlabel={Year},
+    ylabel={Annual NOI (\$1000s)},
+    xmin=2024, xmax=2040,
+    ymin=800, ymax=1600,
+    legend pos=south east,
+    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}K},
+    xtick={2024,2027,2030,2034,2037,2040},
+    x tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=}
+]
+
+% NOI with PTHP upgrade - consistently higher due to energy savings minus reduced penalties
+\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
+    (2024, 1224) (2025, 1224) (2026, 1224) (2027, 1224) (2028, 1224) (2029, 1224)
+    (2030, 1206) (2031, 1206) (2032, 1206) (2033, 1206) (2034, 1206)
+    (2035, 1206) (2036, 1206) (2037, 1206) (2038, 1206) (2039, 1206) (2040, 1206)
+};
+
+% NOI without upgrade - declining due to LL97 penalties that continue post-2034
+\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
+    (2024, 1050) (2025, 1050) (2026, 1050) (2027, 1050) (2028, 1050) (2029, 1050)
+    (2030, 900) (2031, 900) (2032, 900) (2033, 900) (2034, 900)
+    (2035, 900) (2036, 900) (2037, 900) (2038, 900) (2039, 900) (2040, 900)
+};
+
+% Add period markers
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2027,800) -- (axis cs:2027,1600);
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,800) -- (axis cs:2030,1600);
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,800) -- (axis cs:2035,1600);
+
+% Period labels
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2025.5,1400) {Early BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2028.5,1400) {Reduced BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,1400) {Higher LL97 Penalties};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,1400) {Continued LL97};
+
+% Highlight the NOI gap in critical period and beyond
+\fill[yellow!30, opacity=0.5] (axis cs:2030,900) rectangle (axis cs:2040,1206);
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,1053) {\textbf{Sustained NOI Gap}};
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,1000) {\textbf{\$306K/year}};
+
+\legend{NOI with PTHP Upgrade, NOI without Upgrade}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+This NOI comparison reveals the true financial impact of upgrade timing:
+\begin{itemize}
+    \item \textbf{Immediate NOI Boost}: Upgrading in 2024 increases NOI by \$174K/year (17\% increase)
+    \item \textbf{Penalty Avoidance}: Without upgrade, NOI drops \$150K in 2030+ due to higher penalties  
+    \item \textbf{Perpetual Benefit}: The \$306K annual NOI gap continues indefinitely post-2034, creating sustained property value advantages
+    \item \textbf{Risk Mitigation}: Upgrading protects against declining property values from ongoing LL97 penalties
+    \item \textbf{Optimal Window}: Early upgrade (2024-2027) captures maximum BE Credit and avoids penalty escalation
+    \item \textbf{Long-term Value}: LL97 compliance continues post-2034, making upgrade benefits permanent rather than temporary
+\end{itemize}
+
+\section{Property Value Analysis}
+
+Property values are calculated by dividing NOI by the cap rate, providing a direct correlation between operational performance improvements and asset valuation.
+
+\subsection{Property Value Calculation Functions}
+
+Property value calculations use the same scenarios as NOI but apply cap rate conversion:
+
+\begin{lstlisting}
+function calculatePropertyValueNoUpgrade(year: number, capRate: number = 0.04): number {
+  const adjustedNOI = calculateAdjustedNOINoUpgrade(year); // NOI minus actual LL97 penalties paid
+  return adjustedNOI / capRate;
+}
+
+function calculatePropertyValueUpgrade(year: number, capRate: number = 0.04): number {
+  const adjustedNOI = calculateAdjustedNOIUpgrade(year); // NOI plus energy savings minus reduced LL97 penalties
+  return adjustedNOI / capRate;
+}
+\end{lstlisting}
+
+The default cap rate of 4\% reflects typical NYC multifamily properties\footnote{Cap rate of 4\% used for NYC multifamily properties. This parameter can be adjusted based on market conditions, property characteristics, and investment criteria.}.
+
+\subsection{Property Value Impact Analysis}
+
+Using a 4\% cap rate typical for NYC multifamily properties:
+
+\textbf{No Upgrade Property Values}
+\begin{align}
+\code{propertyValueNoUpgrade} &= \code{noiNoUpgrade} \div 0.04
+\end{align}
+
+\textbf{With Upgrade Property Values}  
+\begin{align}
+\code{propertyValueWithUpgrade} &= \code{noiWithUpgrade} \div 0.04
+\end{align}
+
+\textbf{Net Property Value Impact}
+\begin{align}
+\code{netPropertyValueGain} &= \code{propertyValueWithUpgrade} - \code{propertyValueNoUpgrade}
+\end{align}
+
+\subsubsection{Implementation Example}
+
+For a 100,000 sq ft rental building with current NOI of \$1,200,000:
+
+\textbf{Without Upgrade:} Building faces ongoing LL97 penalties
+\begin{itemize}
+    \item 2024-2029: Property Value = \$1,050,000 (NOI) ÷ 0.04 (cap rate) = \$26.25M
+    \item 2030-2034: Property Value = \$900,000 (NOI) ÷ 0.04 (cap rate) = \$22.5M
+    \item 2035+: Property Value = \$900,000 (NOI) ÷ 0.04 (cap rate) = \$22.5M
+\end{itemize}
+
+\textbf{With PTHP Upgrade:} Building gains energy savings + pays reduced penalties
+\begin{itemize}
+    \item 2024-2027: Property Value = \$1,224,000 (NOI) ÷ 0.04 (cap rate) = \$30.6M
+    \item 2030-2034: Property Value = \$1,206,000 (NOI) ÷ 0.04 (cap rate) = \$30.15M  
+    \item 2035+: Property Value = \$1,206,000 (NOI) ÷ 0.04 (cap rate) = \$30.15M
+\end{itemize}
+
+\textbf{Net Property Value Gain:} \$30.15M - \$22.5M = \$7.65M
+
+This \$7.65M property value increase far exceeds typical retrofit costs of \$500K-\$2M, demonstrating the compelling financial case for upgrading.
+
+\subsection{Property Value Impact Visualization}
+
+The following chart demonstrates property value trajectories for both scenarios:
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Property Value by Scenario}},
+    xlabel={Year},
+    ylabel={Property Value (\$Millions)},
+    xmin=2024, xmax=2040,
+    ymin=20, ymax=40,
+    legend pos=south east,
+    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}M},
+    xtick={2024,2027,2030,2034,2037,2040},
+    x tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=}
+]
+
+% Property value with PTHP upgrade - consistently higher
+\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
+    (2024, 30.6) (2025, 30.6) (2026, 30.6) (2027, 30.6) (2028, 30.6) (2029, 30.6)
+    (2030, 30.15) (2031, 30.15) (2032, 30.15) (2033, 30.15) (2034, 30.15)
+    (2035, 30.15) (2036, 30.15) (2037, 30.15) (2038, 30.15) (2039, 30.15) (2040, 30.15)
+};
+
+% Property value without upgrade - declining due to LL97 penalties
+\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
+    (2024, 26.25) (2025, 26.25) (2026, 26.25) (2027, 26.25) (2028, 26.25) (2029, 26.25)
+    (2030, 22.5) (2031, 22.5) (2032, 22.5) (2033, 22.5) (2034, 22.5)
+    (2035, 22.5) (2036, 22.5) (2037, 22.5) (2038, 22.5) (2039, 22.5) (2040, 22.5)
+};
+
+% Period markers
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2027,20) -- (axis cs:2027,40);
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,20) -- (axis cs:2030,40);
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,20) -- (axis cs:2035,40);
+
+% Period labels
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2025.5,35) {Early BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2028.5,35) {Reduced BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,35) {Higher LL97 Penalties};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,35) {Continued LL97};
+
+% Highlight the value gap
+\fill[yellow!30, opacity=0.5] (axis cs:2030,22.5) rectangle (axis cs:2040,30.15);
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,26.325) {\textbf{Property Value Gap}};
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,24.75) {\textbf{\$7.65M}};
+
+\legend{Property Value with Upgrade, Property Value without Upgrade}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+This visualization demonstrates the substantial and sustained property value advantage of upgrading, with the \$7.65M gap representing the permanent value creation from PTHP installation.
 
 \section{Implementation Notes}
 
