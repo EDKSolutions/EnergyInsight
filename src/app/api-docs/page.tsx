@@ -6,7 +6,7 @@ import WarningSuppressor from './warning-suppressor';
 
 export default function ApiDocsPage() {
   const [mounted, setMounted] = useState(false);
-  const [spec, setSpec] = useState(null);
+  const [spec, setSpec] = useState<object | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,7 +70,7 @@ export default function ApiDocsPage() {
     <div className="min-h-screen bg-white">
       <WarningSuppressor />
       <div className="container mx-auto">
-        <SwaggerUIWrapper spec={spec} />
+        <SwaggerUIWrapper spec={spec || undefined} />
       </div>
     </div>
   );

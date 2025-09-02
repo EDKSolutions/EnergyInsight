@@ -8,7 +8,7 @@ export default function WarningSuppressor() {
     const originalWarn = console.warn;
     const originalError = console.error;
     
-    const shouldSuppress = (message: any) => {
+    const shouldSuppress = (message: unknown) => {
       if (typeof message === 'string') {
         return (
           message.includes('Using UNSAFE_componentWillReceiveProps') ||

@@ -103,21 +103,9 @@ export default function SwaggerUIWrapper({ spec }: SwaggerUIWrapperProps) {
           displayOperationId={false}
           defaultModelsExpandDepth={1}
           defaultModelExpandDepth={1}
-          displayRequestDuration={true}
           tryItOutEnabled={true}
           filter={true}
-          showRequestHeaders={true}
-          showCommonExtensions={true}
-          persistAuthorization={true}
           docExpansion="list"
-          supportedSubmitMethods={['get', 'post', 'put', 'delete', 'patch']}
-          validatorUrl={null}
-          showMutatedRequest={false}
-          withCredentials={true}
-          syntaxHighlight={{
-            activated: true,
-            theme: 'agate'
-          }}
           requestInterceptor={(request) => {
             // Auto-inject Bearer token if available in localStorage
             if (typeof window !== 'undefined') {
@@ -136,7 +124,7 @@ export default function SwaggerUIWrapper({ spec }: SwaggerUIWrapperProps) {
               if (token) {
                 try {
                   swaggerApi.preauthorizeApiKey('BearerAuth', token);
-                } catch (error) {
+                } catch {
                   // Silently handle preauthorization errors
                   console.debug('Auth preauthorization skipped');
                 }
