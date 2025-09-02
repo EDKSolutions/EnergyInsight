@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import 'swagger-ui-react/swagger-ui.css';
 import '@/styles/swagger-custom.css';
+import { getValidAuthToken } from '@/utils/auth-token';
 
 // Dynamically import SwaggerUI with specific configurations to minimize warnings
 const SwaggerUI = dynamic(
@@ -106,29 +107,29 @@ export default function SwaggerUIWrapper({ spec }: SwaggerUIWrapperProps) {
           tryItOutEnabled={true}
           filter={true}
           docExpansion="list"
-          requestInterceptor={(request) => {
-            // Auto-inject Bearer token if available in localStorage
-            if (typeof window !== 'undefined') {
-              const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+          requestInterceptor={async (request) => {
+            // Auto-inject Bearer token from AWS Amplify session
+            try {
+              const token = await getValidAuthToken();
               if (token && !request.headers.Authorization) {
                 request.headers.Authorization = `Bearer ${token}`;
               }
+            } catch (error) {
+              console.debug('Could not get auth token for request:', error);
             }
             return request;
           }}
-          onComplete={(swaggerApi) => {
+          onComplete={async (swaggerApi) => {
             console.log('Swagger UI loaded successfully');
-            // Auto-populate auth if token is available
-            if (typeof window !== 'undefined') {
-              const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            // Auto-populate auth with current JWT token
+            try {
+              const token = await getValidAuthToken();
               if (token) {
-                try {
-                  swaggerApi.preauthorizeApiKey('BearerAuth', token);
-                } catch {
-                  // Silently handle preauthorization errors
-                  console.debug('Auth preauthorization skipped');
-                }
+                swaggerApi.preauthorizeApiKey('BearerAuth', token);
+                console.log('JWT token automatically configured for API requests');
               }
+            } catch (error) {
+              console.debug('Could not auto-configure auth token:', error);
             }
           }}
         />

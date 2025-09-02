@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import SwaggerUIWrapper from '@/components/swagger/SwaggerUIWrapper';
 import WarningSuppressor from './warning-suppressor';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function ApiDocsPage() {
   const [mounted, setMounted] = useState(false);
@@ -67,11 +68,13 @@ export default function ApiDocsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <WarningSuppressor />
-      <div className="container mx-auto">
-        <SwaggerUIWrapper spec={spec || undefined} />
+    <ProtectedRoute>
+      <div className="min-h-screen bg-white">
+        <WarningSuppressor />
+        <div className="container mx-auto">
+          <SwaggerUIWrapper spec={spec || undefined} />
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }
