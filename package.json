@@ -29,6 +29,8 @@
     "@langchain/openai": "^0.6.2",
     "@prisma/client": "^6.15.0",
     "@prisma/extension-accelerate": "^2.0.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-react": "^5.18.0",
     "@types/uuid": "^10.0.0",
     "aws-amplify": "^6.15.3",
     "axios": "^1.10.0",
@@ -48,6 +50,8 @@
     "react-dom": "19.1.0",
     "react-hot-toast": "^2.5.2",
     "react-places-autocomplete": "^7.3.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-react": "^5.28.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
@@ -73,5 +77,15 @@
     "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.16",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@tailwindcss/oxide",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
