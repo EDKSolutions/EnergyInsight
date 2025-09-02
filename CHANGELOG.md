@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.25](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.23...v0.0.25) (2025-09-02)
+
+
+### Features
+
+* add latex to repo ([a6de0ed](https://github.com/EDKSolutions/EnergyInsight/commit/a6de0edeac0248d495f8d5a94fcd39a31c6e4715))
+* integrate swagger ([79c457b](https://github.com/EDKSolutions/EnergyInsight/commit/79c457ba775dce9db39c30fe6c6080663df08489))
+
+
+### Bug Fixes
+
+* errors linter ([a1204af](https://github.com/EDKSolutions/EnergyInsight/commit/a1204afa458f1e5e60274a26e0961351d0e9f046))
+
 ### [0.0.24](https://github.com/EDKSolutions/EnergyInsight/compare/v0.0.14...v0.0.24) (2025-09-01)
 
 
