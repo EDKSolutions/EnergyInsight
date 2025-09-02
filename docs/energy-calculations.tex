@@ -494,13 +494,14 @@ function getAnnualSavings(year: number): number {
 
 Code Chunk 2: Example usage of calculating annual savings
 \begin{lstlisting}
-// Loan term years for a static example
+// Loan term years for a static example - upgrade completes in 2025, savings start in 2026
 const loanYears = [2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040];
 const cumulativeSavingsByYear = [];
 let cumulativeSavings = 0;
 
 for (const year of loanYears) {
-  const annualSavings = getAnnualSavings(year);
+  // No savings in 2025 (upgrade year), savings begin in 2026
+  const annualSavings = year === 2025 ? 0 : getAnnualSavings(year);
   cumulativeSavings += annualSavings;
   
   cumulativeSavingsByYear.push(cumulativeSavings);
@@ -509,7 +510,7 @@ for (const year of loanYears) {
 // This array will be the data for the green cumulative savings line in the visualization
 console.log(cumulativeSavingsByYear);
 
-// Actual output: [47000, 94000, 138000, 182000, 226000, 267000, 308000, 349000, 390000, 431000, 468000, 505000, 542000, 579000, 616000, 653000]
+// Actual output: [0, 47000, 94000, 138000, 182000, 226000, 267000, 308000, 349000, 390000, 431000, 468000, 505000, 542000, 579000, 616000]
 \end{lstlisting}
 
 From the array of cumulative savings year-by-year, once it gets above the totalRetrofitCost, then that year is the Simple Payback Period.\footnote{Simple division (totalRetrofitCost ÷ averageAnnualSavings) cannot be used here because annual savings vary significantly across LL97 compliance periods. The year-by-year calculation accounts for these varying savings rates.}
@@ -518,9 +519,9 @@ From the array of cumulative savings year-by-year, once it gets above the totalR
 
 For \code{totalRetrofitCost} = \$500,000, the cumulative savings array shows:
 
-[47000, 94000, 138000, 182000, 226000, 267000, 308000, 349000, 390000, 431000, 468000, \textbf{505000}, 542000, 579000, 616000, 653000]
+[0, 47000, 94000, 138000, 182000, 226000, 267000, 308000, 349000, 390000, 431000, 468000, \textbf{505000}, 542000, 579000, 616000]
 
-\textbf{Year 2036} achieves payback with \$505,000 cumulative savings.
+\textbf{Year 2037} achieves payback with \$505,000 cumulative savings.
 
 \section{Loan Financing and Payback Visualization}
 
@@ -554,9 +555,9 @@ Cumulative savings grow linearly over time\footnote{Simplified as: $\text{Cumula
     scaled y ticks=false,
     y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
     yticklabel={\$\pgfmathprintnumber{\tick}},
-    xtick={2025,2027,2029,2031,2033,2035,2037,2039,2041},
-    x tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=},
-    xticklabels={2025,2027,2029,2031,2033,2035,\textbf{2037},2039,2041}
+    xtick={2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042}
 ]
 
 % Realistic loan balance with proper amortization curve
@@ -566,22 +567,29 @@ Cumulative savings grow linearly over time\footnote{Simplified as: $\text{Cumula
     (2035, 306300) (2036, 278700) (2037, 248900) (2038, 216800) (2039, 182200) (2040, 144800) (2041, 104400) (2042, 0)
 };
 
-% Cumulative savings - higher annual savings that exceed loan principal
+% Cumulative savings - no savings in 2025 (upgrade year), savings begin in 2026
 \addplot[color=green!60!black, line width=2pt, smooth] coordinates {
-    (2025, 0) (2026, 47000) (2027, 94000) (2028, 138000) (2029, 182000)
-    (2030, 226000) (2031, 267000) (2032, 308000) (2033, 349000) (2034, 390000)
-    (2035, 431000) (2036, 468000) (2037, 505000) (2038, 542000) (2039, 579000) (2040, 616000) (2041, 653000) (2042, 690000)
+    (2025, 0) (2026, 0) (2027, 47000) (2028, 94000) (2029, 138000) (2030, 182000)
+    (2031, 226000) (2032, 267000) (2033, 308000) (2034, 349000) (2035, 390000)
+    (2036, 431000) (2037, 468000) (2038, 505000) (2039, 542000) (2040, 579000) (2041, 616000) (2042, 653000)
 };
 
 % Add marker at payback point
-\addplot[only marks, mark=*, mark size=4pt, color=red] coordinates {(2037, 505000)};
+\addplot[only marks, mark=*, mark size=4pt, color=red] coordinates {(2038, 505000)};
 
 % Add professional annotation with arrow
-\node[anchor=south east, align=center, font=\small\sffamily] at (axis cs:2035,500000) {
+\node[anchor=south east, align=center, font=\small\sffamily] at (axis cs:2036,500000) {
     \textcolor{black}{\textsc{Simple Payback}}\\
     \textcolor{black}{\textsc{Period Reached}}
 };
-\draw[->, color=black, line width=1pt] (axis cs:2035.2,502000) -- (axis cs:2036.95,505000);
+\draw[->, color=black, line width=1pt] (axis cs:2036.2,502000) -- (axis cs:2037.95,505000);
+
+% Upgrade completion arrow pointing to 2025
+\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,600000) {
+    \textcolor{black}{\textbf{Upgrade Complete}}\\
+    \textcolor{black}{\textbf{This Year}}
+};
+\draw[->, color=black, line width=1.5pt] (axis cs:2025,570000) -- (axis cs:2025,520000);
 
 \legend{Remaining Loan Balance, Cumulative Savings}
 
@@ -666,16 +674,18 @@ function calculateAdjustedNOIUpgrade(year: number): number {
 
 For a 100,000 sq ft rental building with current NOI of \$1,200,000:
 
-\textbf{Without Upgrade:} Building faces ongoing LL97 penalties
+\textbf{Without Upgrade:} Building faces ongoing LL97 penalties starting in 2026
 \begin{itemize}
-    \item 2024-2029: NOI = \$1,200,000 (current NOI) - \$150,000 (LL97 penalties paid) = \$1,050,000
+    \item 2024-2025: NOI = \$1,200,000 (current NOI) - \$0 (no penalties yet) = \$1,200,000
+    \item 2026-2029: NOI = \$1,200,000 (current NOI) - \$150,000 (LL97 penalties paid) = \$1,050,000
     \item 2030-2034: NOI = \$1,200,000 (current NOI) - \$300,000 (LL97 penalties paid) = \$900,000
     \item 2035+: NOI = \$1,200,000 (current NOI) - \$300,000 (LL97 penalties paid) = \$900,000
 \end{itemize}
 
-\textbf{With PTHP Upgrade:} Building gains energy savings + pays reduced penalties
+\textbf{With PTHP Upgrade:} Upgrade completes in 2025, savings + reduced penalties start in 2026
 \begin{itemize}
-    \item 2024-2027: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$15,000 (reduced LL97 penalties) = \$1,224,000
+    \item 2024-2025: NOI = \$1,200,000 (current NOI) - \$0 (no changes yet) = \$1,200,000
+    \item 2026-2027: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$15,000 (reduced LL97 penalties) = \$1,224,000
     \item 2030-2034: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$33,000 (reduced LL97 penalties) = \$1,206,000  
     \item 2035+: NOI = \$1,200,000 (current NOI) + \$39,000 (energy savings) - \$33,000 (reduced LL97 penalties) = \$1,206,000
 \end{itemize}
@@ -703,20 +713,21 @@ The following chart shows how NOI evolves differently in upgrade vs no-upgrade s
     scaled y ticks=false,
     y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
     yticklabel={\$\pgfmathprintnumber{\tick}K},
-    xtick={2024,2027,2030,2034,2037,2040},
-    x tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=}
+    xtick={2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={2024,\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040}
 ]
 
-% NOI with PTHP upgrade - consistently higher due to energy savings minus reduced penalties
+% NOI with PTHP upgrade - upgrade completes in 2025, savings start in 2026
 \addplot[color=green!60!black, line width=3pt, smooth] coordinates {
-    (2024, 1224) (2025, 1224) (2026, 1224) (2027, 1224) (2028, 1224) (2029, 1224)
+    (2024, 1200) (2025, 1200) (2026, 1224) (2027, 1224) (2028, 1224) (2029, 1224)
     (2030, 1206) (2031, 1206) (2032, 1206) (2033, 1206) (2034, 1206)
     (2035, 1206) (2036, 1206) (2037, 1206) (2038, 1206) (2039, 1206) (2040, 1206)
 };
 
-% NOI without upgrade - declining due to LL97 penalties that continue post-2034
+% NOI without upgrade - dramatic drop in 2026 when LL97 fees kick in
 \addplot[color=red!70!black, line width=3pt, smooth] coordinates {
-    (2024, 1050) (2025, 1050) (2026, 1050) (2027, 1050) (2028, 1050) (2029, 1050)
+    (2024, 1200) (2025, 1200) (2026, 1050) (2027, 1050) (2028, 1050) (2029, 1050)
     (2030, 900) (2031, 900) (2032, 900) (2033, 900) (2034, 900)
     (2035, 900) (2036, 900) (2037, 900) (2038, 900) (2039, 900) (2040, 900)
 };
@@ -726,8 +737,15 @@ The following chart shows how NOI evolves differently in upgrade vs no-upgrade s
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,800) -- (axis cs:2030,1600);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,800) -- (axis cs:2035,1600);
 
+% Upgrade completion arrow pointing to 2025
+\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,1320) {
+    \textcolor{black}{\textbf{Upgrade Complete}}\\
+    \textcolor{black}{\textbf{This Year}}
+};
+\draw[->, color=black, line width=1.5pt] (axis cs:2025,1280) -- (axis cs:2025,1240);
+
 % Period labels
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2025.5,1400) {Early BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026.5,1400) {Fees/Savings Begin};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2028.5,1400) {Reduced BE Credit};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,1400) {Higher LL97 Penalties};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,1400) {Continued LL97};
@@ -798,16 +816,18 @@ Using a 4\% cap rate typical for NYC multifamily properties:
 
 For a 100,000 sq ft rental building with current NOI of \$1,200,000:
 
-\textbf{Without Upgrade:} Building faces ongoing LL97 penalties
+\textbf{Without Upgrade:} Building faces ongoing LL97 penalties starting in 2026
 \begin{itemize}
-    \item 2024-2029: Property Value = \$1,050,000 (NOI) ÷ 0.04 (cap rate) = \$26.25M
+    \item 2024-2025: Property Value = \$1,200,000 (NOI) ÷ 0.04 (cap rate) = \$30.0M
+    \item 2026-2029: Property Value = \$1,050,000 (NOI) ÷ 0.04 (cap rate) = \$26.25M
     \item 2030-2034: Property Value = \$900,000 (NOI) ÷ 0.04 (cap rate) = \$22.5M
     \item 2035+: Property Value = \$900,000 (NOI) ÷ 0.04 (cap rate) = \$22.5M
 \end{itemize}
 
-\textbf{With PTHP Upgrade:} Building gains energy savings + pays reduced penalties
+\textbf{With PTHP Upgrade:} Upgrade completes in 2025, value increases in 2026
 \begin{itemize}
-    \item 2024-2027: Property Value = \$1,224,000 (NOI) ÷ 0.04 (cap rate) = \$30.6M
+    \item 2024-2025: Property Value = \$1,200,000 (NOI) ÷ 0.04 (cap rate) = \$30.0M
+    \item 2026-2027: Property Value = \$1,224,000 (NOI) ÷ 0.04 (cap rate) = \$30.6M
     \item 2030-2034: Property Value = \$1,206,000 (NOI) ÷ 0.04 (cap rate) = \$30.15M  
     \item 2035+: Property Value = \$1,206,000 (NOI) ÷ 0.04 (cap rate) = \$30.15M
 \end{itemize}
@@ -839,20 +859,21 @@ The following chart demonstrates property value trajectories for both scenarios:
     scaled y ticks=false,
     y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
     yticklabel={\$\pgfmathprintnumber{\tick}M},
-    xtick={2024,2027,2030,2034,2037,2040},
-    x tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=}
+    xtick={2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={2024,\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040}
 ]
 
-% Property value with PTHP upgrade - consistently higher
+% Property value with PTHP upgrade - upgrade completes in 2025, value increases in 2026
 \addplot[color=green!60!black, line width=3pt, smooth] coordinates {
-    (2024, 30.6) (2025, 30.6) (2026, 30.6) (2027, 30.6) (2028, 30.6) (2029, 30.6)
+    (2024, 30.0) (2025, 30.0) (2026, 30.6) (2027, 30.6) (2028, 30.6) (2029, 30.6)
     (2030, 30.15) (2031, 30.15) (2032, 30.15) (2033, 30.15) (2034, 30.15)
     (2035, 30.15) (2036, 30.15) (2037, 30.15) (2038, 30.15) (2039, 30.15) (2040, 30.15)
 };
 
-% Property value without upgrade - declining due to LL97 penalties
+% Property value without upgrade - dramatic drop in 2026 when LL97 fees kick in
 \addplot[color=red!70!black, line width=3pt, smooth] coordinates {
-    (2024, 26.25) (2025, 26.25) (2026, 26.25) (2027, 26.25) (2028, 26.25) (2029, 26.25)
+    (2024, 30.0) (2025, 30.0) (2026, 26.25) (2027, 26.25) (2028, 26.25) (2029, 26.25)
     (2030, 22.5) (2031, 22.5) (2032, 22.5) (2033, 22.5) (2034, 22.5)
     (2035, 22.5) (2036, 22.5) (2037, 22.5) (2038, 22.5) (2039, 22.5) (2040, 22.5)
 };
@@ -862,8 +883,15 @@ The following chart demonstrates property value trajectories for both scenarios:
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,20) -- (axis cs:2030,40);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,20) -- (axis cs:2035,40);
 
+% Upgrade completion arrow pointing to 2025
+\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,35) {
+    \textcolor{black}{\textbf{Upgrade Complete}}\\
+    \textcolor{black}{\textbf{This Year}}
+};
+\draw[->, color=black, line width=1.5pt] (axis cs:2025,33.5) -- (axis cs:2025,31.5);
+
 % Period labels
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2025.5,35) {Early BE Credit};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026.5,35) {Fees/Savings Begin};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2028.5,35) {Reduced BE Credit};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,35) {Higher LL97 Penalties};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,35) {Continued LL97};
