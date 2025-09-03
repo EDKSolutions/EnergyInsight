@@ -4,7 +4,7 @@ export interface PlutoData {
   resarea: number;
   unitsres: number;
   unitstotal?: number;
-  boro: string;
+  borough: string;
   lotarea?: number;
   bldgarea?: number;
   yearbuilt?: number;
@@ -49,8 +49,38 @@ export interface LocalLaw84Data {
   [key: string]: unknown;
 }
 
+export interface CooperativeNoiData {
+  boro_block_lot: string;
+  net_operating_income?: string;
+  estimated_gross_income?: string;
+  estimated_expense?: string;
+  report_year?: string;
+  address?: string;
+  building_classification?: string;
+  total_units?: string;
+  year_built?: string;
+  gross_sqft?: string;
+  [key: string]: unknown;
+}
+
+export interface CondominiumNoiData {
+  boro_block_lot: string;
+  net_operating_income?: string;
+  estimated_gross_income?: string;
+  estimated_expense?: string;
+  report_year?: string;
+  address?: string;
+  building_classification?: string;
+  total_units?: string;
+  year_built?: string;
+  gross_sqft?: string;
+  [key: string]: unknown;
+}
+
 const plutoBaseUrl = 'https://data.cityofnewyork.us/resource/64uk-42ks.json';
 const localLaw84BaseUrl = 'https://data.cityofnewyork.us/resource/5zyy-y8am.json';
+const cooperativeNoiBaseUrl = 'https://data.cityofnewyork.us/resource/myei-c3fa.json';
+const condominiumNoiBaseUrl = 'https://data.cityofnewyork.us/resource/9ck6-2jew.json';
 
 export async function getPlutoDataByBbl(bbl: string): Promise<PlutoData | null> {
   console.log(`Fetching PLUTO data for BBL: ${bbl}`);
@@ -143,6 +173,96 @@ export async function getLocalLaw84DataByBbl(bbl: string): Promise<LocalLaw84Dat
   } catch (error) {
     console.error(
       `Error fetching Local Law 84 data: ${(error as Error).message}`,
+      error,
+    );
+    throw error;
+  }
+}
+
+export async function getCooperativeNoiByBbl(bbl: string): Promise<CooperativeNoiData | null> {
+  const formattedBbl = formatBblForLocalLaw84(bbl); // Use same format as LL84 (with dashes)
+  console.log(`Fetching Cooperative NOI data for BBL: ${formattedBbl}`);
+
+  const url = new URL(cooperativeNoiBaseUrl);
+  url.searchParams.append('boro_block_lot', formattedBbl); // Use correct parameter name
+
+  try {
+    console.log(`Making request to Cooperative NOI API: ${url}`);
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        console.warn(`BBL ${formattedBbl} not found in Cooperative NOI dataset (400 error)`);
+        return null; // Return null instead of throwing for missing data
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Cooperative NOI API response received', data);
+
+    if (Array.isArray(data) && data.length > 0) {
+      const sortedData = data.sort(
+        (a: CooperativeNoiData, b: CooperativeNoiData) =>
+          parseInt(b.report_year || '0') - parseInt(a.report_year || '0'),
+      );
+      return sortedData[0];
+    }
+
+    return data || null;
+  } catch (error) {
+    console.error(
+      `Error fetching Cooperative NOI data: ${(error as Error).message}`,
+      error,
+    );
+    throw error;
+  }
+}
+
+export async function getCondominiumNoiByBbl(bbl: string): Promise<CondominiumNoiData | null> {
+  const formattedBbl = formatBblForLocalLaw84(bbl); // Use same format as LL84 (with dashes)
+  console.log(`Fetching Condominium NOI data for BBL: ${formattedBbl}`);
+
+  const url = new URL(condominiumNoiBaseUrl);
+  url.searchParams.append('boro_block_lot', formattedBbl); // Use correct parameter name
+
+  try {
+    console.log(`Making request to Condominium NOI API: ${url}`);
+
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        console.warn(`BBL ${formattedBbl} not found in Condominium NOI dataset (400 error)`);
+        return null; // Return null instead of throwing for missing data
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Condominium NOI API response received', data);
+
+    if (Array.isArray(data) && data.length > 0) {
+      const sortedData = data.sort(
+        (a: CondominiumNoiData, b: CondominiumNoiData) =>
+          parseInt(b.report_year || '0') - parseInt(a.report_year || '0'),
+      );
+      return sortedData[0];
+    }
+
+    return data || null;
+  } catch (error) {
+    console.error(
+      `Error fetching Condominium NOI data: ${(error as Error).message}`,
       error,
     );
     throw error;
