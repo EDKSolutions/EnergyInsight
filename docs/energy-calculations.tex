@@ -584,12 +584,9 @@ Cumulative savings grow linearly over time\footnote{Simplified as: $\text{Cumula
 };
 \draw[->, color=black, line width=1pt] (axis cs:2036.2,502000) -- (axis cs:2037.95,505000);
 
-% Upgrade completion arrow pointing to 2025
-\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,600000) {
-    \textcolor{black}{\textbf{Upgrade Complete}}\\
-    \textcolor{black}{\textbf{This Year}}
-};
-\draw[->, color=black, line width=1.5pt] (axis cs:2025,570000) -- (axis cs:2025,520000);
+% Upgrade completion vertical line and label
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,0) -- (axis cs:2025,700000);
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,650000) {Upgrade Completed};
 
 \legend{Remaining Loan Balance, Cumulative Savings}
 
@@ -733,16 +730,13 @@ The following chart shows how NOI evolves differently in upgrade vs no-upgrade s
 };
 
 % Add period markers
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,800) -- (axis cs:2025,1600);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2027,800) -- (axis cs:2027,1600);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,800) -- (axis cs:2030,1600);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,800) -- (axis cs:2035,1600);
 
-% Upgrade completion arrow pointing to 2025
-\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,1320) {
-    \textcolor{black}{\textbf{Upgrade Complete}}\\
-    \textcolor{black}{\textbf{This Year}}
-};
-\draw[->, color=black, line width=1.5pt] (axis cs:2025,1280) -- (axis cs:2025,1240);
+% Upgrade completion label
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,1500) {Upgrade Completed};
 
 % Period labels
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026.5,1400) {Fees/Savings Begin};
@@ -879,16 +873,13 @@ The following chart demonstrates property value trajectories for both scenarios:
 };
 
 % Period markers
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,20) -- (axis cs:2025,40);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2027,20) -- (axis cs:2027,40);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,20) -- (axis cs:2030,40);
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,20) -- (axis cs:2035,40);
 
-% Upgrade completion arrow pointing to 2025
-\node[anchor=south, align=center, font=\small\sffamily] at (axis cs:2025,35) {
-    \textcolor{black}{\textbf{Upgrade Complete}}\\
-    \textcolor{black}{\textbf{This Year}}
-};
-\draw[->, color=black, line width=1.5pt] (axis cs:2025,33.5) -- (axis cs:2025,31.5);
+% Upgrade completion label
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,37) {Upgrade Completed};
 
 % Period labels
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026.5,35) {Fees/Savings Begin};
