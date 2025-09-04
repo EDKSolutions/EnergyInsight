@@ -130,30 +130,16 @@ Where:
 The EFLH value is determined by building characteristics from PLUTO data using the following function:
 
 \begin{lstlisting}
-export function getEFLHFromPluto(yearBuilt: number | string, floors: number | string): number {
-  const [year, numFloors] = [Number(yearBuilt), Number(floors)];
-  if (!Number.isFinite(year) || year <= 0 || !Number.isFinite(numFloors) || numFloors <= 0) {
-    throw new Error(`Invalid inputs: yearBuilt=${yearBuilt}, floors=${floors}`);
-  }
-
-  const buildingType = numFloors <= 6 ? "LOW_RISE" : "HIGH_RISE";
-  const constructionEra = year <= 1939 ? "PREWAR" :
-                         year <= 1978 ? "PRE79" :
-                         year <= 2006 ? "1979_2006" : "2007PRESENT";
+export function getEFLHFromPluto(yearBuilt: number, floors: number): number {
+  const buildingType = floors <= 6 ? 'lowRise' : 'highRise';
+  
+  const constructionEra = yearBuilt <= 1939 ? 'prewar' :
+                         yearBuilt <= 1978 ? 'pre79' :
+                         yearBuilt <= 2006 ? 'post1979' : 'post2007';
 
   const eflhTable = {
-    LOW_RISE: {
-      PREWAR: 974,
-      PRE79: 738,
-      "1979_2006": 705,
-      "2007PRESENT": 491
-    },
-    HIGH_RISE: {
-      PREWAR: 987,
-      PRE79: 513,
-      "1979_2006": 385,
-      "2007PRESENT": 214
-    }
+    lowRise: { prewar: 974, pre79: 738, post1979: 705, post2007: 491 },
+    highRise: { prewar: 987, pre79: 513, post1979: 385, post2007: 214 }
   };
   
   return eflhTable[buildingType][constructionEra];
@@ -308,19 +294,19 @@ LL97 has two compliance periods with different emissions budgets. The annual fee
 
 Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and the 2030-2034 period has more stringent (lower) emissions limits than the 2024-2029 period.
 
-\subsubsection{2034+ Compliance Period}
+\subsubsection{2035+ Compliance Period}
 \begin{align}
-\code{emissionsBudget2034toFuture} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2034toFuture}_i
+\code{emissionsBudget2035toFuture} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2035toFuture}_i
 \end{align}
 
 \begin{align}
-\code{annualFeeExceedingBudget2034toFuture} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2034toFuture}) \times \code{feePerTonCO2e}
+\code{annualFeeExceedingBudget2035toFuture} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2035toFuture}) \times \code{feePerTonCO2e}
 \end{align}
 
 For financial modeling purposes, we assume:
 \begin{equation}
-\code{annualFeeExceedingBudget2034toFuture} = \code{annualFeeExceedingBudget2030to2034}
+\code{annualFeeExceedingBudget2035toFuture} = \code{annualFeeExceedingBudget2030to2034}
 \end{equation}
 
 This assumption is necessary for downstream financial calculations\footnote{Post-2034 emissions budgets and compliance requirements are to be determined by NYC regulations. This conservative assumption maintains continuity for financial modeling purposes.}.
@@ -416,27 +402,27 @@ For the 2030-2034 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee for 2034+}
+\subsubsection{Annual Fee for 2035+}
 
-For the post-2034 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
+For the post-2035 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
 
 \begin{align}
-\code{adjustedTotalBuildingEmissions2034toFuture} &= \code{totalBuildingEmissionsLL84} \nonumber \\
+\code{adjustedTotalBuildingEmissions2035toFuture} &= \code{totalBuildingEmissionsLL84} \nonumber \\
 &\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
 &\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
 \end{align}
 
 \begin{align}
-\code{adjustedAnnualFee2034toFuture} &= (\code{adjustedTotalBuildingEmissions2034toFuture} \nonumber\\
-&\quad - \code{emissionsBudget2034toFuture}) \times \code{feePerTonCO2e}
+\code{adjustedAnnualFee2035toFuture} &= (\code{adjustedTotalBuildingEmissions2035toFuture} \nonumber\\
+&\quad - \code{emissionsBudget2035toFuture}) \times \code{feePerTonCO2e}
 \end{align}
 
-For modeling purposes, we assume \code{adjustedTotalBuildingEmissions2034toFuture} uses the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2034 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
+For modeling purposes, we assume \code{adjustedTotalBuildingEmissions2035toFuture} uses the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2035 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
 
 
 \section{Financial Analysis of PTHP Upgrade}
 
-In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 6) and the LL97 fee avoidance. The following 4 subsections show how calculating this varies depending on which period you are in, noting that LL97 compliance continues post-2034 with ongoing fee avoidance benefits.
+In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 6) and the LL97 fee avoidance. The following 4 subsections show how calculating this varies depending on which period you are in, noting that LL97 compliance continues post-2035 with ongoing fee avoidance benefits.
 
 \subsection{LL97 Fee Avoidance Calculations}
 
@@ -461,11 +447,11 @@ In order to calculate the financial viability of upgrading from PTAC to PTHP sys
 &\quad - \code{adjustedAnnualFee2030to2034}
 \end{align}
 
-\subsubsection{LL97 Fee Avoidance for 2034+}
+\subsubsection{LL97 Fee Avoidance for 2035+}
 
 \begin{align}
-\code{annualLL97FeeAvoidance2034toFuture} &= \code{annualFeeExceedingBudget2034toFuture} \nonumber \\
-&\quad - \code{adjustedAnnualFee2034toFuture}
+\code{annualLL97FeeAvoidance2035toFuture} &= \code{annualFeeExceedingBudget2035toFuture} \nonumber \\
+&\quad - \code{adjustedAnnualFee2035toFuture}
 \end{align}
 
 \newpage
@@ -484,10 +470,10 @@ function getAnnualSavings(year: number): number {
     return energySavings + annualLL97FeeAvoidance2024to2027;
   } else if (year >= 2027 && year <= 2029) {
     return energySavings + annualLL97FeeAvoidance2027to2029;
-  } else if (year >= 2030 && year <= 2034) {
+  } else if (year >= 2030 && year <= 2035) {
     return energySavings + annualLL97FeeAvoidance2030to2034;
   } else {
-    return energySavings + annualLL97FeeAvoidance2034toFuture;
+    return energySavings + annualLL97FeeAvoidance2035toFuture;
   }
 }
 \end{lstlisting}
@@ -651,7 +637,7 @@ The true impact of PTHP upgrades becomes clear when comparing NOI scenarios:
 \code{noiNoUpgrade2030to2034} &= \code{currentNOI} - \code{annualFeeExceedingBudget2030to2034}
 \end{align}
 \begin{align}
-\code{noiNoUpgradePost2034} &= \code{currentNOI} - \code{annualFeeExceedingBudget2034toFuture}
+\code{noiNoUpgradePost2035} &= \code{currentNOI} - \code{annualFeeExceedingBudget2035toFuture}
 \end{align}
 
 \textbf{Scenario B: With PTHP Upgrade}
@@ -668,8 +654,8 @@ The true impact of PTHP upgrades becomes clear when comparing NOI scenarios:
 &\quad - \code{adjustedAnnualFee2030to2034}
 \end{align}
 \begin{align}
-\code{noiWithUpgradePost2034} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
-&\quad - \code{adjustedAnnualFee2034toFuture}
+\code{noiWithUpgradePost2035} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
+&\quad - \code{adjustedAnnualFee2035toFuture}
 \end{align}
 
 \subsection{NOI Calculation Functions}
@@ -682,10 +668,10 @@ function calculateAdjustedNOINoUpgrade(year: number): number {
   
   if (year >= 2024 && year <= 2029) {
     return currentNOI - annualFeeExceedingBudget2024to2029;
-  } else if (year >= 2030 && year <= 2034) {
+  } else if (year >= 2030 && year <= 2035) {
     return currentNOI - annualFeeExceedingBudget2030to2034;
   } else {
-    return currentNOI - annualFeeExceedingBudget2034toFuture;
+    return currentNOI - annualFeeExceedingBudget2035toFuture;
   }
 }
 
@@ -696,10 +682,10 @@ function calculateAdjustedNOIUpgrade(year: number): number {
   let reducedLL97Penalties = 0;
   if (year >= 2024 && year <= 2029) {
     reducedLL97Penalties = adjustedAnnualFee2024to2029; // actual penalties paid after upgrade
-  } else if (year >= 2030 && year <= 2034) {
+  } else if (year >= 2030 && year <= 2035) {
     reducedLL97Penalties = adjustedAnnualFee2030to2034; // actual penalties paid after upgrade  
   } else {
-    reducedLL97Penalties = adjustedAnnualFee2034toFuture; // actual penalties paid after upgrade
+    reducedLL97Penalties = adjustedAnnualFee2035toFuture; // actual penalties paid after upgrade
   }
   
   return currentNOI + energySavings - reducedLL97Penalties;
@@ -798,10 +784,10 @@ This NOI comparison reveals the true financial impact of upgrade timing:
 \begin{itemize}
     \item \textbf{Immediate NOI Boost}: Upgrading in 2024 increases NOI by \$174K/year (17\% increase)
     \item \textbf{Penalty Avoidance}: Without upgrade, NOI drops \$150K in 2030+ due to higher penalties  
-    \item \textbf{Perpetual Benefit}: The \$306K annual NOI gap continues indefinitely post-2034, creating sustained property value advantages
+    \item \textbf{Perpetual Benefit}: The \$306K annual NOI gap continues indefinitely post-2035, creating sustained property value advantages
     \item \textbf{Risk Mitigation}: Upgrading protects against declining property values from ongoing LL97 penalties
     \item \textbf{Optimal Window}: Early upgrade (2024-2027) captures maximum BE Credit and avoids penalty escalation
-    \item \textbf{Long-term Value}: LL97 compliance continues post-2034, making upgrade benefits permanent rather than temporary
+    \item \textbf{Long-term Value}: LL97 compliance continues post-2035, making upgrade benefits permanent rather than temporary
 \end{itemize}
 
 \section{Property Value Analysis}
