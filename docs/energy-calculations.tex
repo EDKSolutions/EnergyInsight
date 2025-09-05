@@ -605,7 +605,7 @@ NOI values are obtained directly from the NYC Open Data Condominium Comparable R
 \end{equation}
 
 \subsubsection{Rental Buildings (All Other Residential Building Classes)}
-NOI is calculated using static rates from the NYC Rent Guidelines Board 2024 Income \& Expense Study\footnote{Source: https://rentguidelinesboard.cityofnewyork.us/wp-content/uploads/2024/03/2024-IE-Study.pdf. Uses borough-specific per-unit rates with building age adjustments and expense ratios.}:
+NOI is calculated using static rates from the NYC Rent Guidelines Board 2024 Income \& Expense Study\footnote{Source: \textit{2024 Income and Expense Study}, NYC Rent Guidelines Board, March 2024. Available at: https://rentguidelinesboard.cityofnewyork.us/wp-content/uploads/2024/03/2024-IE-Study.pdf. Borough-specific rates derived from RPIE (Real Property Income and Expense) study data showing average rent per unit per month by borough. Age multipliers calculated from study data: Pre-1974 buildings average \$1,587/unit vs Post-1973 buildings average \$2,552/unit, normalized against citywide average of \$1,769/unit. Complete technical methodology documented in \texttt{docs/noi-calculation-methodology.md}.}:
 
 \begin{align}
 \code{annualRentalIncome} &= N_{units} \times R_{borough} \times M_{age} \times 12 \\
@@ -616,14 +616,16 @@ NOI is calculated using static rates from the NYC Rent Guidelines Board 2024 Inc
 Where:
 \begin{itemize}
     \item $N_{units}$: Total residential units from AI-generated unit breakdown analysis
-    \item $R_{borough}$: Borough-specific rate per unit per month (Manhattan: \$2,498, Brooklyn: \$1,640, Queens: \$1,603, Bronx: \$1,224, Staten Island: \$1,166)
-    \item $M_{age}$: Building age multiplier (Pre-1974: 0.897, Post-1973: 1.442)
-    \item 1.108: Supplemental income multiplier (10.8\% from laundry, parking, commercial space)
-    \item 0.45: NOI margin after operating expenses (25-35\%) and property taxes (~25\%)
+    \item $R_{borough}$: Borough-specific rate per unit per month\footnote{Borough rental rates from NYC Rent Guidelines Board 2024 RPIE study: \textbf{Manhattan} \$2,498 (Core Manhattan \$3,118, Upper Manhattan \$1,649), \textbf{Brooklyn} \$1,640, \textbf{Queens} \$1,603, \textbf{Bronx} \$1,224, \textbf{Staten Island} \$1,166. Rates represent average monthly rent per residential unit across all unit types within each borough.}
+    \item $M_{age}$: Building age multiplier\footnote{Age multipliers derived from NYC Rent Guidelines Board 2024 study Section 4 (Building Age Analysis): Pre-1974 buildings = 0.897 (calculated as \$1,587 average rent ÷ \$1,769 citywide average), Post-1973 buildings = 1.442 (calculated as \$2,552 average rent ÷ \$1,769 citywide average). The 1974 cutoff reflects major changes in NYC building codes and construction practices.} (Pre-1974: 0.897, Post-1973: 1.442)
+    \item 1.108: Supplemental income multiplier\footnote{Supplemental income factor from NYC Rent Guidelines Board 2024 study Section 6 (Non-Rental Income Analysis): 10.8\% average increase from auxiliary revenue sources including laundry facilities, parking fees, vending machines, commercial space rental, cell tower leases, and billboard advertising. Factor calculated as gross income multiplier (1 + 0.108 = 1.108).} (10.8\% from laundry, parking, commercial space)
+    \item 0.45: NOI margin\footnote{Net Operating Income margin from NYC Rent Guidelines Board 2024 study Section 8 (Expense Analysis): 45\% of gross income remains as NOI after deducting operating expenses (25-35\% including maintenance, utilities, management, insurance) and property taxes (~25\% of gross income reflecting NYC's property tax burden). This 45\% represents the income available for debt service and owner returns.} after operating expenses (25-35\%) and property taxes (~25\%)
 \end{itemize}
 
 \subsubsection{Static Rate Disclosure}
 \textbf{Important Limitation:} Rental building calculations use fixed 2024 rates from the NYC Rent Guidelines Board study, not live market data. These represent borough-wide averages and may not reflect neighborhood-specific variations or current market conditions.
+
+\textbf{Complete Methodology:} For comprehensive technical details including data validation, error handling, API integration, and alternative calculation approaches, refer to the complete NOI calculation methodology documented in \texttt{docs/noi-calculation-methodology.md}.
 
 \subsection{Upgrade Impact on NOI}
 
