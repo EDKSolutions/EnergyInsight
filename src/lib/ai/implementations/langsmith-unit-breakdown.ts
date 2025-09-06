@@ -64,14 +64,32 @@ export class LangsmithUnitBreakdown {
       throw new Error('No BBL found in inputs');
     }
 
-    const plutoRecord = await getPlutoDataByBbl(bbl);
-    if (!plutoRecord) {
+    const plutoData = await getPlutoDataByBbl(bbl);
+    if (!plutoData) {
       throw new Error(`No PLUTO record found for BBL ${bbl}`);
     }
 
-    const result = await this.unitBreakdownGraph.run(
-      plutoRecord as PlutoRecord,
-    );
+    // Map PlutoData to PlutoRecord format
+    const plutoRecord: PlutoRecord = {
+      bldgclass: plutoData.bldgclass,
+      resarea: plutoData.resarea,
+      unitsres: plutoData.unitsres,
+      unitstotal: plutoData.unitstotal,
+      boro: plutoData.borough, // Map borough to boro
+      lotarea: plutoData.lotarea,
+      bldgarea: plutoData.bldgarea,
+      yearbuilt: plutoData.yearbuilt,
+      landuse: plutoData.landuse,
+      numfloors: plutoData.numfloors,
+      lotdepth: plutoData.lotdepth,
+      lotfront: plutoData.lotfront,
+      zip: plutoData.zip,
+      address: plutoData.address,
+      zone: plutoData.zone || plutoData.zonedist1,
+      ownername: plutoData.ownername,
+    };
+
+    const result = await this.unitBreakdownGraph.run(plutoRecord);
 
     return {
       predicted_rooms: result.numberOfBedrooms,

@@ -3,7 +3,7 @@ import { fetchBblNumber } from './geo-client';
 import { getPlutoDataByBbl, getLocalLaw84DataByBbl, PlutoData, LocalLaw84Data } from './open-data-nyc';
 import { UnitBreakdownService } from '../ai/services/unit-breakdown.service';
 import { CreateCalculationInputDto } from '../types/dtos';
-import { UnitBreakdownResult } from '../ai/types';
+import { UnitBreakdownResult, PlutoRecord } from '../ai/types';
 
 const unitBreakdownService = new UnitBreakdownService();
 
@@ -26,9 +26,29 @@ export async function createCalculation(
 
     const { plutoData, ll84Data } = await fetchBuildingData(bbl);
 
+    // Map PlutoData to PlutoRecord format
+    const plutoRecord: PlutoRecord = {
+      bldgclass: plutoData.bldgclass,
+      resarea: plutoData.resarea,
+      unitsres: plutoData.unitsres,
+      unitstotal: plutoData.unitstotal,
+      boro: plutoData.borough, // Map borough to boro
+      lotarea: plutoData.lotarea,
+      bldgarea: plutoData.bldgarea,
+      yearbuilt: plutoData.yearbuilt,
+      landuse: plutoData.landuse,
+      numfloors: plutoData.numfloors,
+      lotdepth: plutoData.lotdepth,
+      lotfront: plutoData.lotfront,
+      zip: plutoData.zip,
+      address: plutoData.address,
+      zone: plutoData.zone || plutoData.zonedist1,
+      ownername: plutoData.ownername,
+    };
+
     console.log('Running building analysis on PLUTO and LL84 data');
     const analysisResult = await unitBreakdownService.analyzeBuilding(
-      plutoData,
+      plutoRecord,
       ll84Data || undefined,
     );
     console.log('Building analysis completed successfully');
@@ -172,7 +192,7 @@ async function saveCalculationToDatabase(
       buildingClass: plutoData.bldgclass || '',
       taxClass: '',
       zoning: plutoData.zone || '',
-      boro: plutoData.boro || '',
+      boro: plutoData.borough || '',
       totalSquareFeet: plutoData.bldgarea?.toString() || '',
       totalResidentialUnits: plutoData.unitsres?.toString() || '',
       rawPlutoData: JSON.parse(JSON.stringify(plutoData)),
