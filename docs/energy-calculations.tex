@@ -61,6 +61,9 @@
 
 \maketitle
 
+\tableofcontents
+\newpage
+
 \section{Introduction}
 
 This document outlines the energy calculations for comparing Packaged Terminal Air Conditioner (PTAC) and Packaged Terminal Heat Pump (PTHP) systems, using the standardized variable names from our codebase.
@@ -262,7 +265,7 @@ The building's current emissions are obtained from LL84 reporting:
 \code{totalBuildingEmissionsLL84} &= \text{Current building emissions (metric tons CO2e)}
 \end{align}
 
-The emissions budget for the building is calculated as the sum of type-specific emissions limits applied to corresponding square footage\footnote{Key LL97 property type limits (tCO2e/sf): Office (2024-29: 0.00846, 2030-34: 0.00453), Retail Store (2024-29: 0.01582, 2030-34: 0.00775), Multifamily Housing (2024-29: 0.00892, 2030-34: 0.00453), Hotel (2024-29: 0.01344, 2030-34: 0.00775), Hospital (2024-29: 0.02551, 2030-34: 0.01542), K-12 School (2024-29: 0.00846, 2030-34: 0.00453), Warehouse (2024-29: 0.00404, 2030-34: 0.00297). Complete mapping available in codebase at src/ll97/ll97\_espm\_to\_bc\_caps.json.}:
+The emissions budget for the building is calculated as the sum of type-specific emissions limits applied to corresponding square footage\footnote{Key LL97 property type limits (tCO2e/sf) across four compliance periods: Office (2024-29: 0.00846, 2030-34: 0.00453, 2035-39: 0.00165234, 2040-49: 0.000581893), Multifamily Housing (2024-29: 0.00892, 2030-34: 0.00453), Hospital (2024-29: 0.02551, 2030-34: 0.01542). Complete mapping available in ll97\_espm\_to\_bc\_caps\_with\_2035\_2049.json.}:
 
 \begin{align}
 \code{emissionsBudget} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit}_i
@@ -294,22 +297,27 @@ LL97 has two compliance periods with different emissions budgets. The annual fee
 
 Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and the 2030-2034 period has more stringent (lower) emissions limits than the 2024-2029 period.
 
-\subsubsection{2035+ Compliance Period}
+\subsubsection{2035-2039 Compliance Period}
 \begin{align}
-\code{emissionsBudget2035toFuture} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2035toFuture}_i
+\code{emissionsBudget2035to2039} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2035to2039}_i
 \end{align}
 
 \begin{align}
-\code{annualFeeExceedingBudget2035toFuture} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2035toFuture}) \times \code{feePerTonCO2e}
+\code{annualFeeExceedingBudget2035to2039} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2035to2039}) \times \code{feePerTonCO2e}
 \end{align}
 
-For financial modeling purposes, we assume:
-\begin{equation}
-\code{annualFeeExceedingBudget2035toFuture} = \code{annualFeeExceedingBudget2030to2034}
-\end{equation}
+\subsubsection{2040-2049 Compliance Period}
+\begin{align}
+\code{emissionsBudget2040to2049} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2040to2049}_i
+\end{align}
 
-This assumption is necessary for downstream financial calculations\footnote{Post-2034 emissions budgets and compliance requirements are to be determined by NYC regulations. This conservative assumption maintains continuity for financial modeling purposes.}.
+\begin{align}
+\code{annualFeeExceedingBudget2040to2049} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2040to2049}) \times \code{feePerTonCO2e}
+\end{align}
+
+Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and each subsequent period has more stringent (lower) emissions limits.
 
 \subsection{BE Credit Section (Beneficial Electrification)}
 
@@ -367,16 +375,28 @@ This gives us period-specific adjusted emissions:
 &\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
 \end{align}
 
+\begin{align}
+\code{adjustedTotalBuildingEmissions2035to2039} &= \code{totalBuildingEmissionsLL84} \nonumber \\
+&\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
+&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
+\end{align}
+
+\begin{align}
+\code{adjustedTotalBuildingEmissions2040to2049} &= \code{totalBuildingEmissionsLL84} \nonumber \\
+&\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
+&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
+\end{align}
+
 \subsubsection{Annual Fee with BE Credit (Before 2027)}
 
 For buildings upgrading before January 1, 2027:
 
 \begin{align}
-\code{newEmissionsBefore2027} &= \code{adjustedTotalBuildingEmissions2024to2029} - \code{beCreditBefore2027}
+\code{creditedEmissionsBefore2027} &= \code{adjustedTotalBuildingEmissions2024to2029} - \code{beCreditBefore2027}
 \end{align}
 
 \begin{align}
-\code{adjustedAnnualFeeBefore2027} &= (\code{newEmissionsBefore2027} \nonumber\\
+\code{adjustedAnnualFeeBefore2027} &= (\code{creditedEmissionsBefore2027} \nonumber\\
 &\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
 \end{align}
 
@@ -385,11 +405,11 @@ For buildings upgrading before January 1, 2027:
 For buildings upgrading between 2027-2029:
 
 \begin{align}
-\code{newEmissions2027to2029} &= \code{adjustedTotalBuildingEmissions2024to2029} - \code{beCredit2027to2029}
+\code{creditedEmissions2027to2029} &= \code{adjustedTotalBuildingEmissions2024to2029} - \code{beCredit2027to2029}
 \end{align}
 
 \begin{align}
-\code{adjustedAnnualFee2027to2029} &= (\code{newEmissions2027to2029} \nonumber\\
+\code{adjustedAnnualFee2027to2029} &= (\code{creditedEmissions2027to2029} \nonumber\\
 &\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
 \end{align}
 
@@ -402,22 +422,25 @@ For the 2030-2034 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee for 2035+}
+\subsubsection{Annual Fee for 2035-2039}
 
-For the post-2035 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
-
-\begin{align}
-\code{adjustedTotalBuildingEmissions2035toFuture} &= \code{totalBuildingEmissionsLL84} \nonumber \\
-&\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
-&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
-\end{align}
+For the 2035-2039 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
 
 \begin{align}
-\code{adjustedAnnualFee2035toFuture} &= (\code{adjustedTotalBuildingEmissions2035toFuture} \nonumber\\
-&\quad - \code{emissionsBudget2035toFuture}) \times \code{feePerTonCO2e}
+\code{adjustedAnnualFee2035to2039} &= (\code{adjustedTotalBuildingEmissions2035to2039} \nonumber\\
+&\quad - \code{emissionsBudget2035to2039}) \times \code{feePerTonCO2e}
 \end{align}
 
-For modeling purposes, we assume \code{adjustedTotalBuildingEmissions2035toFuture} uses the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2035 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
+\subsubsection{Annual Fee for 2040-2049}
+
+For the 2040-2049 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
+
+\begin{align}
+\code{adjustedAnnualFee2040to2049} &= (\code{adjustedTotalBuildingEmissions2040to2049} \nonumber\\
+&\quad - \code{emissionsBudget2040to2049}) \times \code{feePerTonCO2e}
+\end{align}
+
+For both periods, we assume the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2034 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
 
 
 \section{Financial Analysis of PTHP Upgrade}
@@ -447,11 +470,18 @@ In order to calculate the financial viability of upgrading from PTAC to PTHP sys
 &\quad - \code{adjustedAnnualFee2030to2034}
 \end{align}
 
-\subsubsection{LL97 Fee Avoidance for 2035+}
+\subsubsection{LL97 Fee Avoidance for 2035-2039}
 
 \begin{align}
-\code{annualLL97FeeAvoidance2035toFuture} &= \code{annualFeeExceedingBudget2035toFuture} \nonumber \\
-&\quad - \code{adjustedAnnualFee2035toFuture}
+\code{annualLL97FeeAvoidance2035to2039} &= \code{annualFeeExceedingBudget2035to2039} \nonumber \\
+&\quad - \code{adjustedAnnualFee2035to2039}
+\end{align}
+
+\subsubsection{LL97 Fee Avoidance for 2040-2049}
+
+\begin{align}
+\code{annualLL97FeeAvoidance2040to2049} &= \code{annualFeeExceedingBudget2040to2049} \nonumber \\
+&\quad - \code{adjustedAnnualFee2040to2049}
 \end{align}
 
 \newpage
@@ -470,10 +500,12 @@ function getAnnualSavings(year: number): number {
     return energySavings + annualLL97FeeAvoidance2024to2027;
   } else if (year >= 2027 && year <= 2029) {
     return energySavings + annualLL97FeeAvoidance2027to2029;
-  } else if (year >= 2030 && year <= 2035) {
+  } else if (year >= 2030 && year <= 2034) {
     return energySavings + annualLL97FeeAvoidance2030to2034;
+  } else if (year >= 2035 && year <= 2039) {
+    return energySavings + annualLL97FeeAvoidance2035to2039;
   } else {
-    return energySavings + annualLL97FeeAvoidance2035toFuture;
+    return energySavings + annualLL97FeeAvoidance2040to2049;
   }
 }
 \end{lstlisting}
@@ -668,7 +700,7 @@ The true impact of PTHP upgrades becomes clear when comparing NOI scenarios:
 \code{noiNoUpgrade2030to2034} &= \code{currentNOI} - \code{annualFeeExceedingBudget2030to2034}
 \end{align}
 \begin{align}
-\code{noiNoUpgradePost2035} &= \code{currentNOI} - \code{annualFeeExceedingBudget2035toFuture}
+\code{noiNoUpgradePost2035} &= \code{currentNOI} - \code{annualFeeExceedingBudget2035to2039}
 \end{align}
 
 \textbf{Scenario B: With PTHP Upgrade}
@@ -686,7 +718,7 @@ The true impact of PTHP upgrades becomes clear when comparing NOI scenarios:
 \end{align}
 \begin{align}
 \code{noiWithUpgradePost2035} &= \code{currentNOI} + \code{annualSavingsEnergy} \nonumber\\
-&\quad - \code{adjustedAnnualFee2035toFuture}
+&\quad - \code{adjustedAnnualFee2035to2039}
 \end{align}
 
 \subsection{NOI Calculation Functions}
@@ -699,10 +731,12 @@ function calculateAdjustedNOINoUpgrade(year: number): number {
   
   if (year >= 2024 && year <= 2029) {
     return currentNOI - annualFeeExceedingBudget2024to2029;
-  } else if (year >= 2030 && year <= 2035) {
+  } else if (year >= 2030 && year <= 2034) {
     return currentNOI - annualFeeExceedingBudget2030to2034;
+  } else if (year >= 2035 && year <= 2039) {
+    return currentNOI - annualFeeExceedingBudget2035to2039;
   } else {
-    return currentNOI - annualFeeExceedingBudget2035toFuture;
+    return currentNOI - annualFeeExceedingBudget2040to2049;
   }
 }
 
@@ -713,10 +747,12 @@ function calculateAdjustedNOIUpgrade(year: number): number {
   let reducedLL97Penalties = 0;
   if (year >= 2024 && year <= 2029) {
     reducedLL97Penalties = adjustedAnnualFee2024to2029; // actual penalties paid after upgrade
-  } else if (year >= 2030 && year <= 2035) {
+  } else if (year >= 2030 && year <= 2034) {
     reducedLL97Penalties = adjustedAnnualFee2030to2034; // actual penalties paid after upgrade  
+  } else if (year >= 2035 && year <= 2039) {
+    reducedLL97Penalties = adjustedAnnualFee2035to2039; // actual penalties paid after upgrade
   } else {
-    reducedLL97Penalties = adjustedAnnualFee2035toFuture; // actual penalties paid after upgrade
+    reducedLL97Penalties = adjustedAnnualFee2040to2049; // actual penalties paid after upgrade
   }
   
   return currentNOI + energySavings - reducedLL97Penalties;
