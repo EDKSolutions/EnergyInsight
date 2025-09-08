@@ -1,0 +1,402 @@
+{
+  "metadata": {
+    "title": "NYC Residential NOI per Unit per Month (2023) \u2014 Stabilized vs Market-Rate, by Borough, Era, and Size",
+    "version": "2025-09-06-merge-v3",
+    "created_at_utc": "2025-09-06T09:58:57.603913Z",
+    "measure": "USD per dwelling unit per month (unadjusted; before income taxes and debt service)",
+    "tenure_categories": [
+      "stabilized",
+      "market_rate"
+    ],
+    "era_buckets": {
+      "stabilized": [
+        "pre_1974",
+        "post_1973",
+        "all"
+      ],
+      "market_rate": null
+    },
+    "size_buckets": [
+      "11-19 units",
+      "20-99 units",
+      "100+ units"
+    ],
+    "size_bucket_rules": [
+      {
+        "min_units": 11,
+        "max_units": 19,
+        "label": "11-19 units"
+      },
+      {
+        "min_units": 20,
+        "max_units": 99,
+        "label": "20-99 units"
+      },
+      {
+        "min_units": 100,
+        "max_units": null,
+        "label": "100+ units"
+      }
+    ],
+    "sources": {
+      "stabilized_table": {
+        "title": "Average Net Operating Income in 2023 per Dwelling Unit per Month by Building Size and Location",
+        "source": "NYC Rent Guidelines Board \u2014 2025 Income and Expense Study, Table 5 (p. 28)",
+        "source_url": "https://rentguidelinesboard.cityofnewyork.us/wp-content/uploads/2025/03/2025-IE-Study.pdf#:~:text=pre,per%20month%20in%20NOI%2C%20149",
+        "notes": "\u2018null\u2019 denotes insufficient sample to report; values reflect buildings containing at least one rent-stabilized unit. Cells originally null in the source were imputed with best-guess estimates; see 'imputed_cells' for details. All imputed values are assumed and for modeling convenience only \u2014 not official figures. Detailed imputation notes have been moved to a separate file: nyc_noi_2023_per_unit_month_table5_imputed_notes.json."
+      },
+      "market_rate_modeled": {
+        "title": "Estimated Market-Rate NOI in 2023 per Dwelling Unit per Month by Building Size and Location",
+        "method_summary": "Starting from RGB Table 5 'post_1973' NOI (buildings with at least one stabilized unit), we estimated fully market-rate (0% stabilized) NOI by applying borough-specific uplift factors to the 'post_1973' overall values and then distributing to size buckets using the observed post_1973 size multipliers for each location. Where a location\u2019s size cell was missing, we used City-without-Core multipliers as fallback. Uplift choices reflect observed gradients in the RGB study (less stabilization \u2192 higher NOI), typical market-rate vs stabilized rent diffs reported by brokerage market reports, and NYC multifamily expense benchmarks (Yardi/PREA). These are assumptions for modeling.",
+        "uplift_factors_used": {
+          "Citywide": 0.2,
+          "Bronx": 0.15,
+          "Brooklyn": 0.2,
+          "Manhattan": 0.25,
+          "Queens": 0.18,
+          "Staten Island": 0.12,
+          "Core Manhattan": 0.3,
+          "Upper Manhattan": 0.2,
+          "City without Core Manhattan": 0.17
+        },
+        "assumption_warning": "This file provides modeled estimates for market-rate buildings (0% stabilized). It is NOT an official statistic. Use with caution and calibrate against your portfolio where possible.",
+        "source_baseline": "NYC Rent Guidelines Board \u2014 2025 Income & Expense Study, Table 5 (p. 28) for 'post_1973' baseline.",
+        "source_url_baseline": "https://rentguidelinesboard.cityofnewyork.us/wp-content/uploads/2025/03/2025-IE-Study.pdf"
+      }
+    },
+    "assumptions": {
+      "market_rate_all_bucket": "Simple unweighted average of pre_1974 and post_1973 values; replace with weighted average if era shares are known.",
+      "market_rate_uniform_citywide": {
+        "decision": "REPLACED: market-rate is no longer uniform citywide; values now borough-specific using modeled market-rate (post-1973) per location.",
+        "date_utc": "2025-09-06T10:10:56.233473Z"
+      }
+    },
+    "structure_notes": "Market-rate is year-agnostic (assumed post-1973 only) but **borough-specific**. Stabilized retains era buckets (pre_1974, post_1973, all)."
+  },
+  "data": {
+    "Bronx": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 279,
+          "by_size": {
+            "11-19 units": 236,
+            "20-99 units": 270,
+            "100+ units": 353
+          }
+        },
+        "post_1973": {
+          "overall": 686,
+          "by_size": {
+            "11-19 units": 964,
+            "20-99 units": 695,
+            "100+ units": 651
+          }
+        },
+        "all": {
+          "overall": 339,
+          "by_size": {
+            "11-19 units": 302,
+            "20-99 units": 301,
+            "100+ units": 442
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 789,
+        "by_size": {
+          "11-19 units": 1109,
+          "20-99 units": 799,
+          "100+ units": 749
+        }
+      }
+    },
+    "Brooklyn": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 458,
+          "by_size": {
+            "11-19 units": 500,
+            "20-99 units": 447,
+            "100+ units": 474
+          }
+        },
+        "post_1973": {
+          "overall": 1592,
+          "by_size": {
+            "11-19 units": 1330,
+            "20-99 units": 1558,
+            "100+ units": 1627
+          }
+        },
+        "all": {
+          "overall": 683,
+          "by_size": {
+            "11-19 units": 585,
+            "20-99 units": 568,
+            "100+ units": 834
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 1910,
+        "by_size": {
+          "11-19 units": 1596,
+          "20-99 units": 1869,
+          "100+ units": 1952
+        }
+      }
+    },
+    "City without Core Manhattan": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 384,
+          "by_size": {
+            "11-19 units": 376,
+            "20-99 units": 351,
+            "100+ units": 437
+          }
+        },
+        "post_1973": {
+          "overall": 1197,
+          "by_size": {
+            "11-19 units": 1241,
+            "20-99 units": 1127,
+            "100+ units": 1253
+          }
+        },
+        "all": {
+          "overall": 509,
+          "by_size": {
+            "11-19 units": 462,
+            "20-99 units": 431,
+            "100+ units": 685
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 1400,
+        "by_size": {
+          "11-19 units": 1451,
+          "20-99 units": 1318,
+          "100+ units": 1465
+        }
+      }
+    },
+    "Citywide": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 488,
+          "by_size": {
+            "11-19 units": 526,
+            "20-99 units": 423,
+            "100+ units": 653
+          }
+        },
+        "post_1973": {
+          "overall": 1330,
+          "by_size": {
+            "11-19 units": 1219,
+            "20-99 units": 1145,
+            "100+ units": 1457
+          }
+        },
+        "all": {
+          "overall": 626,
+          "by_size": {
+            "11-19 units": 584,
+            "20-99 units": 495,
+            "100+ units": 914
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 1596,
+        "by_size": {
+          "11-19 units": 1463,
+          "20-99 units": 1374,
+          "100+ units": 1748
+        }
+      }
+    },
+    "Core Manhattan": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 1112,
+          "by_size": {
+            "11-19 units": 976,
+            "20-99 units": 1004,
+            "100+ units": 1268
+          }
+        },
+        "post_1973": {
+          "overall": 1887,
+          "by_size": {
+            "11-19 units": 1130,
+            "20-99 units": 1485,
+            "100+ units": 1942
+          }
+        },
+        "all": {
+          "overall": 1290,
+          "by_size": {
+            "11-19 units": 972,
+            "20-99 units": 1015,
+            "100+ units": 1479
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 2453,
+        "by_size": {
+          "11-19 units": 1469,
+          "20-99 units": 1930,
+          "100+ units": 2524
+        }
+      }
+    },
+    "Manhattan": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 765,
+          "by_size": {
+            "11-19 units": 737,
+            "20-99 units": 617,
+            "100+ units": 1098
+          }
+        },
+        "post_1973": {
+          "overall": 1735,
+          "by_size": {
+            "11-19 units": 853,
+            "20-99 units": 1274,
+            "100+ units": 1860
+          }
+        },
+        "all": {
+          "overall": 926,
+          "by_size": {
+            "11-19 units": 741,
+            "20-99 units": 654,
+            "100+ units": 1378
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 2169,
+        "by_size": {
+          "11-19 units": 1066,
+          "20-99 units": 1593,
+          "100+ units": 2325
+        }
+      }
+    },
+    "Queens": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 467,
+          "by_size": {
+            "11-19 units": 411,
+            "20-99 units": 437,
+            "100+ units": 511
+          }
+        },
+        "post_1973": {
+          "overall": 1203,
+          "by_size": {
+            "11-19 units": 1094,
+            "20-99 units": 1177,
+            "100+ units": 1309
+          }
+        },
+        "all": {
+          "overall": 566,
+          "by_size": {
+            "11-19 units": 486,
+            "20-99 units": 507,
+            "100+ units": 602
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 1420,
+        "by_size": {
+          "11-19 units": 1291,
+          "20-99 units": 1389,
+          "100+ units": 1545
+        }
+      }
+    },
+    "Staten Island": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 354,
+          "by_size": {
+            "11-19 units": 347,
+            "20-99 units": 324,
+            "100+ units": 403
+          }
+        },
+        "post_1973": {
+          "overall": 260,
+          "by_size": {
+            "11-19 units": 230,
+            "20-99 units": 260,
+            "100+ units": null
+          }
+        },
+        "all": {
+          "overall": 318,
+          "by_size": {
+            "11-19 units": 288,
+            "20-99 units": 280,
+            "100+ units": 403
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 291,
+        "by_size": {
+          "11-19 units": 257,
+          "20-99 units": 291,
+          "100+ units": 305
+        }
+      }
+    },
+    "Upper Manhattan": {
+      "stabilized": {
+        "pre_1974": {
+          "overall": 431,
+          "by_size": {
+            "11-19 units": 409,
+            "20-99 units": 409,
+            "100+ units": 578
+          }
+        },
+        "post_1973": {
+          "overall": 1334,
+          "by_size": {
+            "11-19 units": 473,
+            "20-99 units": 1140,
+            "100+ units": 1186
+          }
+        },
+        "all": {
+          "overall": 519,
+          "by_size": {
+            "11-19 units": 437,
+            "20-99 units": 432,
+            "100+ units": 879
+          }
+        }
+      },
+      "market_rate": {
+        "overall": 1601,
+        "by_size": {
+          "11-19 units": 568,
+          "20-99 units": 1368,
+          "100+ units": 1423
+        }
+      }
+    }
+  }
+}
