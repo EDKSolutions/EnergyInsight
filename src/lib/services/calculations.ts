@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prismaClient } from '@/lib/prisma';
 import { fetchBblNumber } from './geo-client';
 import { getPlutoDataByBbl, getLocalLaw84DataByBbl, PlutoData, LocalLaw84Data } from './open-data-nyc';
 import { UnitBreakdownService } from '../ai/services/unit-breakdown.service';
@@ -75,7 +75,7 @@ export async function createCalculation(
 export async function getUserCalculations(userId: string) {
   console.log(`Fetching calculations for user: ${userId}`);
   try {
-    const calculations = await prisma.userCalculations.findMany({
+    const calculations = await prismaClient.userCalculations.findMany({
       where: { userId },
       include: { calculation: true },
     });
@@ -95,7 +95,7 @@ export async function getUserCalculations(userId: string) {
 export async function modifyCalculation(calculationId: string, data: Record<string, unknown>) {
   console.log(`Modifying calculation ${calculationId}`, data);
   try {
-    const calculation = await prisma.calculations.update({
+    const calculation = await prismaClient.calculations.update({
       where: { id: calculationId },
       data,
     });
@@ -137,7 +137,7 @@ async function saveCalculationToDatabase(
   ll84Data: LocalLaw84Data | null,
 ) {
   console.log('Saving calculation to database');
-  const calculation = await prisma.calculations.create({
+  const calculation = await prismaClient.calculations.create({
     data: {
       // Building analysis results
       ptacUnits: analysisResult.ptacUnits.toString(),
@@ -218,7 +218,7 @@ export async function getCalculationById(calculationId: string, userId: string) 
     `Searching calculation ${calculationId} for user ${userId}`,
   );
   try {
-    const userCalculation = await prisma.userCalculations.findFirst({
+    const userCalculation = await prismaClient.userCalculations.findFirst({
       where: {
         userId,
         calculationId,

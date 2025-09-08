@@ -17,7 +17,7 @@ import {
   pthpContingency,
   //MMBTU_PER_THERM,
   KWH_PER_MMBTU,
-} from './constants';
+} from './constants/energy-constants';
 
 /**
  * Utility function to round numbers to 2 decimal places

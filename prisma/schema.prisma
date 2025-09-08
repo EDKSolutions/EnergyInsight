@@ -10,8 +10,8 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("PRISMA_DATABASE_URL")
-  directUrl = env("POSTGRES_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 model User {
@@ -154,6 +154,183 @@ model Calculations {
   /// @DtoReadOnly
   /// @example 31642.86
   annualEnergySavings Float? // PTAC cost - PTHP cost
+
+  // Section 7 - LL97 Emissions & BE Credit (matching LaTeX)
+  /// @DtoReadOnly
+  /// @example 850.25
+  emissionsBudget2024to2029 Float? // Building emissions budget for 2024-2029 period
+
+  /// @DtoReadOnly
+  /// @example 450.75
+  emissionsBudget2030to2034 Float? // Building emissions budget for 2030-2034 period
+
+  /// @DtoReadOnly
+  /// @example 350.50
+  emissionsBudget2035to2039 Float? // Building emissions budget for 2035-2039 period
+
+  /// @DtoReadOnly
+  /// @example 250.25
+  emissionsBudget2040to2049 Float? // Building emissions budget for 2040-2049 period
+
+  /// @DtoReadOnly
+  /// @example 1250.50
+  totalBuildingEmissionsLL84 Float? // Current building emissions from LL84 data
+
+  /// @DtoReadOnly
+  /// @example 125000.00
+  annualFeeExceedingBudget2024to2029 Float? // Annual LL97 fee for 2024-2029 period
+
+  /// @DtoReadOnly
+  /// @example 250000.00
+  annualFeeExceedingBudget2030to2034 Float? // Annual LL97 fee for 2030-2034 period
+
+  /// @DtoReadOnly
+  /// @example 350000.00
+  annualFeeExceedingBudget2035to2039 Float? // Annual LL97 fee for 2035-2039 period
+
+  /// @DtoReadOnly
+  /// @example 450000.00
+  annualFeeExceedingBudget2040to2049 Float? // Annual LL97 fee for 2040-2049 period
+
+  /// @DtoReadOnly
+  /// @example 35.25
+  beCreditBefore2027 Float? // BE Credit for upgrades before 2027
+
+  /// @DtoReadOnly
+  /// @example 17.625
+  beCredit2027to2029 Float? // BE Credit for upgrades 2027-2029
+
+  /// @DtoReadOnly
+  /// @example 1150.50
+  adjustedTotalBuildingEmissions2024to2029 Float? // Adjusted emissions with PTHP for 2024-2029
+
+  /// @DtoReadOnly
+  /// @example 1050.25
+  adjustedTotalBuildingEmissions2030to2034 Float? // Adjusted emissions with PTHP for 2030-2034
+
+  /// @DtoReadOnly
+  /// @example 1050.25
+  adjustedTotalBuildingEmissions2035to2039 Float? // Adjusted emissions with PTHP for 2035-2039
+
+  /// @DtoReadOnly
+  /// @example 1050.25
+  adjustedTotalBuildingEmissions2040to2049 Float? // Adjusted emissions with PTHP for 2040-2049
+
+  /// @DtoReadOnly
+  /// @example 15000.00
+  adjustedAnnualFeeBefore2027 Float? // Adjusted annual fee with BE credit before 2027
+
+  /// @DtoReadOnly
+  /// @example 17500.00
+  adjustedAnnualFee2027to2029 Float? // Adjusted annual fee with BE credit 2027-2029
+
+  /// @DtoReadOnly
+  /// @example 33000.00
+  adjustedAnnualFee2030to2034 Float? // Adjusted annual fee for 2030-2034
+
+  /// @DtoReadOnly
+  /// @example 33000.00
+  adjustedAnnualFee2035to2039 Float? // Adjusted annual fee for 2035-2039
+
+  /// @DtoReadOnly
+  /// @example 33000.00
+  adjustedAnnualFee2040to2049 Float? // Adjusted annual fee for 2040-2049
+
+  // Section 8 - Financial Analysis (matching LaTeX)
+  /// @DtoReadOnly
+  /// @example 110000.00
+  annualLL97FeeAvoidance2024to2027 Float? // Annual LL97 fee savings 2024-2027
+
+  /// @DtoReadOnly
+  /// @example 107500.00
+  annualLL97FeeAvoidance2027to2029 Float? // Annual LL97 fee savings 2027-2029
+
+  /// @DtoReadOnly
+  /// @example 217000.00
+  annualLL97FeeAvoidance2030to2034 Float? // Annual LL97 fee savings 2030-2034
+
+  /// @DtoReadOnly
+  /// @example 317000.00
+  annualLL97FeeAvoidance2035to2039 Float? // Annual LL97 fee savings 2035-2039
+
+  /// @DtoReadOnly
+  /// @example 417000.00
+  annualLL97FeeAvoidance2040to2049 Float? // Annual LL97 fee savings 2040-2049
+
+  /// @DtoReadOnly
+  /// @example 12
+  simplePaybackPeriod Int? // Years to payback in simple calculation
+
+  /// @DtoReadOnly
+  /// @example [0, 47000, 94000, 138000, 182000, 226000]
+  cumulativeSavingsByYear Json? // Array of cumulative savings year by year
+
+  // Section 9 - NOI Analysis (matching LaTeX)
+  /// @DtoReadOnly
+  /// @example 1200000.00
+  currentNOI Float? // Current Net Operating Income
+
+  /// @DtoReadOnly
+  /// @example 1050000.00
+  noiNoUpgrade2024to2029 Float? // NOI without upgrade 2024-2029
+
+  /// @DtoReadOnly
+  /// @example 900000.00
+  noiNoUpgrade2030to2034 Float? // NOI without upgrade 2030-2034
+
+  /// @DtoReadOnly
+  /// @example 900000.00
+  noiNoUpgrade2035to2039 Float? // NOI without upgrade 2035-2039
+
+  /// @DtoReadOnly
+  /// @example 900000.00
+  noiNoUpgrade2040to2049 Float? // NOI without upgrade 2040-2049
+
+  /// @DtoReadOnly
+  /// @example 1224000.00
+  noiWithUpgrade2024to2027 Float? // NOI with upgrade 2024-2027
+
+  /// @DtoReadOnly
+  /// @example 1224000.00
+  noiWithUpgrade2027to2029 Float? // NOI with upgrade 2027-2029
+
+  /// @DtoReadOnly
+  /// @example 1206000.00
+  noiWithUpgrade2030to2034 Float? // NOI with upgrade 2030-2034
+
+  /// @DtoReadOnly
+  /// @example 1206000.00
+  noiWithUpgrade2035to2039 Float? // NOI with upgrade 2035-2039
+
+  /// @DtoReadOnly
+  /// @example 1206000.00
+  noiWithUpgrade2040to2049 Float? // NOI with upgrade 2040-2049
+
+  // Section 10 - Property Value Analysis (matching LaTeX)
+  /// @DtoReadOnly
+  /// @example 30000000.00
+  propertyValueNoUpgrade Float? // Property value without upgrade
+
+  /// @DtoReadOnly
+  /// @example 30600000.00
+  propertyValueWithUpgrade Float? // Property value with upgrade
+
+  /// @DtoReadOnly
+  /// @example 7650000.00
+  netPropertyValueGain Float? // Net property value gain from upgrade
+
+  /// @DtoReadOnly
+  /// @example 4.0
+  capRateUsed Float? // Cap rate used for property value calculations
+
+  // EFLH and Grid Factors
+  /// @DtoReadOnly
+  /// @example 738
+  eflhHours Int? // Equivalent Full Load Hours from PLUTO lookup
+
+  /// @DtoReadOnly
+  /// @example 35000.00
+  annualBuildingkWhHeatingPTHP Float? // Annual kWh for PTHP heating with EFLH
 
   /// @example "65.5"
   siteEUI String

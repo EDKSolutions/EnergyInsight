@@ -1,4 +1,9 @@
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
-export const prisma = new PrismaClient().$extends(withAccelerate());
+const prisma = new PrismaClient();
+
+// Only use Accelerate if DATABASE_URL starts with prisma://
+export const prismaClient = process.env.DATABASE_URL?.startsWith('prisma://') 
+  ? prisma.$extends(withAccelerate())
+  : prisma;

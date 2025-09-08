@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { NextRequest } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prismaClient } from '@/lib/prisma';
 
 interface CognitoJwtPayload {
   sub: string;
@@ -50,6 +50,14 @@ export async function verifyToken(token: string): Promise<CognitoJwtPayload> {
 }
 
 export async function getUserFromRequest(request: NextRequest): Promise<{ userId: string; email?: string } | null> {
+  // Skip auth if disabled in development
+  if (process.env.DISABLE_AUTH === 'true') {
+    return {
+      userId: 'dev-user-id',
+      email: 'dev@example.com'
+    };
+  }
+
   const authHeader = request.headers.get('authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -61,7 +69,7 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
   try {
     const decoded = await verifyToken(token);
 
-    const user = await prisma.userIdentityProvider.findFirst({
+    const user = await prismaClient.userIdentityProvider.findFirst({
       where: {
         provider: 'cognito',
         providerId: decoded.sub,
@@ -72,7 +80,7 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
       return null;
     }
 
-    const userData = await prisma.user.findUnique({
+    const userData = await prismaClient.user.findUnique({
       where: {
         id: user.userId,
       },
