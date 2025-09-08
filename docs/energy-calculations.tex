@@ -66,7 +66,176 @@
 
 \section{Introduction}
 
-This document outlines the energy calculations for comparing Packaged Terminal Air Conditioner (PTAC) and Packaged Terminal Heat Pump (PTHP) systems, using the standardized variable names from our codebase.
+This document outlines the energy calculations for comparing Packaged Terminal Air Conditioner (PTAC) and Packaged Terminal Heat Pump (PTHP) systems, using the standardized variable names from our codebase and the AI-determined unit distributions described in the following section.
+
+\section{AI-Powered Unit Distribution Analysis}
+
+Before calculating energy impacts of PTAC to PTHP conversions, we must first determine the unit distribution within each building. Many NYC buildings lack detailed unit mix data, making AI analysis essential for accurate energy modeling.
+
+\subsection{Overview and Purpose}
+
+The EDK platform uses artificial intelligence to analyze building characteristics and determine unit distribution when detailed unit mix data is unavailable. This AI-driven approach processes publicly available building data from NYC agencies to infer the most likely unit breakdown for residential buildings.
+
+\subsection{Input Data Sources}
+
+The AI analysis utilizes two primary data sources:
+
+\subsubsection{PLUTO Data (Primary Input)}
+
+Data from the NYC Department of City Planning's Primary Land Use Tax Lot Output (PLUTO) dataset:
+
+\begin{itemize}
+    \item \code{bldgclass}: Building Class Code (e.g., C1, D3, R1, etc.)
+    \item \code{yearbuilt}: Year the building was constructed 
+    \item \code{unitsres}: Total number of residential units
+    \item \code{resarea}: Total residential floor area in square feet
+    \item \code{numfloors}: Number of floors in the building
+    \item \code{boro}: Borough location (Manhattan, Brooklyn, Queens, Bronx, Staten Island)
+\end{itemize}
+
+\subsubsection{Local Law 84 Data (Secondary Input)}
+
+Energy consumption data when available:
+\begin{itemize}
+    \item \code{site\_eui}: Site Energy Use Intensity
+    \item Energy usage patterns and building performance metrics
+\end{itemize}
+
+\subsection{AI Analysis Architecture}
+
+The system employs a LangChain-based graph architecture with multiple processing nodes:
+
+\begin{enumerate}
+    \item \textbf{Start Node}: Validates input PLUTO data
+    \item \textbf{Inference Node}: Uses OpenAI GPT-4 to analyze building characteristics
+    \item \textbf{Calculation Node}: Converts unit breakdown to PTAC unit count
+    \item \textbf{Validation Node}: Ensures output integrity and constraints
+\end{enumerate}
+
+\subsection{Prompt Engineering and Structured Output}
+
+The AI uses carefully crafted prompts with structured output validation to ensure consistent, accurate results:
+
+\begin{lstlisting}
+const prompt = `Analyze a building in ${plutoData.boro} with the following 
+characteristics and provide a detailed breakdown of residential units:
+
+Building Details:
+- Building Class: ${plutoData.bldgclass}
+- Year Built: ${plutoData.yearbuilt}
+- Total Residential Units: ${plutoData.unitsres}
+- Total Residential Area: ${plutoData.resarea} sq ft
+- Number of Floors: ${plutoData.numfloors}
+
+Requirements:
+1. The sum of all unit types MUST equal exactly ${plutoData.unitsres} total units
+2. Consider typical unit layouts and sizes for this building's era and class
+3. Account for the total residential area when determining unit mix
+4. Consider historical building practices from the construction period
+
+You must return:
+1. studio: Number of studio units (must be a non-negative integer)
+2. one_bed: Number of one-bedroom units (must be a non-negative integer)  
+3. two_bed: Number of two-bedroom units (must be a non-negative integer)
+4. three_plus: Number of three or more bedroom units (must be a non-negative integer)
+5. reasoning: A detailed explanation of your calculation process`;
+\end{lstlisting}
+
+\subsection{Structured Output Schema}
+
+The AI response follows a strict TypeScript schema to ensure data integrity:
+
+\begin{lstlisting}
+interface UnitBreakdown {
+  studio: number;      // Number of studio units
+  one_bed: number;     // Number of one-bedroom units  
+  two_bed: number;     // Number of two-bedroom units
+  three_plus: number;  // Number of three or more bedroom units
+  source: 'AI-Assumed';
+}
+
+const unitBreakdownSchema = z.object({
+  studio: z.number().int().min(0).describe('Number of studio units'),
+  one_bed: z.number().int().min(0).describe('Number of one-bedroom units'),
+  two_bed: z.number().int().min(0).describe('Number of two-bedroom units'),
+  three_plus: z.number().int().min(0).describe('Number of three or more bedroom units'),
+  reasoning: z.string().describe('Detailed explanation of the unit breakdown calculation')
+});
+\end{lstlisting}
+
+\subsection{Unit Mix to PTAC Unit Calculation}
+
+Once the AI determines the unit breakdown, the system calculates the total number of PTAC units using industry-standard assumptions about air conditioning needs per room:
+
+\subsubsection{PTAC Unit Allocation Rules}
+
+\begin{itemize}
+    \item \textbf{Studio Units}: 1 PTAC unit (combined living/sleeping area)
+    \item \textbf{One-Bedroom Units}: 2 PTAC units (1 bedroom + 1 living area)
+    \item \textbf{Two-Bedroom Units}: 3 PTAC units (2 bedrooms + 1 living area)
+    \item \textbf{Three+ Bedroom Units}: 4 PTAC units (3 bedrooms + 1 living area)
+\end{itemize}
+
+\subsubsection{PTAC Calculation Formula}
+
+The total building PTAC unit count is calculated as:
+
+\begin{equation}
+N_{\text{ptacUnits}} = N_{\text{studio}} \times 1 + N_{\text{oneBed}} \times 2 + N_{\text{twoBed}} \times 3 + N_{\text{threePlus}} \times 4
+\end{equation}
+
+Where:
+\begin{itemize}
+    \item $N_{\text{studio}}$: Number of studio units
+    \item $N_{\text{oneBed}}$: Number of one-bedroom units  
+    \item $N_{\text{twoBed}}$: Number of two-bedroom units
+    \item $N_{\text{threePlus}}$: Number of three or more bedroom units
+\end{itemize}
+
+\subsection{Implementation Example}
+
+For a 1960s 6-story building with 24 residential units and 18,000 sq ft of residential area:
+
+\begin{lstlisting}
+// AI Analysis Result
+{
+  "studio": 6,
+  "one_bed": 12,
+  "two_bed": 6, 
+  "three_plus": 0,
+  "reasoning": "Based on the building's 1960s construction era and 750 sq ft average unit size, this represents a typical mid-century apartment building layout with a mix of studios and one-bedrooms, plus some larger two-bedroom units for families."
+}
+
+// PTAC Unit Calculation  
+ptacUnits = 6×1 + 12×2 + 6×3 + 0×4 = 6 + 24 + 18 + 0 = 48 total PTAC units
+\end{lstlisting}
+
+\subsection{Validation and Quality Control}
+
+The system implements multiple validation layers:
+
+\begin{enumerate}
+    \item \textbf{Sum Validation}: Unit breakdown must equal PLUTO total residential units
+    \item \textbf{Non-Zero Check}: Prevents all-zero responses that would indicate analysis failure
+    \item \textbf{Integer Validation}: Ensures all unit counts are non-negative integers
+    \item \textbf{Reasoning Requirement}: AI must provide detailed explanation for transparency
+\end{enumerate}
+
+If validation fails, the system throws an error and requests re-analysis rather than proceeding with invalid data.
+
+\subsection{AI Analysis Output}
+
+The complete AI analysis provides:
+
+\begin{itemize}
+    \item Detailed unit breakdown with counts for each unit type
+    \item AI reasoning explaining the analysis logic
+    \item Total PTAC unit count for energy calculations
+    \item Data source attribution (\code{source: 'AI-Assumed'})
+    \item Validation confirmation of constraint compliance
+\end{itemize}
+
+This AI-generated unit distribution then feeds into all subsequent energy calculations, cost analyses, and LL97 compliance assessments covered in the following sections.
 
 \section{PTAC System Calculations}
 
