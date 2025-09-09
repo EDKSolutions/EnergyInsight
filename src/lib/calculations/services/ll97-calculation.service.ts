@@ -18,6 +18,24 @@ import {
   getCompliancePeriod,
   getBECreditCoefficient,
 } from '../constants/ll97-constants';
+import { parsePropertyUse, normalizePropertyType, PropertyUse } from '../utils/property-use-parser';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Interface for LL97 emissions limits data
+interface LL97EmissionsLimit {
+  espm_property_type: string;
+  esmp_category: string;
+  bc_occupancy_group: string;
+  bc_group_for_caps: string;
+  b_special: boolean;
+  limit_2024_2029: number;
+  limit_2030_2034: number;
+  suggested_property_type: string;
+  coverage: string;
+  limit_2035_2039: number;
+  limit_2040_2049: number;
+}
 
 export class LL97CalculationService extends BaseCalculationService<
   LL97CalculationInput,
@@ -27,6 +45,49 @@ export class LL97CalculationService extends BaseCalculationService<
   readonly serviceName = 'll97' as const;
   readonly version = '1.0.0';
   readonly dependencies = ['energy'] as const;
+  
+  private emissionsLimits: LL97EmissionsLimit[] | null = null;
+
+  /**
+   * Loads LL97 emissions limits from JSON file
+   */
+  private getEmissionsLimits(): LL97EmissionsLimit[] {
+    if (this.emissionsLimits === null) {
+      try {
+        const jsonPath = path.join(process.cwd(), 'll97_espm_to_bc_caps_with_2035_2049.json');
+        const jsonData = fs.readFileSync(jsonPath, 'utf8');
+        this.emissionsLimits = JSON.parse(jsonData) as LL97EmissionsLimit[];
+      } catch (error) {
+        console.error('Failed to load LL97 emissions limits:', error);
+        this.emissionsLimits = [];
+      }
+    }
+    return this.emissionsLimits;
+  }
+
+  /**
+   * Finds emissions limit entry for a given property type
+   */
+  private findEmissionsLimit(propertyType: string): LL97EmissionsLimit | null {
+    const limits = this.getEmissionsLimits();
+    const normalizedType = normalizePropertyType(propertyType);
+    
+    // First try exact match
+    let match = limits.find(limit => limit.espm_property_type === normalizedType);
+    
+    if (!match) {
+      // Try case-insensitive match
+      match = limits.find(limit => 
+        limit.espm_property_type.toLowerCase() === normalizedType.toLowerCase()
+      );
+    }
+    
+    if (!match) {
+      console.warn(`No emissions limit found for property type: ${propertyType}`);
+    }
+    
+    return match || null;
+  }
 
   /**
    * Main calculation method implementing LaTeX Section 7
@@ -96,8 +157,58 @@ export class LL97CalculationService extends BaseCalculationService<
   }
 
   private calculateEmissionsBudgets(input: LL97CalculationInput) {
-    // This would typically look up building-specific emissions limits
-    // For now, using simplified calculation based on building size and type
+    // Parse property use breakdown from LL84 data
+    const propertyUses = parsePropertyUse(input.propertyUseBreakdown);
+    
+    if (propertyUses.length === 0) {
+      console.warn('No property use breakdown available, falling back to building class estimation');
+      return this.calculateFallbackEmissionsBudgets(input);
+    }
+
+    let emissionsBudget2024to2029 = 0;
+    let emissionsBudget2030to2034 = 0;
+    let emissionsBudget2035to2039 = 0;
+    let emissionsBudget2040to2049 = 0;
+
+    // Calculate emissions budget for each property type and sum them
+    for (const propertyUse of propertyUses) {
+      const emissionsLimit = this.findEmissionsLimit(propertyUse.propertyType);
+      
+      if (emissionsLimit) {
+        // Convert from tCO2e/sf to building total (multiply by square footage)
+        emissionsBudget2024to2029 += propertyUse.squareFeet * emissionsLimit.limit_2024_2029;
+        emissionsBudget2030to2034 += propertyUse.squareFeet * emissionsLimit.limit_2030_2034;
+        emissionsBudget2035to2039 += propertyUse.squareFeet * emissionsLimit.limit_2035_2039;
+        emissionsBudget2040to2049 += propertyUse.squareFeet * emissionsLimit.limit_2040_2049;
+      } else {
+        // Throw error instead of falling back - we want to identify missing property types
+        throw new Error(`No emissions limit found for property type: ${propertyUse.propertyType}. Please update the LL97 property type mapping.`);
+        
+        // TODO: Fallback logic in case we need it later
+        // console.warn(`No emissions limit found for property type ${propertyUse.propertyType}, using multifamily fallback`);
+        // // Use multifamily housing as fallback
+        // emissionsBudget2024to2029 += propertyUse.squareFeet * 0.00675; // Multifamily 2024-2029
+        // emissionsBudget2030to2034 += propertyUse.squareFeet * 0.00407; // Multifamily 2030-2034
+        // emissionsBudget2035to2039 += propertyUse.squareFeet * 0.002692183; // Multifamily 2035-2039
+        // emissionsBudget2040to2049 += propertyUse.squareFeet * 0.002052731; // Multifamily 2040-2049
+      }
+    }
+    
+    console.log(`[${this.serviceName}] Calculated emissions budgets from ${propertyUses.length} property types`);
+    
+    return {
+      emissionsBudget2024to2029,
+      emissionsBudget2030to2034,
+      emissionsBudget2035to2039,
+      emissionsBudget2040to2049,
+    };
+  }
+
+  /**
+   * Fallback emissions budget calculation when property use breakdown is not available
+   */
+  private calculateFallbackEmissionsBudgets(input: LL97CalculationInput) {
+    // Use simplified calculation based on building size and type as before
     const baseEmissionsLimit = this.getEmissionsLimitForBuildingClass(input.buildingClass);
     
     return {
@@ -223,11 +334,32 @@ export class LL97CalculationService extends BaseCalculationService<
     calculation: Calculations,
     overrides?: LL97CalculationOverrides
   ): LL97CalculationInput {
+    // Extract property use breakdown and emissions from raw LL84 data
+    let propertyUseBreakdown: string | undefined;
+    let totalBuildingEmissions = calculation.totalBuildingEmissionsLL84;
+    
+    if (calculation.rawLL84Data) {
+      try {
+        const ll84Data = calculation.rawLL84Data as any;
+        propertyUseBreakdown = ll84Data.list_of_all_property_use;
+        
+        // Use total_location_based_ghg if available, otherwise fall back to stored value or total_ghg_emissions
+        if (ll84Data.total_location_based_ghg) {
+          totalBuildingEmissions = parseFloat(ll84Data.total_location_based_ghg);
+        } else if (ll84Data.total_ghg_emissions) {
+          totalBuildingEmissions = parseFloat(ll84Data.total_ghg_emissions);
+        }
+      } catch (error) {
+        console.warn('Failed to extract property use breakdown from raw LL84 data:', error);
+      }
+    }
+    
     const baseInput: LL97CalculationInput = {
       calculationId: calculation.id,
       buildingClass: calculation.buildingClass || 'R6',
       totalSquareFeet: parseFloat(calculation.totalSquareFeet) || 0,
-      totalBuildingEmissionsLL84: calculation.totalBuildingEmissionsLL84 || 1250.5, // Default from LaTeX
+      totalBuildingEmissionsLL84: totalBuildingEmissions || 1250.5, // Default from LaTeX
+      propertyUseBreakdown,
       annualBuildingMMBtuHeatingPTAC: calculation.annualBuildingMMBtuHeatingPTAC || 0,
       annualBuildingkWhHeatingPTHP: calculation.annualBuildingkWhHeatingPTHP || 0,
     };

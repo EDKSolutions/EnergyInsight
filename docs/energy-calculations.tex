@@ -438,11 +438,13 @@ Where:
 
 \subsection{Current Building Emissions and Budget}
 
-The building's current emissions are obtained from LL84 reporting:
+The building's current emissions are obtained from LL84 reporting, specifically from the \code{total\_location\_based\_ghg} field in the NYC Local Law 84 dataset\footnote{NYC Open Data API: https://data.cityofnewyork.us/resource/5zyy-y8am.json using \code{total\_location\_based\_ghg} field. This field contains the total GHG emissions in metric tons CO2e calculated using location-based emissions factors.}:
 
 \begin{align}
-\code{totalBuildingEmissionsLL84} &= \text{Current building emissions (metric tons CO2e)}
+\code{totalBuildingEmissionsLL84} &= \text{LL84}[\text{total\_location\_based\_ghg}]
 \end{align}
+
+The property use breakdown is obtained from the \code{list\_of\_all\_property\_use} field, which contains a comma-separated string of property types with their corresponding square footage. For example: ``Office (264550.0), Retail Store (21700.0), Parking (13000.0)''. This string is parsed to extract individual property use types and their associated square footage for emissions budget calculations.
 
 The emissions budget for the building is calculated as the sum of type-specific emissions limits applied to corresponding square footage\footnote{Key LL97 property type limits (tCO2e/sf) across four compliance periods: Office (2024-29: 0.00846, 2030-34: 0.00453, 2035-39: 0.00165234, 2040-49: 0.000581893), Multifamily Housing (2024-29: 0.00892, 2030-34: 0.00453), Hospital (2024-29: 0.02551, 2030-34: 0.01542). Complete mapping available in ll97\_espm\_to\_bc\_caps\_with\_2035\_2049.json.}:
 

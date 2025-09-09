@@ -177,6 +177,14 @@ async function saveCalculationToDatabase(
       boro: plutoData.borough || '',
       totalSquareFeet: plutoData.bldgarea?.toString() || '',
       totalResidentialUnits: plutoData.unitsres?.toString() || '',
+      
+      // Extract LL84 emissions data
+      totalBuildingEmissionsLL84: ll84Data?.total_location_based_ghg 
+        ? parseFloat(ll84Data.total_location_based_ghg)
+        : (ll84Data?.total_ghg_emissions 
+          ? parseFloat(ll84Data.total_ghg_emissions)
+          : null),
+      
       rawPlutoData: JSON.parse(JSON.stringify(plutoData)),
       rawLL84Data: ll84Data
         ? JSON.parse(JSON.stringify(ll84Data))

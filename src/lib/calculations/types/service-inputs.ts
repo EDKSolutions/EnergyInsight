@@ -69,6 +69,9 @@ export interface LL97CalculationInput extends BaseServiceInput {
   // Current emissions from LL84 data
   totalBuildingEmissionsLL84: number;
   
+  // Property use breakdown from LL84 data (list_of_all_property_use field)
+  propertyUseBreakdown?: string;
+  
   // Energy calculations from energy service
   annualBuildingMMBtuHeatingPTAC: number;
   annualBuildingkWhHeatingPTHP: number; // Using EFLH calculation

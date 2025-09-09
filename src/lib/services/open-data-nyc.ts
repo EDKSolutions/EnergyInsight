@@ -34,6 +34,8 @@ export interface LocalLaw84Data {
   source_eui?: string;
   weather_normalized_source_eui?: string;
   total_ghg_emissions?: string;
+  total_location_based_ghg?: string;
+  list_of_all_property_use?: string;
   electricity_use?: string;
   natural_gas_use?: string;
   district_steam_use?: string;
