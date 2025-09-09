@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { PlutoRecord, UnitBreakdown, UnitBreakdownResult } from '../types';
 import { LocalLaw84Data } from '../../services/open-data-nyc';
 
-import { calculateAllEnergyMetrics } from '../../calculations/energy-calculations';
+// Removed energy calculations import - AI service should only do AI analysis
 
 const StateAnnotation = Annotation.Root({
   plutoData: Annotation<PlutoRecord>,
@@ -13,7 +13,7 @@ const StateAnnotation = Annotation.Root({
   calculatedUnits: Annotation<{
     numberOfBedrooms: number;
     ptacUnits: number;
-    energyCalculations: ReturnType<typeof calculateAllEnergyMetrics>;
+    // Removed energyCalculations - will be handled by separate energy service
   }>,
   buildingValues: Annotation<{
     capRate: string;
@@ -179,25 +179,27 @@ export class UnitBreakdownGraph {
       throw new Error('Unit breakdown not available for calculation');
     }
 
+    // Calculate total bedrooms: studio(0) + 1-bed(1) + 2-bed(2) + 3+bed(3)
     const numberOfBedrooms =
-      state.unitBreakdown.studio * 1 +
+      state.unitBreakdown.studio * 0 +
       state.unitBreakdown.one_bed * 1 +
       state.unitBreakdown.two_bed * 2 +
       state.unitBreakdown.three_plus * 3;
 
+    // Calculate PTAC units needed: studio(1) + 1-bed(2) + 2-bed(3) + 3+bed(4)
+    // Based on LaTeX Section 2.1: 1 bedroom + 1 living area per unit
     const ptacUnits =
       state.unitBreakdown.studio * 1 +
-      state.unitBreakdown.one_bed * (1 + 1) +
-      state.unitBreakdown.two_bed * (2 + 1) +
-      state.unitBreakdown.three_plus * (3 + 1);
+      state.unitBreakdown.one_bed * 2 +
+      state.unitBreakdown.two_bed * 3 +
+      state.unitBreakdown.three_plus * 4;
 
-    const energyCalculations = calculateAllEnergyMetrics(ptacUnits);
+    // Removed energy calculations - will be handled by separate energy service
 
     return {
       calculatedUnits: {
         numberOfBedrooms,
         ptacUnits,
-        energyCalculations,
       },
     };
   }
@@ -252,8 +254,7 @@ export class UnitBreakdownGraph {
 
       // Destructure nested objects to avoid repetition
       const { unitBreakdown, calculatedUnits, buildingValues } = finalState;
-      const { energyCalculations, ptacUnits, numberOfBedrooms } =
-        calculatedUnits;
+      const { ptacUnits, numberOfBedrooms } = calculatedUnits;
 
       const result: UnitBreakdownResult = {
         algorithm: 'llm-based',
@@ -262,10 +263,7 @@ export class UnitBreakdownGraph {
         ptacUnits,
         numberOfBedrooms,
 
-        // Spread all energy calculations (Sections 2-6 from LaTeX)
-        ...energyCalculations,
-
-        // Spread all building values
+        // Building characteristics (no energy calculations)
         ...buildingValues,
       };
 

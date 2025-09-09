@@ -4,6 +4,7 @@ import { getPlutoDataByBbl, getLocalLaw84DataByBbl, PlutoData, LocalLaw84Data } 
 import { UnitBreakdownService } from '../ai/services/unit-breakdown.service';
 import { CreateCalculationInputDto } from '../types/dtos';
 import { UnitBreakdownResult, PlutoRecord } from '../ai/types';
+import { calculationDependencyManager } from '../calculations/services/calculation-dependency-manager';
 
 const unitBreakdownService = new UnitBreakdownService();
 
@@ -61,6 +62,17 @@ export async function createCalculation(
       plutoData,
       ll84Data,
     );
+
+    // Execute all calculation services to populate the new database fields
+    console.log('Executing all calculation services for new calculation:', calculation.id);
+    try {
+      await calculationDependencyManager.executeAllServices(calculation.id);
+      console.log('Successfully executed all calculation services');
+    } catch (error) {
+      console.error('Error executing calculation services:', error);
+      // Don't throw - we still want to return the calculation even if services fail
+      // The services can be re-run later via the API endpoints
+    }
 
     return calculation;
   } catch (error) {
@@ -139,7 +151,7 @@ async function saveCalculationToDatabase(
   console.log('Saving calculation to database');
   const calculation = await prisma.calculations.create({
     data: {
-      // Building analysis results
+      // AI Unit Breakdown Results
       ptacUnits: analysisResult.ptacUnits.toString(),
       capRate: analysisResult.capRate,
       buildingValue: analysisResult.buildingValue,
@@ -149,41 +161,11 @@ async function saveCalculationToDatabase(
       occupancyRate: analysisResult.occupancyRate,
       maintenanceCost: analysisResult.maintenanceCost,
 
-      // Section 2.2 - Building-Level PTAC Calculations
-      annualBuildingMMBtuCoolingPTAC:
-        analysisResult.annualBuildingMMBtuCoolingPTAC,
-      annualBuildingMMBtuHeatingPTAC:
-        analysisResult.annualBuildingMMBtuHeatingPTAC,
-      annualBuildingMMBtuTotalPTAC:
-        analysisResult.annualBuildingMMBtuTotalPTAC,
+      // Store AI analysis metadata
+      unitBreakdownSource: 'AI-Assumed',
+      aiAnalysisNotes: analysisResult.notes,
 
-      // Section 3 - PTHP Building Calculations
-      annualBuildingMMBtuHeatingPTHP:
-        analysisResult.annualBuildingMMBtuHeatingPTHP,
-      annualBuildingMMBtuCoolingPTHP:
-        analysisResult.annualBuildingMMBtuCoolingPTHP,
-      annualBuildingMMBtuTotalPTHP:
-        analysisResult.annualBuildingMMBtuTotalPTHP,
-
-      // Section 4 - Energy Reduction Analysis
-      energyReductionPercentage: analysisResult.energyReductionPercentage,
-
-      // Section 5 - Retrofit Cost Calculation
-      totalRetrofitCost: analysisResult.totalRetrofitCost,
-
-      // Section 6 - Energy Cost Savings Calculation
-      annualBuildingThermsHeatingPTAC:
-        analysisResult.annualBuildingThermsHeatingPTAC,
-      annualBuildingKwhCoolingPTAC:
-        analysisResult.annualBuildingKwhCoolingPTAC,
-      annualBuildingKwhHeatingPTHP:
-        analysisResult.annualBuildingKwhHeatingPTHP,
-      annualBuildingKwhCoolingPTHP:
-        analysisResult.annualBuildingKwhCoolingPTHP,
-      annualBuildingCostPTAC: analysisResult.annualBuildingCostPTAC,
-      annualBuildingCostPTHP: analysisResult.annualBuildingCostPTHP,
-      annualEnergySavings: analysisResult.annualEnergySavings,
-
+      // Building characteristics from PLUTO
       bbl: bbl,
       buildingName: addressData.address,
       address: addressData.address,
@@ -199,6 +181,13 @@ async function saveCalculationToDatabase(
       rawLL84Data: ll84Data
         ? JSON.parse(JSON.stringify(ll84Data))
         : undefined,
+      
+      // Initialize service metadata
+      serviceVersions: {
+        'ai-breakdown': '1.0.0',
+      },
+      lastCalculatedService: 'ai-breakdown',
+
       users: {
         create: {
           userId,

@@ -351,15 +351,6 @@ The total annual building energy consumption for PTHP:
 \code{annualBuildingMMBtuTotalPTHP} = \code{annualBuildingMMBtuCoolingPTHP} + \code{annualBuildingMMBtuHeatingPTHP}
 \end{equation}
 
-\subsection{PTHP Building Totals for Cost Calculations}
-
-\begin{equation}
-\code{annualBuildingKwhHeatingPTHP} = N_{ptacUnits} \times \code{annualUnitKwhHeatingPTHP}
-\end{equation}
-
-\begin{equation}
-\code{annualBuildingKwhCoolingPTHP} = N_{ptacUnits} \times \code{annualUnitKwhCoolingPTHP}
-\end{equation}
 
 \section{Energy Reduction Analysis}
 
@@ -392,7 +383,9 @@ Where:
 
 \section{Energy Cost Savings Calculation}
 
-The building energy totals for PTAC need to be expressed in kWh and therms so we can calculate price:
+To calculate costs, we need building totals in kWh and therms.
+
+\subsection{PTAC Building Totals for Cost Calculations}
 
 \begin{equation}
 \code{annualBuildingThermsHeatingPTAC} = N_{ptacUnits} \times \code{annualUnitThermsHeatingPTAC}
@@ -401,6 +394,23 @@ The building energy totals for PTAC need to be expressed in kWh and therms so we
 \begin{equation}
 \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times \code{annualUnitKwhCoolingPTAC}
 \end{equation}
+
+Where \code{annualUnitKwhCoolingPTAC} = 16,000 kWh per unit per year.
+
+\subsection{PTHP Building Totals for Cost Calculations}
+
+For PTHP systems, the kWh values needed for cost calculations are:
+
+\begin{itemize}
+    \item \code{annualBuildingkWhHeatingPTHP}: Already calculated in Section 4.1.1 using EFLH methodology
+    \item \code{annualBuildingKwhCoolingPTHP}: Same as PTAC cooling (PTHP cooling efficiency assumed equivalent)
+\end{itemize}
+
+\begin{equation}
+\code{annualBuildingKwhCoolingPTHP} = \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times 16,000
+\end{equation}
+
+\subsection{Cost Calculations}
 
 The annual energy cost savings from switching to PTHP systems is calculated as:
 

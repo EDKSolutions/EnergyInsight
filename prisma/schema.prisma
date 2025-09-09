@@ -9,9 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("PRISMA_DATABASE_URL")
-  directUrl = env("POSTGRES_URL")
+  provider = "postgresql"
+  url      = env("PRISMA_DATABASE_URL")
 }
 
 model User {
@@ -154,6 +153,199 @@ model Calculations {
   /// @DtoReadOnly
   /// @example 31642.86
   annualEnergySavings Float? // PTAC cost - PTHP cost
+
+  // EFLH Data for accurate PTHP heating calculations
+  /// @DtoReadOnly
+  /// @example 738
+  eflhHours Int? // Equivalent Full Load Hours from PLUTO lookup
+
+  /// @DtoReadOnly
+  /// @example 145000.50
+  annualBuildingkWhHeatingPTHP Float? // More accurate PTHP heating using EFLH
+
+  // AI Unit Breakdown Results
+  /// @DtoReadOnly
+  /// @example "AI-Assumed"
+  unitBreakdownSource String? // "AI-Assumed" or "User-Provided"
+  
+  /// @DtoReadOnly
+  aiAnalysisNotes String? // AI reasoning for unit breakdown
+
+  // Section 7 - LL97 Emissions and Compliance Analysis
+  /// @DtoReadOnly
+  /// @example 245.50
+  emissionsBudget2024to2029 Float? // tCO2e emissions budget 2024-2029
+  
+  /// @DtoReadOnly
+  /// @example 189.25
+  emissionsBudget2030to2034 Float? // tCO2e emissions budget 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 69.75
+  emissionsBudget2035to2039 Float? // tCO2e emissions budget 2035-2039
+  
+  /// @DtoReadOnly
+  /// @example 24.60
+  emissionsBudget2040to2049 Float? // tCO2e emissions budget 2040-2049
+  
+  /// @DtoReadOnly
+  /// @example 1250.50
+  totalBuildingEmissionsLL84 Float? // Current building emissions from LL84 data
+  
+  /// @DtoReadOnly
+  /// @example 268750.00
+  annualFeeExceedingBudget2024to2029 Float? // Annual LL97 fee 2024-2029 without upgrade
+  
+  /// @DtoReadOnly
+  /// @example 284250.00
+  annualFeeExceedingBudget2030to2034 Float? // Annual LL97 fee 2030-2034 without upgrade
+  
+  /// @DtoReadOnly
+  /// @example 317450.00
+  annualFeeExceedingBudget2035to2039 Float? // Annual LL97 fee 2035-2039 without upgrade
+  
+  /// @DtoReadOnly
+  /// @example 328650.00
+  annualFeeExceedingBudget2040to2049 Float? // Annual LL97 fee 2040-2049 without upgrade
+  
+  /// @DtoReadOnly
+  /// @example 188.65
+  beCreditBefore2027 Float? // Beneficial Electrification credit before 2027
+  
+  /// @DtoReadOnly
+  /// @example 94.33
+  beCredit2027to2029 Float? // Beneficial Electrification credit 2027-2029
+  
+  /// @DtoReadOnly
+  /// @example 1195.25
+  adjustedTotalBuildingEmissions2024to2029 Float? // Building emissions after PTHP upgrade 2024-2029
+  
+  /// @DtoReadOnly
+  /// @example 1180.50
+  adjustedTotalBuildingEmissions2030to2034 Float? // Building emissions after PTHP upgrade 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 1180.50
+  adjustedTotalBuildingEmissions2035to2039 Float? // Building emissions after PTHP upgrade 2035-2039
+  
+  /// @DtoReadOnly
+  /// @example 1180.50
+  adjustedTotalBuildingEmissions2040to2049 Float? // Building emissions after PTHP upgrade 2040-2049
+  
+  /// @DtoReadOnly
+  /// @example 15250.00
+  adjustedAnnualFeeBefore2027 Float? // LL97 fee with upgrade and BE credit before 2027
+  
+  /// @DtoReadOnly
+  /// @example 25450.00
+  adjustedAnnualFee2027to2029 Float? // LL97 fee with upgrade and BE credit 2027-2029
+  
+  /// @DtoReadOnly
+  /// @example 83650.00
+  adjustedAnnualFee2030to2034 Float? // LL97 fee with upgrade 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 296750.00
+  adjustedAnnualFee2035to2039 Float? // LL97 fee with upgrade 2035-2039
+  
+  /// @DtoReadOnly
+  /// @example 307950.00
+  adjustedAnnualFee2040to2049 Float? // LL97 fee with upgrade 2040-2049
+
+  // Section 8 - Financial Analysis
+  /// @DtoReadOnly
+  /// @example 253500.00
+  annualLL97FeeAvoidance2024to2027 Float? // Annual fee savings 2024-2027
+  
+  /// @DtoReadOnly
+  /// @example 242800.00
+  annualLL97FeeAvoidance2027to2029 Float? // Annual fee savings 2027-2029
+  
+  /// @DtoReadOnly
+  /// @example 200600.00
+  annualLL97FeeAvoidance2030to2034 Float? // Annual fee savings 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 20700.00
+  annualLL97FeeAvoidance2035to2039 Float? // Annual fee savings 2035-2039
+  
+  /// @DtoReadOnly
+  /// @example 20700.00
+  annualLL97FeeAvoidance2040to2049 Float? // Annual fee savings 2040-2049
+  
+  /// @DtoReadOnly
+  /// @example 2037
+  simplePaybackPeriod Int? // Year when cumulative savings equal retrofit cost
+  
+  /// @DtoReadOnly
+  cumulativeSavingsByYear Json? // Array of cumulative savings by year
+  
+  /// @DtoReadOnly
+  loanBalanceByYear Json? // Array of remaining loan balance by year
+  
+  /// @DtoReadOnly
+  /// @example 4223.50
+  monthlyPayment Float? // Monthly loan payment
+  
+  /// @DtoReadOnly
+  /// @example 260235.00
+  totalInterestPaid Float? // Total interest paid over loan term
+
+  // Section 9 - NOI Analysis
+  /// @DtoReadOnly
+  /// @example 1200000.00
+  currentNOI Float? // Current Net Operating Income
+  
+  /// @DtoReadOnly
+  /// @example 1050000.00
+  noiNoUpgrade2024to2029 Float? // NOI without upgrade 2024-2029
+  
+  /// @DtoReadOnly
+  /// @example 900000.00
+  noiNoUpgrade2030to2034 Float? // NOI without upgrade 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 900000.00
+  noiNoUpgradePost2035 Float? // NOI without upgrade post-2035
+  
+  /// @DtoReadOnly
+  /// @example 1224000.00
+  noiWithUpgrade2024to2027 Float? // NOI with upgrade 2024-2027
+  
+  /// @DtoReadOnly
+  /// @example 1224000.00
+  noiWithUpgrade2027to2029 Float? // NOI with upgrade 2027-2029
+  
+  /// @DtoReadOnly
+  /// @example 1206000.00
+  noiWithUpgrade2030to2034 Float? // NOI with upgrade 2030-2034
+  
+  /// @DtoReadOnly
+  /// @example 1206000.00
+  noiWithUpgradePost2035 Float? // NOI with upgrade post-2035
+
+  // Section 10 - Property Value Analysis
+  /// @DtoReadOnly
+  /// @example 22500000.00
+  propertyValueNoUpgrade Float? // Property value without upgrade
+  
+  /// @DtoReadOnly
+  /// @example 30150000.00
+  propertyValueWithUpgrade Float? // Property value with upgrade
+  
+  /// @DtoReadOnly
+  /// @example 7650000.00
+  netPropertyValueGain Float? // Net property value increase from upgrade
+
+  // Service Metadata
+  /// @DtoReadOnly
+  overriddenFields Json? // Object tracking which fields have been overridden
+  
+  /// @DtoReadOnly
+  lastCalculatedService String? // Which service was last calculated
+  
+  /// @DtoReadOnly
+  serviceVersions Json? // Service versions for tracking compatibility
 
   /// @example "65.5"
   siteEUI String

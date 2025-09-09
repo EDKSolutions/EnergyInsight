@@ -26,15 +26,28 @@ export interface UnitBreakdown {
   source: 'AI-Assumed';
 }
 
+// NEW: Clean AI-only result interface (no energy calculations)
 export interface UnitBreakdownResult {
   algorithm: string;
   notes: string;
   graphVersion?: string;
   runTimestamp?: string;
   unitBreakdown: UnitBreakdown;
-  ptacUnits: number;
+  ptacUnits: number; // Calculated from unit mix: studio×1 + one_bed×2 + two_bed×3 + three_plus×4
   numberOfBedrooms: number;
 
+  // Building characteristics (from LL84 data or defaults)
+  capRate: string;
+  buildingValue: string;
+  siteEUI: string;
+  occupancyRate: string;
+  maintenanceCost: string;
+  energyProfile: string;
+}
+
+// DEPRECATED: Legacy interface for backward compatibility during transition
+// TODO: Remove this once all references are updated to use separate services
+export interface LegacyUnitBreakdownResult extends UnitBreakdownResult {
   // Section 2.2 - Building-Level PTAC Calculations (matching LaTeX)
   annualBuildingMMBtuCoolingPTAC: number;
   annualBuildingMMBtuHeatingPTAC: number;
@@ -59,14 +72,6 @@ export interface UnitBreakdownResult {
   annualBuildingCostPTAC: number;
   annualBuildingCostPTHP: number;
   annualEnergySavings: number;
-
-  // Building Values (from LL84 data or defaults)
-  capRate: string;
-  buildingValue: string;
-  siteEUI: string;
-  occupancyRate: string;
-  maintenanceCost: string;
-  energyProfile: string;
 }
 
 export interface AIServiceInterface {
