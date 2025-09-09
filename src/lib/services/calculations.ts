@@ -4,6 +4,7 @@ import { getPlutoDataByBbl, getLocalLaw84DataByBbl, PlutoData, LocalLaw84Data } 
 import { UnitBreakdownService } from '../ai/services/unit-breakdown.service';
 import { CreateCalculationInputDto } from '../types/dtos';
 import { UnitBreakdownResult, PlutoRecord } from '../ai/types';
+import { calculationOrchestrator, CalculationInput } from '../calculations/orchestrators/calculation-orchestrator';
 
 const unitBreakdownService = new UnitBreakdownService();
 
@@ -62,7 +63,31 @@ export async function createCalculation(
       ll84Data,
     );
 
-    return calculation;
+    // Run complete calculation pipeline using orchestrator
+    console.log('Starting complete calculation pipeline');
+    try {
+      const calculationInput: CalculationInput = {
+        calculationId: calculation.id,
+        plutoData: plutoRecord,
+        ll84Data,
+        unitBreakdown: analysisResult.unitBreakdown,
+        ptacUnits: analysisResult.ptacUnits
+      };
+
+      await calculationOrchestrator.executeFullCalculation(calculationInput);
+      console.log('Complete calculation pipeline finished successfully');
+      
+      // Return updated calculation with all computed fields
+      const updatedCalculation = await prismaClient.calculations.findUnique({
+        where: { id: calculation.id }
+      });
+      
+      return updatedCalculation || calculation;
+    } catch (orchestratorError) {
+      console.error('Error in calculation orchestrator:', orchestratorError);
+      // Return the basic calculation even if orchestrator fails
+      return calculation;
+    }
   } catch (error) {
     console.error(
       `Error creating calculation: ${(error as Error).message}`,
