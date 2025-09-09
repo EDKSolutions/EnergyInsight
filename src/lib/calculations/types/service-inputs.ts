@@ -104,11 +104,13 @@ export interface FinancialCalculationInput extends BaseServiceInput {
   adjustedAnnualFee2040to2049: number;
   
   // Overridable financial parameters (optional with defaults)
+  loanPrincipal?: number;                    // Default: totalRetrofitCost
   loanTermYears?: number;                    // Default: 15
   annualInterestRate?: number;               // Default: 0.06
   analysisStartYear?: number;                // Default: 2024
   analysisEndYear?: number;                  // Default: 2050
   upgradeYear?: number;                      // Default: 2025
+  loanStartYear?: number;                    // Default: 2025
 }
 
 // 5. NOI Service Input (Section 9)

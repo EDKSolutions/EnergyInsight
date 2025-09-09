@@ -60,11 +60,13 @@ export interface FinancialCalculationOverrides {
   // Override financial parameters
   totalRetrofitCost?: number;                // Override calculated retrofit cost
   annualEnergySavings?: number;              // Override calculated energy savings
+  loanPrincipal?: number;                    // Override loan principal (defaults to totalRetrofitCost)
   loanTermYears?: number;                    // Override loan term
   annualInterestRate?: number;               // Override interest rate
   analysisStartYear?: number;                // Override analysis start year
   analysisEndYear?: number;                  // Override analysis end year
   upgradeYear?: number;                      // Override when upgrade happens
+  loanStartYear?: number;                    // Override when loan starts
 }
 
 export interface NOICalculationOverrides {

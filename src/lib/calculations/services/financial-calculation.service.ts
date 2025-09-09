@@ -19,6 +19,7 @@ import {
   calculateSimplePaybackPeriod,
   generateAnalysisYears,
   defaultFinancialConfig,
+  CumulativeSavingsData,
 } from '../constants/financial-constants';
 
 export class FinancialCalculationService extends BaseCalculationService<
@@ -40,17 +41,25 @@ export class FinancialCalculationService extends BaseCalculationService<
       analysisStartYear: input.analysisStartYear ?? defaultFinancialConfig.analysisStartYear,
       analysisEndYear: input.analysisEndYear ?? defaultFinancialConfig.analysisEndYear,
       upgradeYear: input.upgradeYear ?? defaultFinancialConfig.upgradeYear,
+      loanStartYear: input.loanStartYear ?? defaultFinancialConfig.loanStartYear,
     };
+
+    // Determine loan principal (can be overridden separately from totalRetrofitCost)
+    const loanPrincipal = input.loanPrincipal ?? input.totalRetrofitCost;
 
     // Step 1: Calculate LL97 fee avoidance by period
     const feeAvoidance = this.calculateLL97FeeAvoidance(input);
 
     // Step 2: Calculate annual savings by year (varying by LL97 periods)
-    const { cumulativeSavingsByYear, annualSavingsByYear } = this.calculateCumulativeSavingsByYear(
+    const { cumulativeSavingsData } = this.calculateCumulativeSavingsByYear(
       input.annualEnergySavings,
       feeAvoidance,
       config
     );
+
+    // Extract arrays for backward compatibility with existing functions
+    const cumulativeSavingsByYear = cumulativeSavingsData.map(data => data.cumulativeSavings);
+    const annualSavingsByYear = cumulativeSavingsData.map(data => data.annualSavings);
 
     // Step 3: Calculate simple payback period
     const simplePaybackPeriod = calculateSimplePaybackPeriod(
@@ -59,7 +68,7 @@ export class FinancialCalculationService extends BaseCalculationService<
     );
 
     // Step 4: Calculate loan analysis
-    const loanAnalysis = this.calculateLoanAnalysis(input.totalRetrofitCost, config);
+    const loanAnalysis = this.calculateLoanAnalysis(loanPrincipal, config);
 
     // Step 5: Calculate summary metrics
     const summary = this.calculateSummaryMetrics(
@@ -74,7 +83,7 @@ export class FinancialCalculationService extends BaseCalculationService<
       analysisYears: generateAnalysisYears(config),
       annualSavingsByYear,
       loanBalanceByYear: loanAnalysis.loanBalanceByYear,
-      cumulativeSavingsByYear,
+      cumulativeSavingsByYear: cumulativeSavingsData,
     };
 
     const result: FinancialCalculationOutput = {
@@ -87,7 +96,7 @@ export class FinancialCalculationService extends BaseCalculationService<
 
       // Payback analysis
       simplePaybackPeriod,
-      cumulativeSavingsByYear,
+      cumulativeSavingsByYear: cumulativeSavingsData,
 
       // Loan analysis
       ...loanAnalysis,
@@ -124,22 +133,21 @@ export class FinancialCalculationService extends BaseCalculationService<
     config: typeof defaultFinancialConfig
   ) {
     const analysisYears = generateAnalysisYears(config);
-    const cumulativeSavingsByYear: number[] = [];
-    const annualSavingsByYear: number[] = [];
+    const cumulativeSavingsData: CumulativeSavingsData[] = [];
     let cumulativeSavings = 0;
 
     for (const year of analysisYears) {
       let annualSavings = 0;
 
       if (year < config.savingsStartYear) {
-        // No savings during upgrade year
+        // No savings during upgrade year or before savings start
         annualSavings = 0;
       } else {
-        // Energy savings apply every year
+        // Energy savings apply every year after savings start
         annualSavings = annualEnergySavings;
 
-        // Add LL97 fee avoidance based on year
-        if (year >= 2024 && year <= 2026) {
+        // Add LL97 fee avoidance based on year - ONLY from 2026 onwards
+        if (year >= 2026 && year <= 2026) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2024to2027;
         } else if (year >= 2027 && year <= 2029) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2027to2029;
@@ -147,29 +155,32 @@ export class FinancialCalculationService extends BaseCalculationService<
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2030to2034;
         } else if (year >= 2035 && year <= 2039) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2035to2039;
-        } else {
+        } else if (year >= 2040) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2040to2049;
         }
       }
 
       cumulativeSavings += annualSavings;
-      annualSavingsByYear.push(annualSavings);
-      cumulativeSavingsByYear.push(cumulativeSavings);
+      cumulativeSavingsData.push({
+        year,
+        annualSavings,
+        cumulativeSavings
+      });
     }
 
-    return { cumulativeSavingsByYear, annualSavingsByYear };
+    return { cumulativeSavingsData };
   }
 
-  private calculateLoanAnalysis(totalRetrofitCost: number, config: typeof defaultFinancialConfig) {
+  private calculateLoanAnalysis(loanPrincipal: number, config: typeof defaultFinancialConfig) {
     const monthlyPayment = calculateMonthlyPayment(
-      totalRetrofitCost,
+      loanPrincipal,
       config.annualInterestRate,
       config.loanTermYears
     );
 
-    const loanBalanceByYear = generateLoanBalanceArray(totalRetrofitCost, config);
+    const loanBalanceByYear = generateLoanBalanceArray(loanPrincipal, config);
 
-    const totalInterestPaid = (monthlyPayment * 12 * config.loanTermYears) - totalRetrofitCost;
+    const totalInterestPaid = (monthlyPayment * 12 * config.loanTermYears) - loanPrincipal;
 
     return {
       loanBalanceByYear,

@@ -15,6 +15,7 @@ export const ANALYSIS_PERIODS = {
   analysisStartYear: 2024,  // Start year for financial analysis
   analysisEndYear: 2050,    // End year for financial analysis (26-year period)
   upgradeYear: 2025,        // Default year when upgrade completes
+  loanStartYear: 2025,      // Default year when loan starts (same as upgrade year)
   savingsStartYear: 2026,   // Year when savings begin (after upgrade completion)
 } as const;
 
@@ -26,12 +27,15 @@ export interface FinancialAnalysisConfig {
   analysisStartYear: number;
   analysisEndYear: number;
   upgradeYear: number;
+  loanStartYear: number;
   savingsStartYear: number;
 }
 
 // Default Financial Configuration
 export const defaultFinancialConfig: FinancialAnalysisConfig = {
-  ...LOAN_CONSTANTS,
+  loanTermYears: LOAN_CONSTANTS.defaultLoanTermYears,
+  annualInterestRate: LOAN_CONSTANTS.defaultAnnualInterestRate,
+  capRate: LOAN_CONSTANTS.defaultCapRate,
   ...ANALYSIS_PERIODS,
 };
 
@@ -78,6 +82,7 @@ export function calculateRemainingBalance(
   yearsElapsed: number
 ): number {
   if (yearsElapsed >= termYears) return 0;
+  if (yearsElapsed === 0) return principal; // Return full principal at loan origination
   
   const monthlyRate = annualRate / 12;
   const totalPayments = termYears * 12;
@@ -98,25 +103,32 @@ export function calculateRemainingBalance(
  * 
  * @param principal - Loan principal amount
  * @param config - Financial analysis configuration
- * @returns Array of remaining loan balance for each year
+ * @returns Array of loan balance data with year information
  */
 export function generateLoanBalanceArray(
   principal: number,
   config: FinancialAnalysisConfig
-): number[] {
+): LoanBalanceData[] {
   const years = generateAnalysisYears(config);
-  const startYear = config.upgradeYear; // Loan starts when upgrade completes
+  const startYear = config.loanStartYear; // Loan starts when loan originates
   
   return years.map(year => {
     const yearsElapsed = year - startYear;
-    if (yearsElapsed < 0) return 0; // No loan yet
+    let balance = 0;
     
-    return calculateRemainingBalance(
-      principal,
-      config.annualInterestRate,
-      config.loanTermYears,
-      yearsElapsed
-    );
+    if (yearsElapsed >= 0) {
+      balance = calculateRemainingBalance(
+        principal,
+        config.annualInterestRate,
+        config.loanTermYears,
+        yearsElapsed
+      );
+    }
+    
+    return {
+      year,
+      balance
+    };
   });
 }
 
@@ -164,3 +176,16 @@ export const FINANCIAL_CONSTANTS = {
 
 // Type for financial constant keys
 export type FinancialConstantKey = keyof typeof FINANCIAL_CONSTANTS;
+
+// Type for loan balance data with year
+export interface LoanBalanceData {
+  year: number;
+  balance: number;
+}
+
+// Type for cumulative savings data with year
+export interface CumulativeSavingsData {
+  year: number;
+  cumulativeSavings: number;
+  annualSavings: number;
+}

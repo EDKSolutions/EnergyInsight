@@ -126,10 +126,17 @@ export interface FinancialCalculationOutput extends BaseServiceOutput {
   
   // Payback analysis
   simplePaybackPeriod: number; // Year when payback is achieved (-1 if not achieved)
-  cumulativeSavingsByYear: number[]; // Array of cumulative savings by year
+  cumulativeSavingsByYear: Array<{
+    year: number;
+    cumulativeSavings: number;
+    annualSavings: number;
+  }>; // Array of cumulative savings data with year information
   
   // Loan analysis
-  loanBalanceByYear: number[];
+  loanBalanceByYear: Array<{
+    year: number;
+    balance: number;
+  }>;
   monthlyPayment: number;
   totalInterestPaid: number;
   
@@ -145,8 +152,15 @@ export interface FinancialCalculationOutput extends BaseServiceOutput {
   visualization: {
     analysisYears: number[];
     annualSavingsByYear: number[];
-    loanBalanceByYear: number[];
-    cumulativeSavingsByYear: number[];
+    loanBalanceByYear: Array<{
+      year: number;
+      balance: number;
+    }>;
+    cumulativeSavingsByYear: Array<{
+      year: number;
+      cumulativeSavings: number;
+      annualSavings: number;
+    }>;
   };
   
   // Configuration used
@@ -156,6 +170,7 @@ export interface FinancialCalculationOutput extends BaseServiceOutput {
     analysisStartYear: number;
     analysisEndYear: number;
     upgradeYear: number;
+    loanStartYear: number;
   };
 }
 
