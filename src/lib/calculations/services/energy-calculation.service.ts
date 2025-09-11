@@ -60,9 +60,9 @@ export class EnergyCalculationService extends BaseCalculationService<
 
     // Original unit calculations for cost analysis
     const annualBuildingThermsHeatingPTAC = input.ptacUnits * config.annualUnitThermsHeatingPTAC;
-    const annualBuildingKwhCoolingPTAC = input.ptacUnits * config.annualUnitKwhCoolingPTAC;
+    const annualBuildingkWhCoolingPTAC = input.ptacUnits * config.annualUnitKwhCoolingPTAC;
     const annualBuildingCostPTAC = 
-      (annualBuildingKwhCoolingPTAC * config.priceKwhHour) +
+      (annualBuildingkWhCoolingPTAC * config.priceKwhHour) +
       (annualBuildingThermsHeatingPTAC * config.priceThermHour);
 
     // Section 3 - PTHP Building Calculations (with EFLH for accuracy)
@@ -77,10 +77,10 @@ export class EnergyCalculationService extends BaseCalculationService<
     const annualBuildingMMBtuTotalPTHP = annualBuildingMMBtuHeatingPTHP + annualBuildingMMBtuCoolingPTHP;
 
     // PTHP cost calculations
-    const annualBuildingKwhCoolingPTHP = annualBuildingKwhCoolingPTAC; // Same as PTAC
+    const annualBuildingkWhCoolingPTHP = annualBuildingkWhCoolingPTAC; // Same as PTAC
     const annualBuildingCostPTHP = 
       (annualBuildingkWhHeatingPTHP * config.priceKwhHour) +
-      (annualBuildingKwhCoolingPTHP * config.priceKwhHour);
+      (annualBuildingkWhCoolingPTHP * config.priceKwhHour);
 
     // Section 4 - Energy Reduction Analysis
     const energyReductionPercentage = ((annualBuildingMMBtuTotalPTAC - annualBuildingMMBtuTotalPTHP) / annualBuildingMMBtuTotalPTAC) * 100;
@@ -104,7 +104,7 @@ export class EnergyCalculationService extends BaseCalculationService<
       annualBuildingMMBtuHeatingPTAC,
       annualBuildingMMBtuTotalPTAC,
       annualBuildingThermsHeatingPTAC,
-      annualBuildingKwhCoolingPTAC,
+      annualBuildingkWhCoolingPTAC,
       annualBuildingCostPTAC,
 
       // Section 3 - PTHP calculations
@@ -112,7 +112,7 @@ export class EnergyCalculationService extends BaseCalculationService<
       annualBuildingMMBtuHeatingPTHP,
       annualBuildingMMBtuCoolingPTHP,
       annualBuildingMMBtuTotalPTHP,
-      annualBuildingKwhCoolingPTHP,
+      annualBuildingkWhCoolingPTHP,
       annualBuildingCostPTHP,
 
       // Section 4 - Energy reduction analysis
@@ -230,14 +230,14 @@ export class EnergyCalculationService extends BaseCalculationService<
         annualBuildingMMBtuHeatingPTAC: output.annualBuildingMMBtuHeatingPTAC,
         annualBuildingMMBtuTotalPTAC: output.annualBuildingMMBtuTotalPTAC,
         annualBuildingThermsHeatingPTAC: output.annualBuildingThermsHeatingPTAC,
-        annualBuildingKwhCoolingPTAC: output.annualBuildingKwhCoolingPTAC,
+        annualBuildingkWhCoolingPTAC: output.annualBuildingkWhCoolingPTAC,
         annualBuildingCostPTAC: output.annualBuildingCostPTAC,
 
         // Section 3 - PTHP Building Calculations
         annualBuildingMMBtuHeatingPTHP: output.annualBuildingMMBtuHeatingPTHP,
         annualBuildingMMBtuCoolingPTHP: output.annualBuildingMMBtuCoolingPTHP,
         annualBuildingMMBtuTotalPTHP: output.annualBuildingMMBtuTotalPTHP,
-        annualBuildingKwhCoolingPTHP: output.annualBuildingKwhCoolingPTHP,
+        annualBuildingkWhCoolingPTHP: output.annualBuildingkWhCoolingPTHP,
         annualBuildingCostPTHP: output.annualBuildingCostPTHP,
 
         // Section 4 - Energy Reduction Analysis

@@ -217,21 +217,21 @@ export const swaggerDefinition = {
               example: 25500.00,
               description: 'Annual building gas heating consumption in therms for PTAC systems'
             },
-            annualBuildingKwhCoolingPTAC: {
+            annualBuildingkWhCoolingPTAC: {
               type: 'number',
               format: 'float',
               nullable: true,
               example: 160000.00,
               description: 'Annual building electric cooling consumption in kWh for PTAC systems'
             },
-            annualBuildingKwhHeatingPTHP: {
+            annualBuildingkWhHeatingPTHP: {
               type: 'number',
               format: 'float',
               nullable: true,
               example: 21428.57,
               description: 'Annual building electric heating consumption in kWh for PTHP systems'
             },
-            annualBuildingKwhCoolingPTHP: {
+            annualBuildingkWhCoolingPTHP: {
               type: 'number',
               format: 'float',
               nullable: true,

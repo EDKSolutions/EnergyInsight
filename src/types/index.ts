@@ -31,9 +31,9 @@ export interface Calculations {
   energyReductionPercentage?: number
   totalRetrofitCost?: number
   annualBuildingThermsHeatingPTAC?: number
-  annualBuildingKwhCoolingPTAC?: number
-  annualBuildingKwhHeatingPTHP?: number
-  annualBuildingKwhCoolingPTHP?: number
+  annualBuildingkWhCoolingPTAC?: number
+  annualBuildingkWhHeatingPTHP?: number
+  annualBuildingkWhCoolingPTHP?: number
   annualBuildingCostPTAC?: number
   annualBuildingCostPTHP?: number
   annualEnergySavings?: number

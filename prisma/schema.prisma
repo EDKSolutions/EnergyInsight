@@ -126,15 +126,11 @@ model Calculations {
 
   /// @DtoReadOnly
   /// @example 160000.00  
-  annualBuildingKwhCoolingPTAC Float? // N_ptacUnits × annualUnitKwhCoolingPTAC
-
-  /// @DtoReadOnly
-  /// @example 21428.57
-  annualBuildingKwhHeatingPTHP Float? // Calculated from COP conversion
+  annualBuildingkWhCoolingPTAC Float? // N_ptacUnits × annualUnitKwhCoolingPTAC
 
   /// @DtoReadOnly
   /// @example 160000.00
-  annualBuildingKwhCoolingPTHP Float? // Same as PTAC cooling
+  annualBuildingkWhCoolingPTHP Float? // Same as PTAC cooling
 
   /// @DtoReadOnly  
   /// @example 77000.00

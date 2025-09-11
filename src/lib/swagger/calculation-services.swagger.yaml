@@ -81,7 +81,7 @@ components:
           type: number
         annualBuildingThermsHeatingPTAC:
           type: number
-        annualBuildingKwhCoolingPTAC:
+        annualBuildingkWhCoolingPTAC:
           type: number
         annualBuildingCostPTAC:
           type: number
@@ -93,7 +93,7 @@ components:
           type: number
         annualBuildingMMBtuTotalPTHP:
           type: number
-        annualBuildingKwhCoolingPTHP:
+        annualBuildingkWhCoolingPTHP:
           type: number
         annualBuildingCostPTHP:
           type: number

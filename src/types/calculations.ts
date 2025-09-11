@@ -24,9 +24,9 @@ export interface Calculation {
     updatedAt: string;
     annualBuildingCostPTAC: string;
     annualBuildingCostPTHP: string;
-    annualBuildingKwhCoolingPTAC: string;
-    annualBuildingKwhCoolingPTHP: string;
-    annualBuildingKwhHeatingPTHP: string;
+    annualBuildingkWhCoolingPTAC: string;
+    annualBuildingkWhCoolingPTHP: string;
+    annualBuildingkWhHeatingPTHP: string;
     annualBuildingMMBtuCoolingPTAC: string;
     annualBuildingMMBtuCoolingPTHP: string;
     annualBuildingMMBtuHeatingPTAC: string;

@@ -35,7 +35,7 @@ export interface EnergyCalculationOutput extends BaseServiceOutput {
   annualBuildingMMBtuHeatingPTAC: number;
   annualBuildingMMBtuTotalPTAC: number;
   annualBuildingThermsHeatingPTAC: number;
-  annualBuildingKwhCoolingPTAC: number;
+  annualBuildingkWhCoolingPTAC: number;
   annualBuildingCostPTAC: number;
   
   // Section 3 - PTHP calculations
@@ -43,7 +43,7 @@ export interface EnergyCalculationOutput extends BaseServiceOutput {
   annualBuildingMMBtuHeatingPTHP: number;
   annualBuildingMMBtuCoolingPTHP: number;
   annualBuildingMMBtuTotalPTHP: number;
-  annualBuildingKwhCoolingPTHP: number;
+  annualBuildingkWhCoolingPTHP: number;
   annualBuildingCostPTHP: number;
   
   // Section 4 - Energy reduction analysis
