@@ -152,9 +152,9 @@ export class EnergyCalculationService extends BaseCalculationService<
   ): EnergyCalculationInput {
     const baseInput: EnergyCalculationInput = {
       calculationId: calculation.id,
-      ptacUnits: parseInt(calculation.ptacUnits) || 0,
-      yearBuilt: parseInt(calculation.yearBuilt) || 1980,
-      numFloors: parseInt(calculation.stories) || 6,
+      ptacUnits: calculation.ptacUnits || 0,
+      yearBuilt: calculation.yearBuilt || 1980,
+      numFloors: calculation.stories || 6,
     };
 
     // Apply overrides if provided

@@ -3,9 +3,8 @@
 export interface CalculationResult {
   id: string;
   bbl: string;
-  buildingName: string;
   address: string;
-  yearBuilt: string;
+  yearBuilt: number;
   annualBuildingCostPTAC: string;
   annualBuildingCostPTHP: string;
   annualBuildingKwhCoolingPTAC: string;
@@ -22,22 +21,16 @@ export interface CalculationResult {
   totalRetrofitCost: string;
   boro: string;
   buildingClass: string;
-  buildingValue: string;
-  capRate: string;
+  buildingValue: number;
+  capRate: number;
   createdAt: string;
-  energyProfile: string;
-  maintenanceCost: string;
-  occupancyRate: string;
-  ptacUnits: string;
+  ptacUnits: number;
   rawLL84Data: unknown[];
   rawPlutoData: unknown[];
-  siteEUI: string;
-  stories: string;
-  taxClass: string;
-  totalResidentialUnits: string;
-  totalSquareFeet: string;
+  stories: number;
+  totalResidentialUnits: number;
+  totalSquareFeet: number;
   unitMixBreakDown: string;
   updatedAt: string;
-  zoning: string;
   [key: string]: string | number | unknown[];
 } 

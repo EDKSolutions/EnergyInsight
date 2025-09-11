@@ -79,24 +79,19 @@ export const swaggerDefinition = {
               example: '1234567890',
               description: 'NYC Building Block and Lot number'
             },
-            buildingName: {
-              type: 'string',
-              example: '123 Main Street, Manhattan',
-              description: 'Building name or address'
-            },
             address: {
               type: 'string',
               example: '123 Main Street, Manhattan',
               description: 'Full building address'
             },
             yearBuilt: {
-              type: 'string',
-              example: '1930',
+              type: 'integer',
+              example: 1930,
               description: 'Year the building was constructed'
             },
             stories: {
-              type: 'string',
-              example: '6',
+              type: 'integer',
+              example: 6,
               description: 'Number of stories in the building'
             },
             buildingClass: {
@@ -104,55 +99,43 @@ export const swaggerDefinition = {
               example: 'R4',
               description: 'NYC building class code'
             },
-            taxClass: {
-              type: 'string',
-              example: '2',
-              description: 'NYC tax class'
-            },
-            zoning: {
-              type: 'string',
-              example: 'R6',
-              description: 'Zoning district designation'
-            },
             boro: {
               type: 'string',
               example: 'Manhattan',
               description: 'NYC borough'
             },
             totalSquareFeet: {
-              type: 'string',
-              example: '10000',
+              type: 'number',
+              format: 'float',
+              example: 10000.0,
               description: 'Total building square footage'
             },
             totalResidentialUnits: {
-              type: 'string',
-              example: '10',
+              type: 'integer',
+              example: 10,
               description: 'Total number of residential units'
             },
             ptacUnits: {
-              type: 'string',
-              example: '8',
+              type: 'integer',
+              example: 8,
               description: 'Number of units with PTAC systems'
             },
             capRate: {
-              type: 'string',
-              example: '5.5',
+              type: 'number',
+              format: 'float',
+              example: 5.5,
               description: 'Capitalization rate percentage'
             },
             buildingValue: {
-              type: 'string',
-              example: '1000000',
+              type: 'number',
+              format: 'float',
+              example: 1000000.0,
               description: 'Total building value in USD'
             },
             unitMixBreakDown: {
               type: 'string',
               example: '{"studio": 2, "one_bed": 4, "two_bed": 3, "three_plus": 1}',
               description: 'JSON string describing unit type distribution'
-            },
-            energyProfile: {
-              type: 'string',
-              example: '{"electric": "60%", "gas": "40%"}',
-              description: 'JSON string describing energy usage profile'
             },
             annualBuildingMMBtuCoolingPTAC: {
               type: 'number',
@@ -259,21 +242,6 @@ export const swaggerDefinition = {
               example: 31642.86,
               description: 'Annual energy cost savings from PTAC to PTHP conversion in USD'
             },
-            siteEUI: {
-              type: 'string',
-              example: '65.5',
-              description: 'Site Energy Use Intensity'
-            },
-            occupancyRate: {
-              type: 'string',
-              example: '95',
-              description: 'Building occupancy rate percentage'
-            },
-            maintenanceCost: {
-              type: 'string',
-              example: '75000',
-              description: 'Annual maintenance cost in USD'
-            },
             rawPlutoData: {
               type: 'object',
               nullable: true,
@@ -300,11 +268,10 @@ export const swaggerDefinition = {
             }
           },
           required: [
-            'id', 'bbl', 'buildingName', 'address', 'yearBuilt', 
-            'stories', 'buildingClass', 'taxClass', 'zoning', 'boro',
+            'id', 'bbl', 'address', 'yearBuilt', 
+            'stories', 'buildingClass', 'boro',
             'totalSquareFeet', 'totalResidentialUnits', 'ptacUnits',
-            'capRate', 'buildingValue', 'unitMixBreakDown', 'energyProfile',
-            'siteEUI', 'occupancyRate', 'maintenanceCost', 'createdAt', 'updatedAt'
+            'capRate', 'buildingValue', 'unitMixBreakDown', 'createdAt', 'updatedAt'
           ]
         },
         CalculationInput: {

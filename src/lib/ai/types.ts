@@ -36,13 +36,9 @@ export interface UnitBreakdownResult {
   ptacUnits: number; // Calculated from unit mix: studio×1 + one_bed×2 + two_bed×3 + three_plus×4
   numberOfBedrooms: number;
 
-  // Building characteristics (from LL84 data or defaults)
+  // Building characteristics
   capRate: string;
   buildingValue: string;
-  siteEUI: string;
-  occupancyRate: string;
-  maintenanceCost: string;
-  energyProfile: string;
 }
 
 // DEPRECATED: Legacy interface for backward compatibility during transition

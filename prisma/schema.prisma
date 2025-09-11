@@ -41,55 +41,49 @@ model Calculations {
   /// @example "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6"
   id String @id @default(uuid())
 
+  // === IDENTITY & LOCATION ===
   /// @example "1234567890"  
   bbl String
-
-  /// @example "123 Main Street, Manhattan"
-  buildingName String
 
   /// @example "123 Main Street, Manhattan"  
   address String
 
-  /// @example "1930"
-  yearBuilt String
+  /// @example "Manhattan"
+  boro String
 
-  /// @example "6"
-  stories String
+  // === BUILDING CHARACTERISTICS ===
+  /// @example 1930
+  yearBuilt Int
+
+  /// @example 6
+  stories Int
 
   /// @example "R4"
   buildingClass String
 
-  /// @example "2"  
-  taxClass String
+  /// @example 10000.0
+  totalSquareFeet Float
 
-  /// @example "R6"
-  zoning String
+  /// @example 10
+  totalResidentialUnits Int
 
-  /// @example "Manhattan"
-  boro String
+  /// @example 8
+  ptacUnits Int
 
-  /// @example "10000"
-  totalSquareFeet String
+  /// @example true
+  isRentStabilized Boolean?
 
-  /// @example "10"
-  totalResidentialUnits String
-
-  /// @example "8"  
-  ptacUnits String
-
-  /// @example "5.5"
-  capRate String
-
-  /// @example "1000000"
-  buildingValue String
-
+  // === UNIT & FINANCIAL PROFILE ===
   /// @example "{\"studio\": 2, \"one_bed\": 4, \"two_bed\": 3, \"three_plus\": 1}"
   unitMixBreakDown String
 
-  /// @example "{\"electric\": \"60%\", \"gas\": \"40%\"}"  
-  energyProfile String
+  /// @example 5.5
+  capRate Float
 
-  // Section 2.2 - Building-Level PTAC Calculations
+  /// @example 1000000.0
+  buildingValue Float
+
+  // === ENERGY CALCULATIONS (PTAC/PTHP) ===
   /// @DtoReadOnly
   /// @example 1234.56
   annualBuildingMMBtuCoolingPTAC Float? // N_ptacUnits × annualUnitMMBtuCoolingPTAC
@@ -102,7 +96,7 @@ model Calculations {
   /// @example 3784.56  
   annualBuildingMMBtuTotalPTAC Float? // Sum of cooling + heating MMBtu
 
-  // Section 3 - PTHP Building Calculations
+  // PTHP Building Calculations
   /// @DtoReadOnly
   /// @example 1200.50
   annualBuildingMMBtuHeatingPTHP Float? // PTAC heating MMBtu / COP
@@ -115,17 +109,17 @@ model Calculations {
   /// @example 2435.06
   annualBuildingMMBtuTotalPTHP Float? // Sum of PTHP cooling + heating MMBtu
 
-  // Section 4 - Energy Reduction Analysis
+  // Energy Reduction Analysis
   /// @DtoReadOnly
   /// @example 35.67
   energyReductionPercentage Float? // (PTAC - PTHP) / PTAC × 100
 
-  // Section 5 - Retrofit Cost Calculation  
+  // Retrofit Cost Calculation  
   /// @DtoReadOnly
   /// @example 68200.00
   totalRetrofitCost Float? // (unitCost + installCost) × units × (1 + contingency)
 
-  // Section 6 - Energy Cost Savings Calculation
+  // Energy Cost Savings Calculation
   /// @DtoReadOnly
   /// @example 25500.00
   annualBuildingThermsHeatingPTAC Float? // N_ptacUnits × annualUnitThermsHeatingPTAC
@@ -171,7 +165,7 @@ model Calculations {
   /// @DtoReadOnly
   aiAnalysisNotes String? // AI reasoning for unit breakdown
 
-  // Section 7 - LL97 Emissions and Compliance Analysis
+  // === LL97 EMISSIONS & COMPLIANCE ===
   /// @DtoReadOnly
   /// @example 245.50
   emissionsBudget2024to2029 Float? // tCO2e emissions budget 2024-2029
@@ -252,7 +246,7 @@ model Calculations {
   /// @example 307950.00
   adjustedAnnualFee2040to2049 Float? // LL97 fee with upgrade 2040-2049
 
-  // Section 8 - Financial Analysis
+  // === FINANCIAL ANALYSIS ===
   /// @DtoReadOnly
   /// @example 253500.00
   annualLL97FeeAvoidance2024to2027 Float? // Annual fee savings 2024-2027
@@ -291,13 +285,10 @@ model Calculations {
   /// @example 260235.00
   totalInterestPaid Float? // Total interest paid over loan term
 
-  // Section 9 - NOI Analysis
+  // === NOI ANALYSIS ===
   /// @DtoReadOnly
   /// @example 1200000.00
   annualBuildingNOI Float? // Annual Building Net Operating Income
-  
-  /// @example true
-  isRentStabilized Boolean? // Whether the building has rent-stabilized units
   
   /// @DtoReadOnly
   noiByYearNoUpgrade Json? // Year-by-year NOI without upgrade: [{year: 2024, noi: 1200000}, ...]
@@ -324,7 +315,7 @@ model Calculations {
   /// @DtoReadOnly
   propertyValueByYearWithUpgrade Json? // Year-by-year property value with upgrade: [{year: 2024, value: 31250000}, ...]
 
-  // Service Metadata
+  // === SERVICE METADATA ===
   /// @DtoReadOnly
   overriddenFields Json? // Object tracking which fields have been overridden
   
@@ -334,21 +325,13 @@ model Calculations {
   /// @DtoReadOnly
   serviceVersions Json? // Service versions for tracking compatibility
 
-  /// @example "65.5"
-  siteEUI String
-
-  /// @example "95"  
-  occupancyRate String
-
-  /// @example "75000"
-  maintenanceCost String
-
   /// @example {"field1": "value1", "field2": "value2"}
   rawPlutoData Json? // Raw PLUTO API response
 
   /// @example {"field1": "value1", "field2": "value2"}  
   rawLL84Data Json? // Raw LL84 API response
 
+  // === TIMESTAMPS ===
   /// @DtoReadOnly
   createdAt DateTime @default(now())
 

@@ -18,10 +18,6 @@ const StateAnnotation = Annotation.Root({
   buildingValues: Annotation<{
     capRate: string;
     buildingValue: string;
-    siteEUI: string;
-    occupancyRate: string;
-    maintenanceCost: string;
-    energyProfile: string;
   }>,
 });
 
@@ -147,27 +143,14 @@ export class UnitBreakdownGraph {
   private extractBuildingValuesNode(state: typeof StateAnnotation.State) {
     console.log('Running building values node');
 
-    // Extract values from LL84 data if available, otherwise use defaults
-    const siteEUI = state.ll84Data?.site_eui || '65.5';
-    const occupancyRate = '95'; // No direct equivalent in LL84 data
-    const maintenanceCost = '75000'; // No direct equivalent in LL84 data
+    // Extract building values (use defaults for now)
     const buildingValue = '1000000'; // No direct equivalent in LL84 data
     const capRate = '5.5'; // No direct equivalent in LL84 data
-
-    // Create energy profile based on available data
-    const energyProfile = JSON.stringify({
-      electric: '60%',
-      gas: '40%',
-    });
 
     return {
       buildingValues: {
         capRate,
         buildingValue,
-        siteEUI,
-        occupancyRate,
-        maintenanceCost,
-        energyProfile,
       },
     };
   }

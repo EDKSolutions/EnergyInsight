@@ -279,16 +279,16 @@ export class NOICalculationService extends BaseCalculationService<
       // Building identification and characteristics (required for NOI source determination)
       bbl: calculation.bbl,
       buildingClass: calculation.buildingClass,
-      unitsRes: parseInt(calculation.totalResidentialUnits) || 0,
-      yearBuilt: parseInt(calculation.yearBuilt) || 1950,
+      unitsRes: calculation.totalResidentialUnits || 0,
+      yearBuilt: calculation.yearBuilt || 1950,
       borough: calculation.boro,
-      numFloors: parseInt(calculation.stories) || 1,
+      numFloors: calculation.stories || 1,
       // TODO: Add communityDistrict field to database for Manhattan subcategories
       communityDistrict: undefined,
       
       // Financial data
-      buildingValue: parseFloat(calculation.buildingValue) || 1000000,
-      capRate: parseFloat(calculation.capRate) || 5.5,
+      buildingValue: calculation.buildingValue || 1000000,
+      capRate: calculation.capRate || 5.5,
       totalRetrofitCost: calculation.totalRetrofitCost || 0,
       annualEnergySavings: calculation.annualEnergySavings || 0,
       

@@ -149,34 +149,38 @@ async function saveCalculationToDatabase(
   ll84Data: LocalLaw84Data | null,
 ) {
   console.log('Saving calculation to database');
+  console.log('PLUTO data types:', {
+    yearbuilt: typeof plutoData.yearbuilt,
+    yearbuiltValue: plutoData.yearbuilt,
+    numfloors: typeof plutoData.numfloors,
+    numfloorsValue: plutoData.numfloors,
+    bldgarea: typeof plutoData.bldgarea,
+    bldgareaValue: plutoData.bldgarea,
+    unitsres: typeof plutoData.unitsres,
+    unitsresValue: plutoData.unitsres
+  });
+  
   const calculation = await prisma.calculations.create({
     data: {
       // AI Unit Breakdown Results
-      ptacUnits: analysisResult.ptacUnits.toString(),
-      capRate: analysisResult.capRate,
-      buildingValue: analysisResult.buildingValue,
+      ptacUnits: analysisResult.ptacUnits,
+      capRate: parseFloat(analysisResult.capRate),
+      buildingValue: parseFloat(analysisResult.buildingValue),
       unitMixBreakDown: JSON.stringify(analysisResult.unitBreakdown),
-      energyProfile: analysisResult.energyProfile,
-      siteEUI: analysisResult.siteEUI,
-      occupancyRate: analysisResult.occupancyRate,
-      maintenanceCost: analysisResult.maintenanceCost,
 
       // Store AI analysis metadata
       unitBreakdownSource: 'AI-Assumed',
       aiAnalysisNotes: analysisResult.notes,
 
-      // Building characteristics from PLUTO
+      // Building characteristics from PLUTO - these should always be present
       bbl: bbl,
-      buildingName: addressData.address,
       address: addressData.address,
-      yearBuilt: plutoData.yearbuilt?.toString() || '',
-      stories: plutoData.numfloors?.toString() || '',
-      buildingClass: plutoData.bldgclass || '',
-      taxClass: '',
-      zoning: plutoData.zone || '',
-      boro: plutoData.borough || '',
-      totalSquareFeet: plutoData.bldgarea?.toString() || '',
-      totalResidentialUnits: plutoData.unitsres?.toString() || '',
+      yearBuilt: typeof plutoData.yearbuilt === 'string' ? parseInt(plutoData.yearbuilt) : plutoData.yearbuilt || (() => { throw new Error('yearbuilt missing from PLUTO data') })(),
+      stories: typeof plutoData.numfloors === 'string' ? parseInt(plutoData.numfloors) : plutoData.numfloors || (() => { throw new Error('numfloors missing from PLUTO data') })(),
+      buildingClass: plutoData.bldgclass || (() => { throw new Error('bldgclass missing from PLUTO data') })(),
+      boro: plutoData.borough || (() => { throw new Error('borough missing from PLUTO data') })(),
+      totalSquareFeet: typeof plutoData.bldgarea === 'string' ? parseFloat(plutoData.bldgarea) : plutoData.bldgarea || (() => { throw new Error('bldgarea missing from PLUTO data') })(),
+      totalResidentialUnits: typeof plutoData.unitsres === 'string' ? parseInt(plutoData.unitsres) : plutoData.unitsres || (() => { throw new Error('unitsres missing from PLUTO data') })(),
       
       // Extract LL84 emissions data
       totalBuildingEmissionsLL84: ll84Data?.total_location_based_ghg 

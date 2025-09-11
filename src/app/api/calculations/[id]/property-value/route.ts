@@ -271,7 +271,7 @@ import { getUserFromRequest } from '@/app/api/auth/middleware';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getUserFromRequest(request);
@@ -279,7 +279,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: calculationId } = params;
+    const { id: calculationId } = await params;
 
     // Verify user has access to this calculation
     const userCalculation = await prisma.userCalculations.findFirst({
@@ -331,7 +331,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getUserFromRequest(request);
@@ -339,7 +339,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id: calculationId } = params;
+    const { id: calculationId } = await params;
 
     // Verify user has access to this calculation
     const userCalculation = await prisma.userCalculations.findFirst({

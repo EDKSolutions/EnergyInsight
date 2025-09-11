@@ -10,21 +10,18 @@ export interface User {
 export interface Calculations {
   id: string
   bbl: string
-  buildingName: string
   address: string
-  yearBuilt: string
-  stories: string
-  buildingClass: string
-  taxClass: string
-  zoning: string
   boro: string
-  totalSquareFeet: string
-  totalResidentialUnits: string
-  ptacUnits: string
-  capRate: string
-  buildingValue: string
+  yearBuilt: number
+  stories: number
+  buildingClass: string
+  totalSquareFeet: number
+  totalResidentialUnits: number
+  ptacUnits: number
+  capRate: number
+  buildingValue: number
   unitMixBreakDown: string
-  energyProfile: string
+  isRentStabilized?: boolean
   annualBuildingMMBtuCoolingPTAC?: number
   annualBuildingMMBtuHeatingPTAC?: number
   annualBuildingMMBtuTotalPTAC?: number
@@ -40,9 +37,6 @@ export interface Calculations {
   annualBuildingCostPTAC?: number
   annualBuildingCostPTHP?: number
   annualEnergySavings?: number
-  siteEUI: string
-  occupancyRate: string
-  maintenanceCost: string
   rawPlutoData?: Record<string, unknown>
   rawLL84Data?: Record<string, unknown>
   createdAt: Date
@@ -51,24 +45,18 @@ export interface Calculations {
 
 export interface CreateCalculationRequest {
   bbl: string
-  buildingName: string
   address: string
-  yearBuilt: string
-  stories: string
-  buildingClass: string
-  taxClass: string
-  zoning: string
   boro: string
-  totalSquareFeet: string
-  totalResidentialUnits: string
-  ptacUnits: string
-  capRate: string
-  buildingValue: string
+  yearBuilt: number
+  stories: number
+  buildingClass: string
+  totalSquareFeet: number
+  totalResidentialUnits: number
+  ptacUnits: number
+  capRate: number
+  buildingValue: number
   unitMixBreakDown: string
-  energyProfile: string
-  siteEUI: string
-  occupancyRate: string
-  maintenanceCost: string
+  isRentStabilized?: boolean
 }
 
 export interface AuthUser {
