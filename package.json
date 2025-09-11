@@ -16,7 +16,8 @@
     "latex:build": "cd docs && make",
     "latex:watch": "cd docs && make watch",
     "latex:clean": "cd docs && make clean",
-    "latex:open": "cd docs && make build-open"
+    "latex:open": "cd docs && make build-open",
+    "latex:compile-report": "./scripts/compile-latex-report.sh"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.13.1",

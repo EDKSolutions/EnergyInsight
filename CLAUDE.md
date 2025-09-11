@@ -24,10 +24,11 @@ pnpm run db:studio        # Open Prisma Studio GUI
 pnpm run release          # Create versioned release with standard-version
 
 # LaTeX documentation generation
-pnpm run latex:build      # Generate energy calculations PDF
-pnpm run latex:watch      # Auto-rebuild PDF on changes
-pnpm run latex:clean      # Clean LaTeX build artifacts
-pnpm run latex:open       # Build and open PDF
+pnpm run latex:build          # Generate energy calculations PDF
+pnpm run latex:watch          # Auto-rebuild PDF on changes
+pnpm run latex:clean          # Clean LaTeX build artifacts
+pnpm run latex:open           # Build and open PDF
+pnpm run latex:compile-report # Compile building-specific LaTeX reports to PDF
 ```
 
 ## Architecture Overview
@@ -170,3 +171,70 @@ Generated PDF contains detailed energy calculations methodology, formulas, and a
 
 ### LaTeX Setup on macOS
 For detailed LaTeX installation and setup instructions on macOS, see `latex-macbook-setup.md` in the project root.
+
+## Building-Specific LaTeX Reports
+
+The application includes a service to generate personalized LaTeX reports for individual building calculations.
+
+### LaTeX Report Generation API
+
+**Endpoint:** `POST /api/calculations/{id}/latex-report`
+
+Generates a personalized LaTeX report showing end-to-end math and analysis for a specific building's PTAC to PTHP conversion calculation.
+
+**Features:**
+- Building characteristics and unit breakdown  
+- Step-by-step energy calculations (PTAC vs PTHP)
+- LL97 compliance analysis with actual emissions data
+- Financial projections and payback analysis
+- NOI and property value impacts
+- Three visualization charts with real building data
+
+**Usage:**
+```bash
+# Generate LaTeX report for calculation ID
+curl -X POST http://localhost:3000/api/calculations/{id}/latex-report \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -o building-report.tex
+
+# Compile LaTeX to PDF using provided script
+pnpm run latex:compile-report building-report.tex ./reports/
+
+# Alternative: Direct script usage
+./scripts/compile-latex-report.sh building-report.tex ./reports/
+```
+
+**Requirements for LaTeX Reports:**
+- Calculation must have completed all services (energy, LL97, financial, NOI, property-value)
+- User must be authorized to access the specific calculation
+- LuaLaTeX must be installed for PDF compilation
+
+**Data Sources:**
+The LaTeX report pulls all data from the database calculation record:
+- Building characteristics from PLUTO/GeoClient APIs
+- Energy calculations from calculation services  
+- LL97 emissions and compliance data
+- Financial analysis including loan terms and payback
+- NOI projections and property value analysis
+- Year-by-year visualization data (JSON arrays)
+
+**Template Structure:**
+- Template location: `docs/latex-templates/building-report-template.tex`
+- Uses Handlebars-style variable replacement (`{{VARIABLE_NAME}}`)
+- Includes TikZ/PGFPlots charts with real data coordinates
+- Produces a comprehensive 10+ page technical report
+
+**Generated Report Sections:**
+1. Building Profile & Characteristics
+2. Current PTAC Energy Analysis (with actual consumption)
+3. PTHP System Analysis (using EFLH methodology)  
+4. Energy Savings & Efficiency Gains
+5. Retrofit Cost Analysis
+6. LL97 Compliance & Carbon Reduction
+7. Financial Analysis & Payback
+8. NOI Impact Assessment
+9. Property Value Enhancement
+10. Executive Summary with Key Metrics
+11. Three Financial Projection Charts
+
+The reports are designed to be **concise and math-focused**, showing actual calculations rather than methodology explanations.
