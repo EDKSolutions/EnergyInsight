@@ -93,6 +93,45 @@ The application requires multiple API keys:
 - Husky pre-commit hooks with standard-version for releases
 - Components follow atomic design patterns in `src/components/`
 
+### Variable Naming Conventions
+
+#### Energy Unit Abbreviations
+Consistent naming for energy calculations is critical for alignment between implementation code and LaTeX documentation:
+
+**Energy Units:**
+- `kWh` (kilowatt-hour): Use "kWh" in variable names, never "kwh" or "KWH"
+- `MMBtu` (million British thermal units): Use "MMBtu" for consistency
+- `tCO₂e` (tons of CO₂ equivalent): Use "tCO2e" in code (LaTeX uses proper subscripts)
+
+**Variable Naming Patterns:**
+```typescript
+// Annual building totals by unit and system type
+annualBuilding[Unit][System]: 
+  - annualBuildingkWhHeatingPTHP
+  - annualBuildingkWhCoolingPTAC
+  - annualBuildingMMBtuTotalPTAC
+
+// Per-unit consumption rates  
+annualUnit[Unit][System]:
+  - annualUnitKwhCoolingPTAC
+  - annualUnitMMBtuHeatingPTAC
+
+// Pricing variables
+price[Unit][Time]:
+  - priceKwhHour ($0.24 per kWh)
+  - priceThermHour ($1.50 per therm)
+
+// Conversion constants
+[UNIT]_PER_[UNIT]:
+  - KWH_PER_MMBTU (293.1 kWh per MMBtu)
+  - MMBTU_PER_KWH (0.003412 MMBtu per kWh)
+```
+
+**Documentation Alignment:**
+- Variable names in TypeScript code must match exactly with those used in LaTeX documentation
+- Use descriptive names that clearly indicate units, time periods, and system types
+- Maintain consistency between database schema field names and calculation variable names
+
 ### Testing
 - Jest configured for testing (though minimal test coverage currently exists)
 - Run `pnpm test` to execute test suite
