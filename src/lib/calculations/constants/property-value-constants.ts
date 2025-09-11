@@ -26,18 +26,3 @@ export const PROPERTY_VALUE_CONSTANTS = {
   maxCreditworthinessImprovement: 0.5, // 50% max improvement
 } as const;
 
-// Type for property value constant keys
-export type PropertyValueConstantKey = keyof typeof PROPERTY_VALUE_CONSTANTS;
-
-// Helper function to get property value constant by key
-export function getPropertyValueConstant(key: PropertyValueConstantKey): number {
-  return PROPERTY_VALUE_CONSTANTS[key];
-}
-
-// Validation ranges for property value parameters
-export const PROPERTY_VALUE_VALIDATION_RANGES = {
-  capRate: { min: 1.0, max: 15.0, typical: [3.0, 8.0] },
-  greenPremiumPercentage: { min: 0.0, max: 10.0, typical: [1.0, 5.0] },
-  energyEfficiencyPremium: { min: 0.0, max: 10.0, typical: [1.0, 4.0] },
-  marketAppreciationRate: { min: 0.0, max: 10.0, typical: [2.0, 5.0] },
-} as const;

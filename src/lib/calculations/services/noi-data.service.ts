@@ -6,7 +6,7 @@
  * 3. RGB Study data (for all other residential buildings)
  */
 
-import { isRentStabilized, getLocationCategory, getBuildingSizeCategory, getBuildingEraCategory, BoroughCode, BoroughName } from '../constants/noi-constants';
+import { isRentStabilized, getLocationCategory, getBuildingSizeCategory, getBuildingEraCategory, BoroughCode, BoroughName, isCooperativeBuilding, isCondominiumBuilding } from '../constants/noi-constants';
 import rgbStudyData from '@/lib/data/nyc_noi_2023_per_unit_month.json';
 
 export interface NOIDataInput {
@@ -31,9 +31,6 @@ export interface NOIResult {
   };
 }
 
-// Building class categories per LaTeX documentation
-const COOPERATIVE_CLASSES = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9'];
-const CONDOMINIUM_CLASSES = ['R4', 'R5', 'R6A', 'R6B', 'R7A', 'R7B', 'R7D', 'R7X', 'R8A', 'R8B', 'R8X', 'R9A', 'R9B', 'R9X', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9'];
 
 export class NOIDataService {
   
@@ -45,12 +42,12 @@ export class NOIDataService {
     console.log(`[NOI Data Service] Determining NOI source for BBL ${input.bbl}, Building Class: ${input.buildingClass}`);
     
     // Step 1: Check building class to determine source
-    if (this.isCooperativeBuilding(input.buildingClass)) {
+    if (isCooperativeBuilding(input.buildingClass)) {
       console.log(`[NOI Data Service] Building class ${input.buildingClass} is Cooperative - calling Cooperative API`);
       return await this.fetchCooperativeNOI(input.bbl);
     }
     
-    if (this.isCondominiumBuilding(input.buildingClass)) {
+    if (isCondominiumBuilding(input.buildingClass)) {
       console.log(`[NOI Data Service] Building class ${input.buildingClass} is Condominium - calling Condominium API`);
       return await this.fetchCondominiumNOI(input.bbl);
     }
@@ -229,19 +226,6 @@ export class NOIDataService {
     return noiValue;
   }
   
-  /**
-   * Check if building class is Cooperative (C0-C9)
-   */
-  private isCooperativeBuilding(buildingClass: string): boolean {
-    return COOPERATIVE_CLASSES.some(cls => buildingClass.includes(cls));
-  }
-  
-  /**
-   * Check if building class is Condominium (R4, R5, R6A-R9B, D4-D9)
-   */
-  private isCondominiumBuilding(buildingClass: string): boolean {
-    return CONDOMINIUM_CLASSES.includes(buildingClass);
-  }
 }
 
 export const noiDataService = new NOIDataService();

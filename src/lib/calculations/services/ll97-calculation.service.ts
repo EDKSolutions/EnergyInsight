@@ -183,14 +183,6 @@ export class LL97CalculationService extends BaseCalculationService<
       } else {
         // Throw error instead of falling back - we want to identify missing property types
         throw new Error(`No emissions limit found for property type: ${propertyUse.propertyType}. Please update the LL97 property type mapping.`);
-        
-        // TODO: Fallback logic in case we need it later
-        // console.warn(`No emissions limit found for property type ${propertyUse.propertyType}, using multifamily fallback`);
-        // // Use multifamily housing as fallback
-        // emissionsBudget2024to2029 += propertyUse.squareFeet * 0.00675; // Multifamily 2024-2029
-        // emissionsBudget2030to2034 += propertyUse.squareFeet * 0.00407; // Multifamily 2030-2034
-        // emissionsBudget2035to2039 += propertyUse.squareFeet * 0.002692183; // Multifamily 2035-2039
-        // emissionsBudget2040to2049 += propertyUse.squareFeet * 0.002052731; // Multifamily 2040-2049
       }
     }
     

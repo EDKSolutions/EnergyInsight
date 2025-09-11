@@ -87,33 +87,6 @@ export function parsePropertyUse(propertyUseString: string | undefined | null): 
   return propertyUses;
 }
 
-/**
- * Gets the total square footage from all property uses
- */
-export function getTotalSquareFootage(propertyUses: PropertyUse[]): number {
-  return propertyUses.reduce((total, use) => total + use.squareFeet, 0);
-}
-
-/**
- * Gets the primary property type (the one with the most square footage)
- */
-export function getPrimaryPropertyType(propertyUses: PropertyUse[]): string | null {
-  if (propertyUses.length === 0) {
-    return null;
-  }
-  
-  let maxSquareFeet = 0;
-  let primaryType = propertyUses[0].propertyType;
-  
-  for (const use of propertyUses) {
-    if (use.squareFeet > maxSquareFeet) {
-      maxSquareFeet = use.squareFeet;
-      primaryType = use.propertyType;
-    }
-  }
-  
-  return primaryType;
-}
 
 /**
  * Normalizes property type names to match LL97 ESPM mapping
