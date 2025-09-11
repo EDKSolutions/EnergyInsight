@@ -71,8 +71,11 @@ export interface FinancialCalculationOverrides {
 
 export interface NOICalculationOverrides {
   // Override NOI parameters
-  overrideCurrentNOI?: number;               // Override calculated current NOI
-  // Could add overrides for RGB study parameters if needed
+  customCurrentNOI?: number;                 // Override calculated current NOI (renamed for API consistency)
+  rentIncreasePercentage?: number;           // Override rent increase from energy efficiency
+  utilitiesIncludedInRent?: boolean;         // Override utilities included in rent
+  operatingExpenseRatio?: number;            // Override operating expense ratio
+  vacancyRate?: number;                      // Override vacancy rate
 }
 
 export interface PropertyValueCalculationOverrides {

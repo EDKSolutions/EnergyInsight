@@ -115,46 +115,48 @@ export interface FinancialCalculationInput extends BaseServiceInput {
 
 // 5. NOI Service Input (Section 9)
 export interface NOICalculationInput extends BaseServiceInput {
-  // Building characteristics for NOI lookup
-  bbl: string;
-  buildingClass: string;
-  boro: string;
-  unitsRes: number;
-  yearBuilt: number;
-  numFloors: number;
+  // Building identification and characteristics (required for NOI source determination)
+  bbl: string;                    // Borough-Block-Lot identifier for API lookups
+  buildingClass: string;          // Building class code (determines Coop/Condo vs other)
+  unitsRes: number;               // Total residential units (for RGB Study size bucket)
+  yearBuilt: number;              // Construction year (for era determination)
+  borough: string;                // Borough name (for location category)
+  communityDistrict?: number;     // Community district (for Manhattan subcategories)
+  numFloors: number;              // Number of floors (for rent stabilization heuristics)
   
-  // Energy and financial data
-  annualEnergySavings: number;
+  // Financial data
+  buildingValue: number;
+  capRate: number;
+  totalRetrofitCost: number;
+  annualEnergySavings?: number;
   
-  // LL97 fee data (all periods)
-  annualFeeExceedingBudget2024to2029: number;
-  annualFeeExceedingBudget2030to2034: number;
-  annualFeeExceedingBudget2035to2039: number;
-  annualFeeExceedingBudget2040to2049: number;
+  // LL97 fee data (all periods) - needed for year-by-year calculations
+  annualFeeExceedingBudget2024to2029?: number;
+  annualFeeExceedingBudget2030to2034?: number;
+  annualFeeExceedingBudget2035to2039?: number;
+  annualFeeExceedingBudget2040to2049?: number;
   
-  adjustedAnnualFeeBefore2027: number;
-  adjustedAnnualFee2027to2029: number;
-  adjustedAnnualFee2030to2034: number;
-  adjustedAnnualFee2035to2039: number;
-  adjustedAnnualFee2040to2049: number;
+  adjustedAnnualFeeBefore2027?: number;
+  adjustedAnnualFee2027to2029?: number;
+  adjustedAnnualFee2030to2034?: number;
+  adjustedAnnualFee2035to2039?: number;
+  adjustedAnnualFee2040to2049?: number;
   
-  // Overridable NOI parameters (optional)
-  overrideCurrentNOI?: number;               // Override calculated NOI
+  // Override parameters (from NOICalculationOverrides)
+  customCurrentNOI?: number;
+  rentIncreasePercentage?: number;
+  utilitiesIncludedInRent?: boolean;
+  operatingExpenseRatio?: number;
+  vacancyRate?: number;
 }
 
 // 6. Property Value Service Input (Section 10)
 export interface PropertyValueCalculationInput extends BaseServiceInput {
-  // NOI data from NOI service
-  currentNOI: number;
-  noiNoUpgrade2024to2029: number;
-  noiNoUpgrade2030to2034: number;
-  noiNoUpgradePost2035: number;
-  noiWithUpgrade2024to2027: number;
-  noiWithUpgrade2027to2029: number;
-  noiWithUpgrade2030to2034: number;
-  noiWithUpgradePost2035: number;
+  // NOI data from NOI service (year-by-year arrays)
+  noiByYearNoUpgrade: Array<{year: number, noi: number}>;
+  noiByYearWithUpgrade: Array<{year: number, noi: number}>;
   
-  // Overridable property value parameters (optional with defaults)
+  // Overridable property value parameters
   capRate?: number;                          // Default: 0.04 (4%)
 }
 

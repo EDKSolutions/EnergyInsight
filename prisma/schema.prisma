@@ -294,35 +294,16 @@ model Calculations {
   // Section 9 - NOI Analysis
   /// @DtoReadOnly
   /// @example 1200000.00
-  currentNOI Float? // Current Net Operating Income
+  annualBuildingNOI Float? // Annual Building Net Operating Income
+  
+  /// @example true
+  isRentStabilized Boolean? // Whether the building has rent-stabilized units
   
   /// @DtoReadOnly
-  /// @example 1050000.00
-  noiNoUpgrade2024to2029 Float? // NOI without upgrade 2024-2029
+  noiByYearNoUpgrade Json? // Year-by-year NOI without upgrade: [{year: 2024, noi: 1200000}, ...]
   
   /// @DtoReadOnly
-  /// @example 900000.00
-  noiNoUpgrade2030to2034 Float? // NOI without upgrade 2030-2034
-  
-  /// @DtoReadOnly
-  /// @example 900000.00
-  noiNoUpgradePost2035 Float? // NOI without upgrade post-2035
-  
-  /// @DtoReadOnly
-  /// @example 1224000.00
-  noiWithUpgrade2024to2027 Float? // NOI with upgrade 2024-2027
-  
-  /// @DtoReadOnly
-  /// @example 1224000.00
-  noiWithUpgrade2027to2029 Float? // NOI with upgrade 2027-2029
-  
-  /// @DtoReadOnly
-  /// @example 1206000.00
-  noiWithUpgrade2030to2034 Float? // NOI with upgrade 2030-2034
-  
-  /// @DtoReadOnly
-  /// @example 1206000.00
-  noiWithUpgradePost2035 Float? // NOI with upgrade post-2035
+  noiByYearWithUpgrade Json? // Year-by-year NOI with upgrade: [{year: 2024, noi: 1250000}, ...]
 
   // Section 10 - Property Value Analysis
   /// @DtoReadOnly
@@ -336,6 +317,12 @@ model Calculations {
   /// @DtoReadOnly
   /// @example 7650000.00
   netPropertyValueGain Float? // Net property value increase from upgrade
+  
+  /// @DtoReadOnly
+  propertyValueByYearNoUpgrade Json? // Year-by-year property value without upgrade: [{year: 2024, value: 30000000}, ...]
+  
+  /// @DtoReadOnly
+  propertyValueByYearWithUpgrade Json? // Year-by-year property value with upgrade: [{year: 2024, value: 31250000}, ...]
 
   // Service Metadata
   /// @DtoReadOnly

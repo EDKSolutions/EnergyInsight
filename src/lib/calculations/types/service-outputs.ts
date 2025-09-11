@@ -176,54 +176,51 @@ export interface FinancialCalculationOutput extends BaseServiceOutput {
 
 // 5. NOI Service Output (Section 9)
 export interface NOICalculationOutput extends BaseServiceOutput {
-  // Current NOI
-  currentNOI: number;
+  // Base Annual Building NOI
+  annualBuildingNOI: number;
   
-  // NOI scenarios without upgrade
-  noiNoUpgrade2024to2029: number;
-  noiNoUpgrade2030to2034: number;
-  noiNoUpgradePost2035: number;
+  // Year-by-year NOI projections
+  noiByYearNoUpgrade: Array<{year: number, noi: number}>;
+  noiByYearWithUpgrade: Array<{year: number, noi: number}>;
   
-  // NOI scenarios with upgrade
-  noiWithUpgrade2024to2027: number;
-  noiWithUpgrade2027to2029: number;
-  noiWithUpgrade2030to2034: number;
-  noiWithUpgradePost2035: number;
+  // Core calculation components (used to build year arrays)
+  potentialRentalIncomeImpact: number;
+  operatingExpenseSavings: number;
+  noiImpact: number;
+  effectiveGrossIncomeChange: number;
+  netOperatingIncomeChange: number;
   
-  // Analysis insights
-  insights: {
-    immediateNOIBoost: number;           // Year 1 NOI increase
-    sustainedNOIGap: number;             // Long-term NOI advantage
-    noiImprovementPercentage: number;    // Percentage improvement
-    optimalUpgradeWindow: string;        // Recommended timing
-  };
+  // Metrics
+  estimatedCurrentNOI: number;
+  newNOI: number;
+  noiYieldOnInvestment: number;
+  roiFromNOI: number;
+  noiPaybackPeriod: number;
   
-  // Data source information
-  dataSource: {
-    method: 'cooperative-api' | 'condominium-api' | 'rgb-study-fallback';
-    rentStabilized: boolean;
-    buildingCategory: string;
+  // Building characteristics
+  isRentStabilized: boolean;
+  
+  // Configuration used for calculation
+  utilitiesIncludedInRent: boolean;
+  rentIncreasePercentage: number;
+  noiConfig: {
+    rentIncreasePercentage: number;
+    utilitiesIncludedInRent: boolean;
+    operatingExpenseRatio: number;
+    vacancyRate: number;
   };
 }
 
 // 6. Property Value Service Output (Section 10)
 export interface PropertyValueCalculationOutput extends BaseServiceOutput {
-  // Property values without upgrade
+  // Summary property values
   propertyValueNoUpgrade: number;
-  
-  // Property values with upgrade
   propertyValueWithUpgrade: number;
-  
-  // Net property value impact
   netPropertyValueGain: number;
   
-  // Analysis by time period
-  valueAnalysis: {
-    currentValue: number;
-    upgradeValue: number;
-    valueIncrease: number;
-    valueIncreasePercentage: number;
-  };
+  // Year-by-year property value projections
+  propertyValueByYearNoUpgrade: Array<{year: number, value: number}>;
+  propertyValueByYearWithUpgrade: Array<{year: number, value: number}>;
   
   // Investment metrics
   investmentMetrics: {
@@ -233,7 +230,7 @@ export interface PropertyValueCalculationOutput extends BaseServiceOutput {
   };
   
   // Configuration used
-  capRateUsed: number;
+  capRate: number;
 }
 
 // Union type for all service outputs

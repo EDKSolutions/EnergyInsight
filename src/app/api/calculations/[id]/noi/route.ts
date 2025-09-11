@@ -310,25 +310,15 @@ export async function GET(
       lastCalculated: userCalculation.calculation.updatedAt,
       serviceVersion: serviceVersions.noi,
 
-      // Rental income impact
-      potentialRentalIncomeImpact: userCalculation.calculation.potentialRentalIncomeImpact,
-      utilitiesIncludedInRent: userCalculation.calculation.utilitiesIncludedInRent,
-      rentIncreasePercentage: userCalculation.calculation.rentIncreasePercentage,
-
-      // Operating expense savings
-      operatingExpenseSavings: userCalculation.calculation.operatingExpenseSavings,
-
-      // NOI calculations
-      noiImpact: userCalculation.calculation.noiImpact,
-      effectiveGrossIncomeChange: userCalculation.calculation.effectiveGrossIncomeChange,
-      netOperatingIncomeChange: userCalculation.calculation.netOperatingIncomeChange,
-
-      // NOI metrics
-      estimatedCurrentNOI: userCalculation.calculation.estimatedCurrentNOI,
-      newNOI: userCalculation.calculation.newNOI,
-      noiYieldOnInvestment: userCalculation.calculation.noiYieldOnInvestment,
-      roiFromNOI: userCalculation.calculation.roiFromNOI,
-      noiPaybackPeriod: userCalculation.calculation.noiPaybackPeriod,
+      // Base Annual Building NOI
+      annualBuildingNOI: userCalculation.calculation.annualBuildingNOI,
+      
+      // Year-by-year NOI projections
+      noiByYearNoUpgrade: userCalculation.calculation.noiByYearNoUpgrade,
+      noiByYearWithUpgrade: userCalculation.calculation.noiByYearWithUpgrade,
+      
+      // Rent stabilization status
+      isRentStabilized: userCalculation.calculation.isRentStabilized,
     };
 
     return NextResponse.json(noiData);

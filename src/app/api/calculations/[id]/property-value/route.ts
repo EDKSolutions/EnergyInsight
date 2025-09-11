@@ -309,27 +309,14 @@ export async function GET(
       lastCalculated: userCalculation.calculation.updatedAt,
       serviceVersion: serviceVersions['property-value'],
 
-      // Value increases
-      noiBasedValueIncrease: userCalculation.calculation.noiBasedValueIncrease,
-      greenPremiumValueIncrease: userCalculation.calculation.greenPremiumValueIncrease,
-      energyEfficiencyValueIncrease: userCalculation.calculation.energyEfficiencyValueIncrease,
-      totalPropertyValueIncrease: userCalculation.calculation.totalPropertyValueIncrease,
+      // Summary property values
+      propertyValueNoUpgrade: userCalculation.calculation.propertyValueNoUpgrade,
+      propertyValueWithUpgrade: userCalculation.calculation.propertyValueWithUpgrade,
+      netPropertyValueGain: userCalculation.calculation.netPropertyValueGain,
 
-      // Property values
-      currentPropertyValue: userCalculation.calculation.buildingValue, // Use buildingValue as current property value
-      newPropertyValue: userCalculation.calculation.newPropertyValue,
-
-      // Return metrics
-      valueCreationROI: userCalculation.calculation.valueCreationROI,
-      propertyAppreciationPercentage: userCalculation.calculation.propertyAppreciationPercentage,
-      additionalLoanCapacity: userCalculation.calculation.additionalLoanCapacity,
-      netBenefit: userCalculation.calculation.netBenefit,
-      valuePaybackPeriod: userCalculation.calculation.valuePaybackPeriod,
-
-      // Financing impact
-      refinancingBenefit: userCalculation.calculation.refinancingBenefit,
-      dscrImprovement: userCalculation.calculation.dscrImprovement,
-      creditworthinessImprovement: userCalculation.calculation.creditworthinessImprovement,
+      // Year-by-year property value projections
+      propertyValueByYearNoUpgrade: userCalculation.calculation.propertyValueByYearNoUpgrade,
+      propertyValueByYearWithUpgrade: userCalculation.calculation.propertyValueByYearWithUpgrade,
     };
 
     return NextResponse.json(propertyValueData);

@@ -340,7 +340,7 @@ export class LL97CalculationService extends BaseCalculationService<
     
     if (calculation.rawLL84Data) {
       try {
-        const ll84Data = calculation.rawLL84Data as any;
+        const ll84Data = calculation.rawLL84Data as Record<string, unknown>;
         propertyUseBreakdown = ll84Data.list_of_all_property_use;
         
         // Use total_location_based_ghg if available, otherwise fall back to stored value or total_ghg_emissions

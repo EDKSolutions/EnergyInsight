@@ -22,6 +22,9 @@ import {
   CumulativeSavingsData,
 } from '../constants/financial-constants';
 
+// LL97 fees won't be assessed until 2026
+const FEES_ASSESSED_THIS_YEAR = 2026;
+
 export class FinancialCalculationService extends BaseCalculationService<
   FinancialCalculationInput,
   FinancialCalculationOutput,
@@ -146,8 +149,8 @@ export class FinancialCalculationService extends BaseCalculationService<
         // Energy savings apply every year after savings start
         annualSavings = annualEnergySavings;
 
-        // Add LL97 fee avoidance based on year - ONLY from 2026 onwards
-        if (year >= 2026 && year <= 2026) {
+        // Add LL97 fee avoidance based on year - ONLY from FEES_ASSESSED_THIS_YEAR onwards
+        if (year >= FEES_ASSESSED_THIS_YEAR && year <= 2026) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2024to2027;
         } else if (year >= 2027 && year <= 2029) {
           annualSavings += feeAvoidance.annualLL97FeeAvoidance2027to2029;

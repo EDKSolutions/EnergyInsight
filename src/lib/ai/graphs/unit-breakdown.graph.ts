@@ -47,7 +47,7 @@ export class UnitBreakdownGraph {
   constructor() {
     this.model = new ChatOpenAI({
       temperature: 0.1,
-      modelName: 'gpt-4-0125-preview',
+      modelName: "gpt-4o-mini",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
   }

@@ -1,6 +1,6 @@
 /**
  * Property Value Calculation Service
- * Implements property value analysis from LaTeX Section 10
+ * Implements property value analysis from LaTeX Section 10 with year-by-year calculations
  */
 
 import { BaseCalculationService } from './base-calculation.service';
@@ -12,7 +12,6 @@ import {
   PropertyValueCalculationOverrides,
   OverrideValidationResult,
 } from '../types';
-import { PROPERTY_VALUE_CONSTANTS } from '../constants/property-value-constants';
 
 export class PropertyValueCalculationService extends BaseCalculationService<
   PropertyValueCalculationInput,
@@ -24,157 +23,85 @@ export class PropertyValueCalculationService extends BaseCalculationService<
   readonly dependencies = ['noi'] as const;
 
   calculate(input: PropertyValueCalculationInput): PropertyValueCalculationOutput {
-    console.log(`[${this.serviceName}] Calculating property value impact`);
+    console.log(`[${this.serviceName}] Starting property value analysis with cap rate: ${input.capRate || 4.0}%`);
 
     // Apply defaults
-    const config = {
-      capRate: input.capRate ?? PROPERTY_VALUE_CONSTANTS.capRate,
-      greenPremiumPercentage: input.greenPremiumPercentage ?? PROPERTY_VALUE_CONSTANTS.greenPremiumPercentage,
-      energyEfficiencyPremium: input.energyEfficiencyPremium ?? PROPERTY_VALUE_CONSTANTS.energyEfficiencyPremium,
-      marketAppreciationRate: input.marketAppreciationRate ?? PROPERTY_VALUE_CONSTANTS.marketAppreciationRate,
-    };
+    const capRate = input.capRate ?? 4.0; // 4% default cap rate
 
-    // Step 1: Calculate NOI-based value increase
-    const noiBasedValueIncrease = this.calculateNOIBasedValueIncrease(input, config);
-
-    // Step 2: Calculate green premium value increase
-    const greenPremiumValueIncrease = this.calculateGreenPremiumValueIncrease(input, config);
-
-    // Step 3: Calculate energy efficiency premium
-    const energyEfficiencyValueIncrease = this.calculateEnergyEfficiencyPremium(input, config);
-
-    // Step 4: Calculate total property value increase
-    const totalPropertyValueIncrease = Math.max(
-      noiBasedValueIncrease,
-      greenPremiumValueIncrease + energyEfficiencyValueIncrease
+    // Calculate year-by-year property values following LaTeX specification
+    const propertyValueByYearNoUpgrade = this.calculatePropertyValueByYear(
+      input.noiByYearNoUpgrade,
+      capRate
     );
 
-    // Step 5: Calculate new property value
-    const newPropertyValue = input.currentPropertyValue + totalPropertyValueIncrease;
-
-    // Step 6: Calculate return metrics
-    const returnMetrics = this.calculateReturnMetrics(
-      input,
-      totalPropertyValueIncrease,
-      newPropertyValue,
-      config
+    const propertyValueByYearWithUpgrade = this.calculatePropertyValueByYear(
+      input.noiByYearWithUpgrade,
+      capRate
     );
 
-    // Step 7: Calculate financing impact
-    const financingImpact = this.calculateFinancingImpact(input, totalPropertyValueIncrease);
+    // Calculate summary metrics (using first year values)
+    const propertyValueNoUpgrade = propertyValueByYearNoUpgrade[0]?.value || 0;
+    const propertyValueWithUpgrade = propertyValueByYearWithUpgrade[0]?.value || 0;
+    const netPropertyValueGain = propertyValueWithUpgrade - propertyValueNoUpgrade;
+
+    // Calculate investment metrics
+    const investmentMetrics = this.calculateInvestmentMetrics(
+      netPropertyValueGain,
+      0 // We'll need retrofit cost from a different source
+    );
+
+    console.log(`[${this.serviceName}] Property value analysis:`);
+    console.log(`[${this.serviceName}] - No upgrade (Year 1): $${propertyValueNoUpgrade.toLocaleString()}`);
+    console.log(`[${this.serviceName}] - With upgrade (Year 1): $${propertyValueWithUpgrade.toLocaleString()}`);
+    console.log(`[${this.serviceName}] - Net gain: $${netPropertyValueGain.toLocaleString()}`);
+    console.log(`[${this.serviceName}] - Generated ${propertyValueByYearNoUpgrade.length} years of property value projections`);
 
     const result: PropertyValueCalculationOutput = {
       calculationId: input.calculationId,
       lastCalculated: new Date(),
       serviceVersion: this.version,
 
-      // Value increases by method
-      noiBasedValueIncrease,
-      greenPremiumValueIncrease,
-      energyEfficiencyValueIncrease,
-      totalPropertyValueIncrease,
+      // Summary values
+      propertyValueNoUpgrade,
+      propertyValueWithUpgrade,
+      netPropertyValueGain,
 
-      // Property values
-      currentPropertyValue: input.currentPropertyValue,
-      newPropertyValue,
+      // Year-by-year projections
+      propertyValueByYearNoUpgrade,
+      propertyValueByYearWithUpgrade,
 
-      // Return metrics
-      ...returnMetrics,
-
-      // Financing impact
-      ...financingImpact,
+      // Investment metrics
+      investmentMetrics,
 
       // Configuration used
-      propertyValueConfig: config,
+      capRate,
     };
-
-    console.log(`[${this.serviceName}] Property value increase: $${totalPropertyValueIncrease.toLocaleString()}`);
-    console.log(`[${this.serviceName}] Value creation ROI: ${returnMetrics.valueCreationROI.toFixed(2)}%`);
 
     return result;
   }
 
-  private calculateNOIBasedValueIncrease(
-    input: PropertyValueCalculationInput,
-    config: typeof PROPERTY_VALUE_CONSTANTS
-  ): number {
-    // Property value increase based on NOI improvement
-    // Value = NOI / Cap Rate
-    return input.netOperatingIncomeChange / (config.capRate / 100);
+  /**
+   * Calculate property value for each year using NOI / cap rate
+   * Following LaTeX functions: calculatePropertyValueNoUpgrade() and calculatePropertyValueUpgrade()
+   */
+  private calculatePropertyValueByYear(
+    noiByYear: Array<{year: number, noi: number}>,
+    capRate: number
+  ): Array<{year: number, value: number}> {
+    return noiByYear.map(item => ({
+      year: item.year,
+      value: item.noi / (capRate / 100) // NOI / cap rate = property value
+    }));
   }
 
-  private calculateGreenPremiumValueIncrease(
-    input: PropertyValueCalculationInput,
-    config: typeof PROPERTY_VALUE_CONSTANTS
-  ): number {
-    // Green buildings typically command a premium in the market
-    return input.currentPropertyValue * (config.greenPremiumPercentage / 100);
-  }
-
-  private calculateEnergyEfficiencyPremium(
-    input: PropertyValueCalculationInput,
-    config: typeof PROPERTY_VALUE_CONSTANTS
-  ): number {
-    // Additional premium specifically for energy efficiency improvements
-    const energyReductionFactor = Math.min(input.energyReductionPercentage / 100, 0.5); // Cap at 50%
-    return input.currentPropertyValue * (config.energyEfficiencyPremium / 100) * energyReductionFactor;
-  }
-
-  private calculateReturnMetrics(
-    input: PropertyValueCalculationInput,
-    totalPropertyValueIncrease: number,
-    newPropertyValue: number,
-    config: typeof PROPERTY_VALUE_CONSTANTS
-  ) {
-    // Value creation ROI
-    const valueCreationROI = input.totalRetrofitCost > 0 
-      ? (totalPropertyValueIncrease / input.totalRetrofitCost) * 100 
-      : 0;
-
-    // Property appreciation percentage
-    const propertyAppreciationPercentage = input.currentPropertyValue > 0 
-      ? (totalPropertyValueIncrease / input.currentPropertyValue) * 100 
-      : 0;
-
-    // Loan-to-value impact (assuming typical 75% LTV)
-    const newLoanCapacity = newPropertyValue * 0.75;
-    const currentLoanCapacity = input.currentPropertyValue * 0.75;
-    const additionalLoanCapacity = newLoanCapacity - currentLoanCapacity;
-
-    // Net benefit (value increase minus retrofit cost)
-    const netBenefit = totalPropertyValueIncrease - input.totalRetrofitCost;
-
-    // Payback from value perspective
-    const valuePaybackPeriod = totalPropertyValueIncrease > 0 
-      ? input.totalRetrofitCost / (totalPropertyValueIncrease * (config.marketAppreciationRate / 100))
-      : -1;
-
+  /**
+   * Calculate investment metrics for property value analysis
+   */
+  private calculateInvestmentMetrics(netPropertyValueGain: number, retrofitCost: number) {
     return {
-      valueCreationROI,
-      propertyAppreciationPercentage,
-      additionalLoanCapacity,
-      netBenefit,
-      valuePaybackPeriod,
-    };
-  }
-
-  private calculateFinancingImpact(
-    input: PropertyValueCalculationInput,
-    totalPropertyValueIncrease: number
-  ) {
-    // Potential refinancing benefits
-    const refinancingBenefit = totalPropertyValueIncrease * 0.75; // Typical 75% LTV
-
-    // Debt service coverage ratio improvement (from NOI increase)
-    const dscrImprovement = input.netOperatingIncomeChange / (input.totalRetrofitCost * 0.08); // Assume 8% debt service
-
-    // Improved creditworthiness indicator
-    const creditworthinessImprovement = Math.min(dscrImprovement, 0.5); // Cap improvement
-
-    return {
-      refinancingBenefit,
-      dscrImprovement,
-      creditworthinessImprovement,
+      valueToRetrofitCostRatio: retrofitCost > 0 ? netPropertyValueGain / retrofitCost : 0,
+      equityCreated: netPropertyValueGain,
+      leverageMultiplier: retrofitCost > 0 ? netPropertyValueGain / retrofitCost : 0,
     };
   }
 
@@ -182,12 +109,14 @@ export class PropertyValueCalculationService extends BaseCalculationService<
     calculation: Calculations,
     overrides?: PropertyValueCalculationOverrides
   ): PropertyValueCalculationInput {
+    // Extract NOI arrays from the calculation
+    const noiByYearNoUpgrade = (calculation.noiByYearNoUpgrade as Array<{year: number, noi: number}>) || [];
+    const noiByYearWithUpgrade = (calculation.noiByYearWithUpgrade as Array<{year: number, noi: number}>) || [];
+
     const baseInput: PropertyValueCalculationInput = {
       calculationId: calculation.id,
-      currentPropertyValue: parseFloat(calculation.buildingValue) || 1000000,
-      totalRetrofitCost: calculation.totalRetrofitCost || 0,
-      netOperatingIncomeChange: calculation.netOperatingIncomeChange || 0,
-      energyReductionPercentage: calculation.energyReductionPercentage || 0,
+      noiByYearNoUpgrade,
+      noiByYearWithUpgrade,
     };
 
     return { ...baseInput, ...overrides };
@@ -200,17 +129,17 @@ export class PropertyValueCalculationService extends BaseCalculationService<
       warnings: [],
     };
 
-    if (!input.currentPropertyValue || input.currentPropertyValue <= 0) {
+    if (!input.noiByYearNoUpgrade || input.noiByYearNoUpgrade.length === 0) {
       result.errors.push({
-        field: 'currentPropertyValue',
-        message: 'Current property value must be greater than 0',
+        field: 'noiByYearNoUpgrade',
+        message: 'NOI year-by-year data without upgrade is required',
       });
     }
 
-    if (!input.totalRetrofitCost || input.totalRetrofitCost <= 0) {
+    if (!input.noiByYearWithUpgrade || input.noiByYearWithUpgrade.length === 0) {
       result.errors.push({
-        field: 'totalRetrofitCost',
-        message: 'Total retrofit cost must be greater than 0',
+        field: 'noiByYearWithUpgrade',
+        message: 'NOI year-by-year data with upgrade is required',
       });
     }
 
@@ -221,32 +150,30 @@ export class PropertyValueCalculationService extends BaseCalculationService<
       });
     }
 
-    if (input.greenPremiumPercentage !== undefined && (input.greenPremiumPercentage < 0 || input.greenPremiumPercentage > 20)) {
-      result.warnings.push({
-        field: 'greenPremiumPercentage',
-        message: 'Green premium should typically be between 0% and 10%',
-      });
-    }
-
     result.valid = result.errors.length === 0;
     return result;
   }
 
   async saveResultsToDatabase(calculationId: string, output: PropertyValueCalculationOutput): Promise<void> {
     console.log(`[${this.serviceName}] Saving property value results to database for ${calculationId}`);
+    console.log(`[${this.serviceName}] Net property value gain: $${output.netPropertyValueGain.toLocaleString()}`);
+    console.log(`[${this.serviceName}] Saving ${output.propertyValueByYearNoUpgrade.length} years of property value projections`);
 
     await prisma.calculations.update({
       where: { id: calculationId },
       data: {
-        // Map to existing schema fields
-        propertyValueNoUpgrade: output.currentPropertyValue,
-        propertyValueWithUpgrade: output.newPropertyValue,
-        netPropertyValueGain: output.totalPropertyValueIncrease,
+        // Summary values
+        propertyValueNoUpgrade: output.propertyValueNoUpgrade,
+        propertyValueWithUpgrade: output.propertyValueWithUpgrade,
+        netPropertyValueGain: output.netPropertyValueGain,
+        // Year-by-year projections as JSON
+        propertyValueByYearNoUpgrade: output.propertyValueByYearNoUpgrade,
+        propertyValueByYearWithUpgrade: output.propertyValueByYearWithUpgrade,
       },
     });
 
     await this.updateServiceMetadata(calculationId);
-    console.log(`[${this.serviceName}] Successfully saved property value results`);
+    console.log(`[${this.serviceName}] Successfully saved property value results with year-by-year projections`);
   }
 }
 

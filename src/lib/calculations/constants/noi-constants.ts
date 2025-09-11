@@ -3,6 +3,27 @@
  * Based on LaTeX Document Section 9 - NOI Analysis
  */
 
+// NYC Borough Types and Mappings
+export type BoroughCode = 'MN' | 'BK' | 'QN' | 'BX' | 'SI';
+export type BoroughName = 'Manhattan' | 'Brooklyn' | 'Queens' | 'Bronx' | 'Staten Island';
+export type CommunityDistrict = 101 | 102 | 103 | 104 | 105 | 106 | 107 | 108 | 109 | 110 | 111 | 112;
+
+export const BOROUGH_CODE_TO_NAME: Record<BoroughCode, BoroughName> = {
+  'MN': 'Manhattan',
+  'BK': 'Brooklyn', 
+  'QN': 'Queens',
+  'BX': 'Bronx',
+  'SI': 'Staten Island'
+} as const;
+
+export const BOROUGH_NAME_TO_CODE: Record<BoroughName, BoroughCode> = {
+  'Manhattan': 'MN',
+  'Brooklyn': 'BK',
+  'Queens': 'QN', 
+  'Bronx': 'BX',
+  'Staten Island': 'SI'
+} as const;
+
 // NYC Open Data API Endpoints
 export const NOI_DATA_SOURCES = {
   cooperativeApiUrl: 'https://data.cityofnewyork.us/resource/myei-c3fa.json',
@@ -42,18 +63,19 @@ export const RGB_STUDY_CATEGORIES = {
   },
   
   location: {
-    coreManhattan: 'core_manhattan',
-    upperManhattan: 'upper_manhattan', 
-    brooklyn: 'brooklyn',
-    queens: 'queens',
-    bronx: 'bronx',
-    statenIsland: 'staten_island',
+    coreManhattan: 'Core Manhattan',
+    upperManhattan: 'Upper Manhattan', 
+    brooklyn: 'Brooklyn',
+    queens: 'Queens',
+    bronx: 'Bronx',
+    statenIsland: 'Staten Island',
+    manhattan: 'Manhattan',
   },
   
   buildingSize: {
-    small: '11-19', // 11-19 units
-    medium: '20-99', // 20-99 units  
-    large: '100+', // 100+ units
+    small: '11-19 units', // 11-19 units
+    medium: '20-99 units', // 20-99 units  
+    large: '100+ units', // 100+ units
   },
   
   buildingEra: {
@@ -92,23 +114,56 @@ export function isRentStabilized(
 }
 
 /**
- * Get location category for RGB Study lookup
+ * Convert borough code to borough name
  * 
- * @param boro - Borough name
+ * @param boroughCode - NYC borough code (MN, BK, QN, BX, SI)
+ * @returns Full borough name
+ * @throws Error if borough code is invalid
+ */
+export function convertBoroughCodeToName(boroughCode: string): BoroughName {
+  const code = boroughCode.toUpperCase() as BoroughCode;
+  const name = BOROUGH_CODE_TO_NAME[code];
+  
+  if (!name) {
+    throw new Error(`Invalid borough code '${boroughCode}'. Supported codes: MN, BK, QN, BX, SI`);
+  }
+  
+  return name;
+}
+
+/**
+ * Get location category for RGB Study lookup
+ * Handles both borough codes (MN, BK, etc.) and full names (Manhattan, Brooklyn, etc.)
+ * 
+ * @param borough - Borough code or name
  * @param communityDistrict - Community district number (if Manhattan)
  * @returns Location category for RGB Study
+ * @throws Error if borough cannot be mapped to a location category
  */
 export function getLocationCategory(
-  boro: string,
+  borough: string,
   communityDistrict?: number
 ): string {
-  const boroLower = boro.toLowerCase();
+  // Convert borough code to name if needed
+  let boroughName: string;
+  try {
+    // First try as borough code
+    boroughName = convertBoroughCodeToName(borough);
+  } catch {
+    // If that fails, use as-is (assume it's already a name)
+    boroughName = borough;
+  }
+  
+  const boroLower = boroughName.toLowerCase();
   
   if (boroLower === 'manhattan' && communityDistrict) {
-    if (NYC_COMMUNITY_DISTRICTS.coreManhattan.includes(communityDistrict)) {
+    const manhattanDistricts = NYC_COMMUNITY_DISTRICTS.coreManhattan as readonly number[];
+    const upperManhattanDistricts = NYC_COMMUNITY_DISTRICTS.upperManhattan as readonly number[];
+    
+    if (manhattanDistricts.includes(communityDistrict)) {
       return RGB_STUDY_CATEGORIES.location.coreManhattan;
     }
-    if (NYC_COMMUNITY_DISTRICTS.upperManhattan.includes(communityDistrict)) {
+    if (upperManhattanDistricts.includes(communityDistrict)) {
       return RGB_STUDY_CATEGORIES.location.upperManhattan;
     }
   }
@@ -119,7 +174,10 @@ export function getLocationCategory(
     case 'queens': return RGB_STUDY_CATEGORIES.location.queens;
     case 'bronx': return RGB_STUDY_CATEGORIES.location.bronx;
     case 'staten island': return RGB_STUDY_CATEGORIES.location.statenIsland;
-    default: return RGB_STUDY_CATEGORIES.location.brooklyn; // Default fallback
+    case 'manhattan': 
+      return RGB_STUDY_CATEGORIES.location.manhattan;
+    default: 
+      throw new Error(`Unable to map borough '${borough}' to RGB Study location category. Supported: MN/Manhattan (with community district), BK/Brooklyn, QN/Queens, BX/Bronx, SI/Staten Island`);
   }
 }
 
@@ -164,7 +222,8 @@ export function isCooperativeBuilding(buildingClass: string): boolean {
  * @returns True if condominium building
  */
 export function isCondominiumBuilding(buildingClass: string): boolean {
-  return NOI_BUILDING_CLASSES.condominium.includes(buildingClass);
+  const condominiumClasses = NOI_BUILDING_CLASSES.condominium as readonly string[];
+  return condominiumClasses.includes(buildingClass);
 }
 
 // Combined export for easy access
