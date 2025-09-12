@@ -7,6 +7,7 @@ import { BaseCalculationService } from './base-calculation.service';
 import { Calculations } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
+  ServiceName,
   FinancialCalculationInput,
   FinancialCalculationOutput,
   FinancialCalculationOverrides,
@@ -31,7 +32,7 @@ export class FinancialCalculationService extends BaseCalculationService<
 > {
   readonly serviceName = 'financial' as const;
   readonly version = '1.0.0';
-  readonly dependencies = ['energy', 'll97'] as const;
+  readonly dependencies = ['energy', 'll97'] as ServiceName[];
 
   calculate(input: FinancialCalculationInput): FinancialCalculationOutput {
     console.log(`[${this.serviceName}] Calculating financial analysis`);
@@ -56,7 +57,7 @@ export class FinancialCalculationService extends BaseCalculationService<
     const { cumulativeSavingsData } = this.calculateCumulativeSavingsByYear(
       input.annualEnergySavings,
       feeAvoidance,
-      config
+      config,
     );
 
     // Extract arrays for backward compatibility with existing functions
@@ -77,7 +78,6 @@ export class FinancialCalculationService extends BaseCalculationService<
       input.totalRetrofitCost,
       cumulativeSavingsByYear,
       annualSavingsByYear,
-      config
     );
 
     // Step 6: Generate visualization data

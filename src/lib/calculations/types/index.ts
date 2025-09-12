@@ -3,11 +3,12 @@
  * Provides easy access to all TypeScript interfaces and types
  */
 
+import type { ServiceName } from './service-inputs';
+
 // Service input types
 export * from './service-inputs';
 export type {
   ServiceInput,
-  ServiceName,
   ServiceInputByName,
   AIUnitBreakdownInput,
   EnergyCalculationInput,
@@ -50,7 +51,6 @@ export type {
 
 // Re-export utility functions
 export {
-  buildServiceInput,
   validateOverrides,
   mergeOverrides,
   isEnergyOverrides,
@@ -74,8 +74,8 @@ export interface CalculationContext {
 // Service dependency definition
 export interface ServiceDependency {
   serviceName: ServiceName;
-  dependsOn: ServiceName[];
-  triggers: ServiceName[];
+  dependsOn: readonly ServiceName[];
+  triggers: readonly ServiceName[];
 }
 
 // Complete service registry type

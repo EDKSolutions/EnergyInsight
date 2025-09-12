@@ -10,7 +10,7 @@ const EnergyCard = ({ c }: { c: CalculationResult }) => {
   const energyProfile: { electric?: number; gas?: number; [key: string]: unknown } = {};
   try {
     const currentEnergyProfile = getFieldValue('energyProfile', c.energyProfile);
-    const parsed = JSON.parse(currentEnergyProfile);
+    const parsed = JSON.parse(String(currentEnergyProfile));
     energyProfile.electric = parsed.electric ? parseFloat(parsed.electric) : 0;
     energyProfile.gas = parsed.gas ? parseFloat(parsed.gas) : 0;
   } catch (e) {
@@ -23,7 +23,7 @@ const EnergyCard = ({ c }: { c: CalculationResult }) => {
     let parsed;
     
     try {
-      parsed = JSON.parse(currentProfile);
+      parsed = JSON.parse(String(currentProfile));
     } catch {
       parsed = { electric: "60%", gas: "40%" };
     }
@@ -121,7 +121,7 @@ const EnergyCard = ({ c }: { c: CalculationResult }) => {
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                 <EditableInputField 
                   field="siteEUI" 
-                  value={c.siteEUI} 
+                  value={String(c.siteEUI)} 
                   className="text-sm font-medium text-gray-700 dark:text-gray-300" 
                   inputType="number"
                   abbreviate=" kBtu/ft²/year"
@@ -135,7 +135,7 @@ const EnergyCard = ({ c }: { c: CalculationResult }) => {
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                 <EditableInputField 
                   field="occupancyRate" 
-                  value={c.occupancyRate} 
+                  value={String(c.occupancyRate)} 
                   className="text-sm font-medium text-gray-700 dark:text-gray-300" 
                   inputType="number"
                   abbreviate="%"
@@ -149,7 +149,7 @@ const EnergyCard = ({ c }: { c: CalculationResult }) => {
               <div className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                 <EditableInputField 
                   field="maintenanceCost" 
-                  value={c.maintenanceCost} 
+                  value={String(c.maintenanceCost)} 
                   className="text-sm font-medium text-gray-700 dark:text-gray-300" 
                   inputType="number"
                   abbreviate=" /unit/year"

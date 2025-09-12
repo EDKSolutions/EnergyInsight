@@ -28,7 +28,7 @@ const Unit = ({ c }: { c: CalculationResult }) => {
   const twoBed = unitMix.two_bed ?? 0;
   const threePlus = unitMix.three_plus ?? 0;
   const total = studio + oneBed + twoBed + threePlus;
-  const totalResidentialUnits = parseInt(getFieldValue('totalResidentialUnits', c.totalResidentialUnits)) || 0;
+  const totalResidentialUnits = getFieldValue('totalResidentialUnits', c.totalResidentialUnits) || 0;
 
   const percent = (value: number) => total > 0 ? `${((value / total) * 100).toFixed(1)}%` : '-';
 

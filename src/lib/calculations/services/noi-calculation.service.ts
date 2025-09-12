@@ -11,8 +11,9 @@ import {
   NOICalculationOutput,
   NOICalculationOverrides,
   OverrideValidationResult,
+  ServiceName,
 } from '../types';
-import { NOI_CONSTANTS, isRentStabilized } from '../constants/noi-constants';
+import { isRentStabilized, BoroughCode } from '../constants/noi-constants';
 import { noiDataService } from './noi-data.service';
 import { FEES_ASSESSED_THIS_YEAR } from './financial-calculation.service';
 import { ANALYSIS_PERIODS } from '../constants/financial-constants';
@@ -24,7 +25,7 @@ export class NOICalculationService extends BaseCalculationService<
 > {
   readonly serviceName = 'noi' as const;
   readonly version = '1.0.0';
-  readonly dependencies = ['financial'] as const;
+  readonly dependencies = ['financial'] as ServiceName[];
 
   async calculate(input: NOICalculationInput): Promise<NOICalculationOutput> {
     console.log(`[${this.serviceName}] Starting NOI analysis for BBL: ${input.bbl}, Building Class: ${input.buildingClass}`);
@@ -33,13 +34,13 @@ export class NOICalculationService extends BaseCalculationService<
     const annualBuildingNOI = input.customCurrentNOI ?? await this.determineNOIFromSource(input);
     
     const config = {
-      rentIncreasePercentage: input.rentIncreasePercentage ?? NOI_CONSTANTS.rentIncreasePercentage,
-      utilitiesIncludedInRent: input.utilitiesIncludedInRent ?? NOI_CONSTANTS.utilitiesIncludedInRent,
-      operatingExpenseRatio: input.operatingExpenseRatio ?? NOI_CONSTANTS.operatingExpenseRatio,
-      vacancyRate: input.vacancyRate ?? NOI_CONSTANTS.vacancyRate,
+      rentIncreasePercentage: input.rentIncreasePercentage ?? 2.5,
+      utilitiesIncludedInRent: input.utilitiesIncludedInRent ?? false,
+      operatingExpenseRatio: input.operatingExpenseRatio ?? 0.35,
+      vacancyRate: input.vacancyRate ?? 5.0,
     };
     
-    const isRentStabilized = this.determineRentStabilizationStatus(input, annualBuildingNOI);
+    const isRentStabilized = this.determineRentStabilizationStatus(input);
     
     console.log(`[${this.serviceName}] Annual Building NOI: $${annualBuildingNOI.toLocaleString()}`);
     console.log(`[${this.serviceName}] Energy savings: $${input.annualEnergySavings?.toLocaleString()}`);
@@ -69,7 +70,7 @@ export class NOICalculationService extends BaseCalculationService<
     );
 
     // Legacy NOI impact calculations - simplified for current implementation
-    const operatingExpenseSavings = this.calculateOperatingExpenseSavings(input, config);
+    const operatingExpenseSavings = this.calculateOperatingExpenseSavings(input);
     const potentialRentalIncomeImpact = 0; // Simplified: rental impact is already included in year-by-year calculations
     const noiImpact = operatingExpenseSavings; // Just the direct energy savings
     const effectiveGrossIncomeChange = 0; // Simplified for current implementation
@@ -138,7 +139,7 @@ export class NOICalculationService extends BaseCalculationService<
     annualBuildingNOI: number,
     energySavings: number,
     ll97Fees: Record<string, number>,
-    config: typeof NOI_CONSTANTS,
+    config: { rentIncreasePercentage: number; utilitiesIncludedInRent: boolean; operatingExpenseRatio: number; vacancyRate: number },
     upgradeYear: number
   ) {
     const analysisYears = 25; // 25-year analysis period
@@ -176,7 +177,7 @@ export class NOICalculationService extends BaseCalculationService<
         buildingClass: input.buildingClass,
         unitsRes: input.unitsRes,
         yearBuilt: input.yearBuilt,
-        borough: input.borough,
+        borough: input.borough as BoroughCode,
         communityDistrict: input.communityDistrict,
         numFloors: input.numFloors
       });
