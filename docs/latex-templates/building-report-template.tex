@@ -264,80 +264,6 @@ Operating expense savings from reduced energy costs contribute to NOI improvemen
 % Section 9: Financial Projections
 \section{Financial Projections}
 
-\subsection{Property Valuation Summary}
-Using {{CAP_RATE}}\% cap rate:
-\begin{align}
-\text{Current Value} &= \${{PROPERTY_VALUE_NO_UPGRADE}} \\
-\text{Enhanced Value} &= \${{PROPERTY_VALUE_WITH_UPGRADE}} \\
-\text{Value Gain} &= \${{NET_PROPERTY_VALUE_GAIN}}
-\end{align}
-
-\subsection{NOI Impact by Scenario}
-\begin{center}
-\begin{tikzpicture}
-\begin{axis}[
-    title={\textbf{Net Operating Income by Scenario}},
-    xlabel={Year},
-    ylabel={NOI (\$Millions)},
-    xmin=2024, xmax=2048,
-    ymin={{NOI_Y_MIN}}, ymax={{NOI_Y_MAX}},
-    legend pos=south east,
-    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
-    grid=major,
-    grid style={line width=0.1pt, draw=gray!30},
-    major grid style={line width=0.2pt, draw=gray!50},
-    width=14cm,
-    height=10cm,
-    axis background/.style={fill=gray!5},
-    scaled y ticks=false,
-    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
-    yticklabel={\$\pgfmathprintnumber{\tick}M},
-    xtick={2024,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048},
-    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
-    xticklabels={2024,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048}
-]
-
-% NOI with PTHP upgrade - enhanced NOI from energy savings
-\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
-    {{NOI_WITH_UPGRADE_COORDINATES}}
-};
-
-% NOI without upgrade - reduced NOI due to LL97 fees
-\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
-    {{NOI_NO_UPGRADE_COORDINATES}}
-};
-
-% Period markers
-\draw[color=blue, line width=2pt, dashed] (axis cs:2025,{{NOI_Y_MIN}}) -- (axis cs:2025,{{NOI_Y_MAX}});
-\draw[color=orange, line width=1.5pt, dashed] (axis cs:2026,{{NOI_Y_MIN}}) -- (axis cs:2026,{{NOI_Y_MAX}});
-\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,{{NOI_Y_MIN}}) -- (axis cs:2030,{{NOI_Y_MAX}});
-\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,{{NOI_Y_MIN}}) -- (axis cs:2035,{{NOI_Y_MAX}});
-
-% Upgrade completion label
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{NOI_Y_MAX}}) {Upgrade Completed};
-
-% Period labels  
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026,{{NOI_Y_MAX}}) {LL97 Fees Begin};
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2030,{{NOI_Y_MAX}}) {Higher Penalties};
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2035,{{NOI_Y_MAX}}) {Maximum Penalties};
-
-\legend{NOI with Upgrade, NOI without Upgrade}
-
-\end{axis}
-\end{tikzpicture}
-\end{center}
-
-\textbf{NOI Data by Year (\$Millions):}
-\begin{center}
-\begin{tabular}{lcc}
-\hline
-Year & NOI with Upgrade & NOI without Upgrade \\
-\hline
-{{NOI_DATA_TABLE}}
-\hline
-\end{tabular}
-\end{center}
-
 \subsection{Loan Balance vs Savings}
 \begin{center}
 \begin{tikzpicture}
@@ -402,6 +328,70 @@ Year & Annual Savings & Cumulative Savings & Loan Balance \\
 \end{tabular}
 \end{center}
 
+\subsection{NOI Impact by Scenario}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Net Operating Income by Scenario}},
+    xlabel={Year},
+    ylabel={NOI (\$Millions)},
+    xmin=2025, xmax=2048,
+    ymin={{NOI_Y_MIN}}, ymax={{NOI_Y_MAX}},
+    legend pos=south east,
+    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}M},
+    xtick={2025,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={2025,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048}
+]
+
+% NOI with PTHP upgrade - enhanced NOI from energy savings
+\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
+    {{NOI_WITH_UPGRADE_COORDINATES}}
+};
+
+% NOI without upgrade - reduced NOI due to LL97 fees
+\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
+    {{NOI_NO_UPGRADE_COORDINATES}}
+};
+
+% Period markers
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,{{NOI_Y_MIN}}) -- (axis cs:2025,{{NOI_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,{{NOI_Y_MIN}}) -- (axis cs:2030,{{NOI_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,{{NOI_Y_MIN}}) -- (axis cs:2035,{{NOI_Y_MAX}});
+
+% Upgrade completion label
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{NOI_Y_MAX}}) {Upgrade Completed};
+
+% Period labels  
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2030,{{NOI_Y_MAX}}) {Higher Penalties};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2035,{{NOI_Y_MAX}}) {Maximum Penalties};
+
+\legend{NOI with Upgrade, NOI without Upgrade}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\textbf{NOI Data by Year (\$Millions):}
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+Year & NOI with Upgrade & NOI without Upgrade \\
+\hline
+{{NOI_DATA_TABLE}}
+\hline
+\end{tabular}
+\end{center}
+
 \subsection{Property Value Enhancement}
 \begin{center}
 \begin{tikzpicture}
@@ -409,7 +399,7 @@ Year & Annual Savings & Cumulative Savings & Loan Balance \\
     title={\textbf{Property Value by Scenario}},
     xlabel={Year},
     ylabel={Property Value (\$Millions)},
-    xmin=2024, xmax=2040,
+    xmin=2025, xmax=2040,
     ymin={{PROPERTY_VALUE_Y_MIN}}, ymax={{PROPERTY_VALUE_Y_MAX}},
     legend pos=south east,
     legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
@@ -422,9 +412,9 @@ Year & Annual Savings & Cumulative Savings & Loan Balance \\
     scaled y ticks=false,
     y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
     yticklabel={\$\pgfmathprintnumber{\tick}M},
-    xtick={2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040},
+    xtick={2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040},
     x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
-    xticklabels={2024,\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040}
+    xticklabels={\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040}
 ]
 
 % Property value with PTHP upgrade - upgrade completes in 2025, value increases in 2026
@@ -439,7 +429,6 @@ Year & Annual Savings & Cumulative Savings & Loan Balance \\
 
 % Period markers
 \draw[color=blue, line width=2pt, dashed] (axis cs:2025,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2025,{{PROPERTY_VALUE_Y_MAX}});
-\draw[color=orange, line width=1.5pt, dashed] (axis cs:2027,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2027,{{PROPERTY_VALUE_Y_MAX}});
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2030,{{PROPERTY_VALUE_Y_MAX}});
 \draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2035,{{PROPERTY_VALUE_Y_MAX}});
 
@@ -447,8 +436,6 @@ Year & Annual Savings & Cumulative Savings & Loan Balance \\
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{PROPERTY_VALUE_Y_MAX}}) {Upgrade Completed};
 
 % Period labels
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2026.5,{{PROPERTY_VALUE_Y_MAX}}) {Fees/Savings Begin};
-\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2028.5,{{PROPERTY_VALUE_Y_MAX}}) {Reduced BE Credit};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,{{PROPERTY_VALUE_Y_MAX}}) {Higher LL97 Penalties};
 \node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,{{PROPERTY_VALUE_Y_MAX}}) {Continued LL97};
 
