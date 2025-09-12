@@ -382,7 +382,7 @@ export async function PUT(
     await calculationDependencyManager.executeService(
       calculationId,
       'noi',
-      overrides,
+      overrides as Record<string, string | number>,
       true // Enable cascading
     );
 

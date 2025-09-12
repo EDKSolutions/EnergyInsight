@@ -103,8 +103,7 @@ export abstract class BaseCalculationService<
       // 7. Trigger dependencies if cascade is enabled
       if (cascade) {
         result.dependenciesTriggered = await this.triggerDependencies(
-          calculationId,
-          context
+          calculationId
         );
       }
 
@@ -221,7 +220,7 @@ export abstract class BaseCalculationService<
       await prisma.calculations.update({
         where: { id: calculationId },
         data: {
-          overriddenFields: overrideMetadata,
+          overriddenFields: JSON.stringify(overrideMetadata),
         },
       });
     } catch (error) {
@@ -289,9 +288,15 @@ export abstract class BaseCalculationService<
     dependencies: { service: ServiceName; available: boolean }[];
     lastExecution?: Date;
   }> {
-    const health = {
+    const health: {
+      service: ServiceName;
+      status: 'healthy' | 'degraded' | 'unhealthy';
+      version: string;
+      dependencies: { service: ServiceName; available: boolean }[];
+      lastExecution?: Date;
+    } = {
       service: this.serviceName,
-      status: 'healthy' as const,
+      status: 'healthy',
       version: this.version,
       dependencies: this.dependencies.map(dep => ({
         service: dep,

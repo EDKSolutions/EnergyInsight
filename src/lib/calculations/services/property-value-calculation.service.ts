@@ -11,6 +11,7 @@ import {
   PropertyValueCalculationOutput,
   PropertyValueCalculationOverrides,
   OverrideValidationResult,
+  ServiceName,
 } from '../types';
 
 export class PropertyValueCalculationService extends BaseCalculationService<
@@ -20,7 +21,7 @@ export class PropertyValueCalculationService extends BaseCalculationService<
 > {
   readonly serviceName = 'property-value' as const;
   readonly version = '1.0.0';
-  readonly dependencies = ['noi'] as const;
+  readonly dependencies = ['noi'] as ServiceName[];
 
   calculate(input: PropertyValueCalculationInput): PropertyValueCalculationOutput {
     console.log(`[${this.serviceName}] Starting property value analysis with cap rate: ${input.capRate || 4.0}%`);

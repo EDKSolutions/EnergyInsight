@@ -12,6 +12,7 @@ import {
   EnergyCalculationOutput,
   EnergyCalculationOverrides,
   OverrideValidationResult,
+  ServiceName,
 } from '../types';
 import {
   ENERGY_CONSTANTS,
@@ -26,7 +27,7 @@ export class EnergyCalculationService extends BaseCalculationService<
 > {
   readonly serviceName = 'energy' as const;
   readonly version = '1.0.0';
-  readonly dependencies = ['ai-breakdown'] as const;
+  readonly dependencies = ['ai-breakdown'] as ServiceName[];
 
   /**
    * Main calculation method implementing LaTeX Sections 2-6

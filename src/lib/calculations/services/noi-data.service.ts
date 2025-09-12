@@ -185,25 +185,25 @@ export class NOIDataService {
     const data = rgbStudyData.data as Record<string, unknown>;
     
     // Get location data
-    const locationData = data[locationCategory];
+    const locationData = data[locationCategory] as Record<string, unknown>;
     if (!locationData) {
       throw new Error(`Location category '${locationCategory}' not found in RGB Study data`);
     }
     
     // Get tenure data (stabilized vs market_rate)
     const tenureKey = rentStabilized ? 'stabilized' : 'market_rate';
-    const tenureData = locationData[tenureKey];
+    const tenureData = locationData[tenureKey] as Record<string, unknown>;
     if (!tenureData) {
       throw new Error(`Tenure '${tenureKey}' not found for location '${locationCategory}'`);
     }
     
-    let eraData;
+    let eraData: Record<string, unknown>;
     if (rentStabilized && eraCategory) {
       // For stabilized buildings, use specific era
-      eraData = tenureData[eraCategory];
+      eraData = tenureData[eraCategory] as Record<string, unknown>;
       if (!eraData) {
         console.warn(`[NOI Data Service] Era '${eraCategory}' not found, falling back to 'all'`);
-        eraData = tenureData['all'];
+        eraData = tenureData['all'] as Record<string, unknown>;
       }
     } else {
       // For market rate buildings, no era distinction
@@ -215,12 +215,12 @@ export class NOIDataService {
     }
     
     // Get size bucket value
-    const sizeData = eraData.by_size || eraData;
-    const noiValue = sizeData[sizeCategory];
+    const sizeData = (eraData.by_size || eraData) as Record<string, unknown>;
+    const noiValue = sizeData[sizeCategory] as number;
     
     if (noiValue === null || noiValue === undefined) {
       console.warn(`[NOI Data Service] Size category '${sizeCategory}' not available, using overall average`);
-      return eraData.overall || tenureData.overall;
+      return (eraData.overall || tenureData.overall) as number;
     }
     
     return noiValue;
