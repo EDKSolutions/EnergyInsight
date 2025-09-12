@@ -76,6 +76,7 @@ export interface NOICalculationOverrides {
   utilitiesIncludedInRent?: boolean;         // Override utilities included in rent
   operatingExpenseRatio?: number;            // Override operating expense ratio
   vacancyRate?: number;                      // Override vacancy rate
+  upgradeYear?: number;                      // Override when retrofit completes
 }
 
 export interface PropertyValueCalculationOverrides {

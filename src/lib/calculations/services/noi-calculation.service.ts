@@ -14,6 +14,8 @@ import {
 } from '../types';
 import { NOI_CONSTANTS, isRentStabilized } from '../constants/noi-constants';
 import { noiDataService } from './noi-data.service';
+import { FEES_ASSESSED_THIS_YEAR } from './financial-calculation.service';
+import { ANALYSIS_PERIODS } from '../constants/financial-constants';
 
 export class NOICalculationService extends BaseCalculationService<
   NOICalculationInput,
@@ -56,11 +58,14 @@ export class NOICalculationService extends BaseCalculationService<
       adjustedAnnualFee2040to2049: input.adjustedAnnualFee2040to2049 || 0,
     };
 
+    const upgradeYear = input.upgradeYear ?? ANALYSIS_PERIODS.upgradeYear;
+
     const { noiByYearNoUpgrade, noiByYearWithUpgrade } = this.generateNOIByYear(
       annualBuildingNOI,
       input.annualEnergySavings || 0,
       ll97Fees,
-      config
+      config,
+      upgradeYear
     );
 
     // Legacy NOI impact calculations - simplified for current implementation
@@ -133,10 +138,11 @@ export class NOICalculationService extends BaseCalculationService<
     annualBuildingNOI: number,
     energySavings: number,
     ll97Fees: Record<string, number>,
-    config: typeof NOI_CONSTANTS
+    config: typeof NOI_CONSTANTS,
+    upgradeYear: number
   ) {
     const analysisYears = 25; // 25-year analysis period
-    const startYear = 2024;
+    const startYear = upgradeYear;
     
     const noiByYearNoUpgrade = [];
     const noiByYearWithUpgrade = [];
@@ -145,16 +151,16 @@ export class NOICalculationService extends BaseCalculationService<
       const year = startYear + i;
       
       const noiNoUpgrade = this.calculateAdjustedNOINoUpgrade(year, annualBuildingNOI, ll97Fees);
-      const noiWithUpgrade = this.calculateAdjustedNOIUpgrade(year, annualBuildingNOI, energySavings, ll97Fees);
+      const noiWithUpgrade = this.calculateAdjustedNOIUpgrade(year, annualBuildingNOI, energySavings, ll97Fees, upgradeYear);
       
       noiByYearNoUpgrade.push({ year, noi: noiNoUpgrade });
       noiByYearWithUpgrade.push({ year, noi: noiWithUpgrade });
     }
     
     console.log(`[${this.serviceName}] Sample NOI projections:`);
-    console.log(`[${this.serviceName}] 2024 - No upgrade: $${noiByYearNoUpgrade[0].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[0].noi.toLocaleString()}`);
-    console.log(`[${this.serviceName}] 2030 - No upgrade: $${noiByYearNoUpgrade[6].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[6].noi.toLocaleString()}`);
-    console.log(`[${this.serviceName}] 2035 - No upgrade: $${noiByYearNoUpgrade[11].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[11].noi.toLocaleString()}`);
+    console.log(`[${this.serviceName}] ${startYear} - No upgrade: $${noiByYearNoUpgrade[0].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[0].noi.toLocaleString()}`);
+    console.log(`[${this.serviceName}] ${startYear + 6} - No upgrade: $${noiByYearNoUpgrade[6].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[6].noi.toLocaleString()}`);
+    console.log(`[${this.serviceName}] ${startYear + 11} - No upgrade: $${noiByYearNoUpgrade[11].noi.toLocaleString()}, With upgrade: $${noiByYearWithUpgrade[11].noi.toLocaleString()}`);
     
     return { noiByYearNoUpgrade, noiByYearWithUpgrade };
   }
@@ -216,15 +222,16 @@ export class NOICalculationService extends BaseCalculationService<
    * NOI = annualBuildingNOI - LL97 penalties for the year
    */
   private calculateAdjustedNOINoUpgrade(year: number, annualBuildingNOI: number, ll97Fees: Record<string, number>): number {
-    if (year >= 2024 && year <= 2029) {
+    if (year >= FEES_ASSESSED_THIS_YEAR && year <= 2029) {
       return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2024to2029;
     } else if (year >= 2030 && year <= 2034) {
       return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2030to2034;
     } else if (year >= 2035 && year <= 2039) {
       return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2035to2039;
-    } else {
+    } else if (year >= 2040) {
       return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2040to2049;
     }
+    return annualBuildingNOI;
   }
 
   /**
@@ -235,11 +242,12 @@ export class NOICalculationService extends BaseCalculationService<
     year: number, 
     annualBuildingNOI: number, 
     energySavings: number, 
-    ll97Fees: Record<string, number>
+    ll97Fees: Record<string, number>,
+    upgradeYear: number
   ): number {
     let reducedLL97Penalties = 0;
     
-    if (year >= 2024 && year <= 2026) {
+    if (year >= FEES_ASSESSED_THIS_YEAR && year <= 2026) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFeeBefore2027;
     } else if (year >= 2027 && year <= 2029) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFee2027to2029;
@@ -247,11 +255,14 @@ export class NOICalculationService extends BaseCalculationService<
       reducedLL97Penalties = ll97Fees.adjustedAnnualFee2030to2034;
     } else if (year >= 2035 && year <= 2039) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFee2035to2039;
-    } else {
+    } else if (year >= 2040) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFee2040to2049;
     }
     
-    return annualBuildingNOI + energySavings - reducedLL97Penalties;
+    // Energy savings only apply AFTER the upgrade year
+    const appliedEnergySavings = year > upgradeYear ? energySavings : 0;
+    
+    return annualBuildingNOI + appliedEnergySavings - reducedLL97Penalties;
   }
 
   // REMOVED: calculateRentalIncomeImpact() - simplified to use direct energy savings
@@ -279,18 +290,19 @@ export class NOICalculationService extends BaseCalculationService<
       // Building identification and characteristics (required for NOI source determination)
       bbl: calculation.bbl,
       buildingClass: calculation.buildingClass,
-      unitsRes: calculation.totalResidentialUnits || 0,
-      yearBuilt: calculation.yearBuilt || 1950,
+      unitsRes: Number(calculation.totalResidentialUnits) || 0,
+      yearBuilt: Number(calculation.yearBuilt) || 1950,
       borough: calculation.boro,
-      numFloors: calculation.stories || 1,
+      numFloors: Number(calculation.stories) || 1,
       // TODO: Add communityDistrict field to database for Manhattan subcategories
       communityDistrict: undefined,
       
       // Financial data
-      buildingValue: calculation.buildingValue || 1000000,
-      capRate: calculation.capRate || 5.5,
-      totalRetrofitCost: calculation.totalRetrofitCost || 0,
-      annualEnergySavings: calculation.annualEnergySavings || 0,
+      buildingValue: Number(calculation.buildingValue) || 1000000,
+      capRate: Number(calculation.capRate) || 5.5,
+      totalRetrofitCost: Number(calculation.totalRetrofitCost) || 0,
+      annualEnergySavings: Number(calculation.annualEnergySavings) || 0,
+      upgradeYear: (calculation as Calculations & { upgradeYear?: number }).upgradeYear || ANALYSIS_PERIODS.upgradeYear,
       
       // LL97 fee data needed for year-by-year calculations (handle null values)
       annualFeeExceedingBudget2024to2029: calculation.annualFeeExceedingBudget2024to2029 ?? undefined,

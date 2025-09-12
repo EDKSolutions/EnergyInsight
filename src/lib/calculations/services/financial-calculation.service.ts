@@ -23,7 +23,7 @@ import {
 } from '../constants/financial-constants';
 
 // LL97 fees won't be assessed until 2026
-const FEES_ASSESSED_THIS_YEAR = 2026;
+export const FEES_ASSESSED_THIS_YEAR = 2026;
 
 export class FinancialCalculationService extends BaseCalculationService<
   FinancialCalculationInput,

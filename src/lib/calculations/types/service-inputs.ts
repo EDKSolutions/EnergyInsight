@@ -129,6 +129,7 @@ export interface NOICalculationInput extends BaseServiceInput {
   capRate: number;
   totalRetrofitCost: number;
   annualEnergySavings?: number;
+  upgradeYear?: number;           // Year when retrofit completes (default: 2025)
   
   // LL97 fee data (all periods) - needed for year-by-year calculations
   annualFeeExceedingBudget2024to2029?: number;
