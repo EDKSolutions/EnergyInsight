@@ -380,7 +380,7 @@ export async function PUT(
     await calculationDependencyManager.executeService(
       calculationId,
       'property-value',
-      overrides,
+      overrides as Record<string, string | number>,
       false // No cascading - this is the final service in the chain
     );
 

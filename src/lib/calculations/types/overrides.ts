@@ -159,7 +159,7 @@ export function mergeOverrides<T extends ServiceName>(
   if (!overrides) return baseInput;
   
   // Deep merge overrides with base input
-  return { ...baseInput, ...overrides };
+  return { ...baseInput, ...overrides } as Record<string, string | number>;
 }
 
 // Type guard functions

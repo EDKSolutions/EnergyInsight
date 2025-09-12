@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -24,7 +24,7 @@ function getKey(header: jwt.JwtHeader, callback: (err: Error | null, key?: strin
     return;
   }
   
-  client.getSigningKey(header.kid, (err, key) => {
+  client.getSigningKey(header.kid, (err: Error | null, key: jwksClient.SigningKey | undefined) => {
     if (err) {
       callback(err);
       return;
@@ -65,6 +65,9 @@ export async function getUserFromRequest(request: NextRequest): Promise<{ userId
       where: {
         provider: 'cognito',
         providerId: decoded.sub,
+      },
+      select: {
+        userId: true,
       },
     });
 

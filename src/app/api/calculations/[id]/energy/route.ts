@@ -283,7 +283,7 @@ export async function GET(
       annualBuildingMMBtuHeatingPTAC: userCalculation.calculation.annualBuildingMMBtuHeatingPTAC,
       annualBuildingMMBtuTotalPTAC: userCalculation.calculation.annualBuildingMMBtuTotalPTAC,
       annualBuildingThermsHeatingPTAC: userCalculation.calculation.annualBuildingThermsHeatingPTAC,
-      annualBuildingKwhCoolingPTAC: userCalculation.calculation.annualBuildingKwhCoolingPTAC,
+      annualBuildingKwhCoolingPTAC: userCalculation.calculation.annualBuildingkWhCoolingPTAC,
       annualBuildingCostPTAC: userCalculation.calculation.annualBuildingCostPTAC,
 
       // Section 3 - PTHP calculations
@@ -291,7 +291,7 @@ export async function GET(
       annualBuildingMMBtuHeatingPTHP: userCalculation.calculation.annualBuildingMMBtuHeatingPTHP,
       annualBuildingMMBtuCoolingPTHP: userCalculation.calculation.annualBuildingMMBtuCoolingPTHP,
       annualBuildingMMBtuTotalPTHP: userCalculation.calculation.annualBuildingMMBtuTotalPTHP,
-      annualBuildingKwhCoolingPTHP: userCalculation.calculation.annualBuildingKwhCoolingPTHP,
+      annualBuildingKwhCoolingPTHP: userCalculation.calculation.annualBuildingkWhCoolingPTHP,
       annualBuildingCostPTHP: userCalculation.calculation.annualBuildingCostPTHP,
 
       // Section 4 - Energy reduction analysis
@@ -365,7 +365,7 @@ export async function PUT(
     await calculationDependencyManager.executeService(
       calculationId,
       'energy',
-      overrides,
+      overrides as Record<string, string | number>,
       true // Enable cascading
     );
 

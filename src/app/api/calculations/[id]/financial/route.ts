@@ -325,10 +325,10 @@ export async function GET(
       totalInterestPaid: userCalculation.calculation.totalInterestPaid,
 
       // Summary metrics would be included if stored in database
-      totalSavingsOverAnalysisPeriod: userCalculation.calculation.totalSavingsOverAnalysisPeriod,
-      averageAnnualSavings: userCalculation.calculation.averageAnnualSavings,
-      netPresentValue: userCalculation.calculation.netPresentValue,
-      returnOnInvestment: userCalculation.calculation.returnOnInvestment,
+      // totalSavingsOverAnalysisPeriod: userCalculation.calculation.totalSavingsOverAnalysisPeriod,
+      // averageAnnualSavings: userCalculation.calculation.averageAnnualSavings,
+      // netPresentValue: userCalculation.calculation.netPresentValue,
+      // returnOnInvestment: userCalculation.calculation.returnOnInvestment,
     };
 
     return NextResponse.json(financialData);
@@ -392,7 +392,7 @@ export async function PUT(
     await calculationDependencyManager.executeService(
       calculationId,
       'financial',
-      overrides,
+      overrides as Record<string, string | number>,
       true // Enable cascading
     );
 

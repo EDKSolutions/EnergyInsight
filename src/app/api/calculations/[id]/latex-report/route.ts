@@ -217,7 +217,7 @@ export async function POST(
     }
 
     // Validate that calculation has required data
-    const missingFields = validateCalculationData(calculation);
+    const missingFields = validateCalculationData(calculation as CalculationData);
     if (missingFields.length > 0) {
       return NextResponse.json(
         { 
@@ -273,7 +273,7 @@ function validateCalculationData(calculation: CalculationData): string[] {
   const missingFields: string[] = [];
   
   for (const field of requiredFields) {
-    if (calculation[field] === null || calculation[field] === undefined) {
+    if (calculation[field as keyof CalculationData] === null || calculation[field as keyof CalculationData] === undefined) {
       missingFields.push(field);
     }
   }

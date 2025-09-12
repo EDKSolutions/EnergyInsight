@@ -7,6 +7,7 @@ import { BaseCalculationService } from './base-calculation.service';
 import { Calculations } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
+  ServiceName,
   LL97CalculationInput,
   LL97CalculationOutput,
   LL97CalculationOverrides,
@@ -41,7 +42,7 @@ export class LL97CalculationService extends BaseCalculationService<
 > {
   readonly serviceName = 'll97' as const;
   readonly version = '1.0.0';
-  readonly dependencies = ['energy'] as const;
+  readonly dependencies = ['energy'] as ServiceName[];
   
   private emissionsLimits: LL97EmissionsLimit[] | null = null;
 
@@ -223,14 +224,14 @@ export class LL97CalculationService extends BaseCalculationService<
     };
   }
 
-  private calculateBECredits(input: LL97CalculationInput, config: typeof LL97_CONSTANTS) {
+  private calculateBECredits(input: LL97CalculationInput, config: { beCoefficientBefore2027: number; beCoefficient2027to2029: number }) {
     return {
       beCreditBefore2027: input.annualBuildingkWhHeatingPTHP * config.beCoefficientBefore2027,
       beCredit2027to2029: input.annualBuildingkWhHeatingPTHP * config.beCoefficient2027to2029,
     };
   }
 
-  private calculateAdjustedEmissions(input: LL97CalculationInput, config: typeof LL97_CONSTANTS) {
+  private calculateAdjustedEmissions(input: LL97CalculationInput, config: { efGas: number; efGrid2024to2029: number; efGrid2030to2034: number }) {
     // Base adjusted emissions: remove gas heating, add electric heating
     const baseAdjustedEmissions = input.totalBuildingEmissionsLL84 
       - (input.annualBuildingMMBtuHeatingPTAC * config.efGas)
@@ -254,7 +255,7 @@ export class LL97CalculationService extends BaseCalculationService<
     adjustedEmissions: ReturnType<typeof this.calculateAdjustedEmissions>,
     emissionsBudgets: ReturnType<typeof this.calculateEmissionsBudgets>,
     beCredits: ReturnType<typeof this.calculateBECredits>,
-    config: typeof LL97_CONSTANTS
+    config: { feePerTonCO2e: number }
   ) {
     const calculateAdjustedFee = (emissions: number, budget: number, beCredit: number = 0) =>
       Math.max(0, (emissions - beCredit - budget) * config.feePerTonCO2e);
@@ -330,13 +331,13 @@ export class LL97CalculationService extends BaseCalculationService<
     if (calculation.rawLL84Data) {
       try {
         const ll84Data = calculation.rawLL84Data as Record<string, unknown>;
-        propertyUseBreakdown = ll84Data.list_of_all_property_use;
+        propertyUseBreakdown = ll84Data.list_of_all_property_use as string;
         
         // Use total_location_based_ghg if available, otherwise fall back to stored value or total_ghg_emissions
         if (ll84Data.total_location_based_ghg) {
-          totalBuildingEmissions = parseFloat(ll84Data.total_location_based_ghg);
+          totalBuildingEmissions = parseFloat(String(ll84Data.total_location_based_ghg));
         } else if (ll84Data.total_ghg_emissions) {
-          totalBuildingEmissions = parseFloat(ll84Data.total_ghg_emissions);
+          totalBuildingEmissions = parseFloat(String(ll84Data.total_ghg_emissions));
         }
       } catch (error) {
         console.warn('Failed to extract property use breakdown from raw LL84 data:', error);
@@ -346,7 +347,7 @@ export class LL97CalculationService extends BaseCalculationService<
     const baseInput: LL97CalculationInput = {
       calculationId: calculation.id,
       buildingClass: calculation.buildingClass || 'R6',
-      totalSquareFeet: parseFloat(calculation.totalSquareFeet) || 0,
+      totalSquareFeet: parseFloat(String(calculation.totalSquareFeet)) || 0,
       totalBuildingEmissionsLL84: totalBuildingEmissions || 1250.5, // Default from LaTeX
       propertyUseBreakdown,
       annualBuildingMMBtuHeatingPTAC: calculation.annualBuildingMMBtuHeatingPTAC || 0,
