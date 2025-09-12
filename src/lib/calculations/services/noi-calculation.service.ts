@@ -199,7 +199,7 @@ export class NOICalculationService extends BaseCalculationService<
   /**
    * Determine rent stabilization status using proper building data
    */
-  private determineRentStabilizationStatus(input: NOICalculationInput, annualBuildingNOI: number): boolean {
+  private determineRentStabilizationStatus(input: NOICalculationInput): boolean {
     // Use the proper isRentStabilized function from constants
     const isStabilized = isRentStabilized(
       input.bbl,
@@ -270,8 +270,7 @@ export class NOICalculationService extends BaseCalculationService<
   // through energy savings passed to calculateAdjustedNOIUpgrade()
 
   private calculateOperatingExpenseSavings(
-    input: NOICalculationInput,
-    config: typeof NOI_CONSTANTS
+    input: NOICalculationInput
   ): number {
     // Direct energy cost savings reduce operating expenses
     return input.annualEnergySavings || 0;

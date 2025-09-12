@@ -140,7 +140,7 @@ export class UnitBreakdownGraph {
     }
   }
 
-  private extractBuildingValuesNode(state: typeof StateAnnotation.State) {
+  private extractBuildingValuesNode() {
     console.log('Running building values node');
 
     // Extract building values (use defaults for now)

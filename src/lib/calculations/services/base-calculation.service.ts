@@ -251,8 +251,7 @@ export abstract class BaseCalculationService<
    * Trigger dependent services (to be implemented by dependency manager)
    */
   protected async triggerDependencies(
-    calculationId: string,
-    context?: CalculationContext
+    calculationId: string
   ): Promise<string[]> {
     // This will be implemented by the dependency manager
     // For now, return empty array
@@ -304,7 +303,7 @@ export abstract class BaseCalculationService<
       try {
         const calculation = await this.getCalculation(calculationId);
         health.lastExecution = calculation?.updatedAt;
-      } catch (error) {
+      } catch {
         health.status = 'degraded';
       }
     }

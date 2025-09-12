@@ -3,6 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { getUserFromRequest } from '@/app/api/auth/middleware';
 import fs from 'fs/promises';
 import path from 'path';
+import { CumulativeSavingsData, LoanBalanceData } from '@/lib/calculations/constants/financial-constants';
+
+// Types for NOI and Property Value data
+type NOIYearData = { year: number; noi: number };
+type PropertyValueYearData = { year: number; value: number };
 
 /**
  * @swagger
@@ -148,20 +153,20 @@ interface CalculationData {
   annualLL97FeeAvoidance2035to2039: number | null;
   annualLL97FeeAvoidance2040to2049: number | null;
   simplePaybackPeriod: number | null;
-  cumulativeSavingsByYear: any | null;
-  loanBalanceByYear: any | null;
+  cumulativeSavingsByYear: CumulativeSavingsData[] | null;
+  loanBalanceByYear: LoanBalanceData[] | null;
   monthlyPayment: number | null;
   totalInterestPaid: number | null;
 
   // NOI and property value
   annualBuildingNOI: number | null;
-  noiByYearNoUpgrade: any | null;
-  noiByYearWithUpgrade: any | null;
+  noiByYearNoUpgrade: NOIYearData[] | null;
+  noiByYearWithUpgrade: NOIYearData[] | null;
   propertyValueNoUpgrade: number | null;
   propertyValueWithUpgrade: number | null;
   netPropertyValueGain: number | null;
-  propertyValueByYearNoUpgrade: any | null;
-  propertyValueByYearWithUpgrade: any | null;
+  propertyValueByYearNoUpgrade: PropertyValueYearData[] | null;
+  propertyValueByYearWithUpgrade: PropertyValueYearData[] | null;
 }
 
 interface UnitBreakdown {
@@ -169,11 +174,6 @@ interface UnitBreakdown {
   one_bed: number;
   two_bed: number;
   three_plus: number;
-}
-
-interface ChartCoordinate {
-  year: number;
-  value: number;
 }
 
 export async function POST(
@@ -259,7 +259,7 @@ export async function POST(
 /**
  * Validate that calculation has all required data for LaTeX generation
  */
-function validateCalculationData(calculation: any): string[] {
+function validateCalculationData(calculation: CalculationData): string[] {
   const requiredFields = [
     'bbl', 'address', 'boro', 'yearBuilt', 'stories', 'buildingClass',
     'totalSquareFeet', 'totalResidentialUnits', 'ptacUnits', 'unitMixBreakDown',
@@ -465,54 +465,54 @@ async function generateLatexReport(calculation: CalculationData): Promise<string
 /**
  * Generate TikZ coordinates for cumulative savings chart
  */
-function generateCumulativeSavingsCoordinates(data: any): string {
+function generateCumulativeSavingsCoordinates(data: CumulativeSavingsData[] | null): string {
   if (!data || !Array.isArray(data)) return '';
   
   return data
     .slice(0, 15) // Show 15 years to match loan term
-    .map((item: any) => `(${item.year},${item.cumulativeSavings})`)
+    .map((item: CumulativeSavingsData) => `(${item.year},${item.cumulativeSavings})`)
     .join(' ');
 }
 
 /**
  * Generate TikZ coordinates for loan balance chart
  */
-function generateLoanBalanceCoordinates(data: any): string {
+function generateLoanBalanceCoordinates(data: LoanBalanceData[] | null): string {
   if (!data || !Array.isArray(data)) return '';
   
   return data
     .slice(0, 16) // 15-year loan + 1 extra year
-    .map((item: any) => `(${item.year},${item.balance})`)
+    .map((item: LoanBalanceData) => `(${item.year},${item.balance})`)
     .join(' ');
 }
 
 /**
  * Generate TikZ coordinates for property value charts
  */
-function generatePropertyValueCoordinates(data: any): string {
+function generatePropertyValueCoordinates(data: PropertyValueYearData[] | null): string {
   if (!data || !Array.isArray(data)) return '';
   
   return data
     .slice(0, 10) // First 10 years
-    .map((item: any) => `(${item.year},${(item.value / 1000000).toFixed(1)})`)
+    .map((item: PropertyValueYearData) => `(${item.year},${(item.value / 1000000).toFixed(1)})`)
     .join(' ');
 }
 
 /**
  * Generate TikZ coordinates for NOI charts
  */
-function generateNOICoordinates(data: any): string {
+function generateNOICoordinates(data: NOIYearData[] | null): string {
   if (!data || !Array.isArray(data)) return '';
   
   return data
-    .map((item: any) => `(${item.year},${(item.noi / 1000000).toFixed(1)})`)
+    .map((item: NOIYearData) => `(${item.year},${(item.noi / 1000000).toFixed(1)})`)
     .join(' ');
 }
 
 /**
  * Generate NOI data table for auditing
  */
-function generateNOIDataTable(noiNoUpgrade: any, noiWithUpgrade: any): string {
+function generateNOIDataTable(noiNoUpgrade: NOIYearData[] | null, noiWithUpgrade: NOIYearData[] | null): string {
   if (!noiNoUpgrade || !noiWithUpgrade || !Array.isArray(noiNoUpgrade) || !Array.isArray(noiWithUpgrade)) {
     return '';
   }
@@ -537,7 +537,7 @@ function generateNOIDataTable(noiNoUpgrade: any, noiWithUpgrade: any): string {
 /**
  * Generate Property Value data table for auditing
  */
-function generatePropertyValueDataTable(pvNoUpgrade: any, pvWithUpgrade: any): string {
+function generatePropertyValueDataTable(pvNoUpgrade: PropertyValueYearData[] | null, pvWithUpgrade: PropertyValueYearData[] | null): string {
   if (!pvNoUpgrade || !pvWithUpgrade || !Array.isArray(pvNoUpgrade) || !Array.isArray(pvWithUpgrade)) {
     return '';
   }
@@ -562,7 +562,7 @@ function generatePropertyValueDataTable(pvNoUpgrade: any, pvWithUpgrade: any): s
 /**
  * Generate Cumulative Savings data table for auditing
  */
-function generateCumulativeSavingsDataTable(cumulativeSavingsData: any, loanBalanceData: any): string {
+function generateCumulativeSavingsDataTable(cumulativeSavingsData: CumulativeSavingsData[] | null, loanBalanceData: LoanBalanceData[] | null): string {
   if (!cumulativeSavingsData || !Array.isArray(cumulativeSavingsData)) {
     return '';
   }
@@ -605,11 +605,11 @@ function calculateChartScales(calculation: CalculationData) {
   const loanPrincipal = calculation.totalRetrofitCost || 0;
   const cumulativeSavings = calculation.cumulativeSavingsByYear || [];
   const maxSavings = cumulativeSavings.length > 0 
-    ? Math.max(...cumulativeSavings.map((s: any) => s.cumulativeSavings || 0))
+    ? Math.max(...cumulativeSavings.map((s: CumulativeSavingsData) => s.cumulativeSavings || 0))
     : 0;
   const loanBalanceData = calculation.loanBalanceByYear || [];
   const maxLoanBalance = loanBalanceData.length > 0 
-    ? Math.max(...loanBalanceData.map((l: any) => l.balance || 0))
+    ? Math.max(...loanBalanceData.map((l: LoanBalanceData) => l.balance || 0))
     : loanPrincipal;
   
   const loanChartMax = Math.max(maxLoanBalance, maxSavings) * 1.3; // 30% padding to prevent cutoff

@@ -13,7 +13,6 @@ import {
   OverrideValidationResult,
 } from '../types';
 import {
-  FINANCIAL_CONSTANTS,
   calculateMonthlyPayment,
   generateLoanBalanceArray,
   calculateSimplePaybackPeriod,
@@ -195,8 +194,7 @@ export class FinancialCalculationService extends BaseCalculationService<
   private calculateSummaryMetrics(
     totalRetrofitCost: number,
     cumulativeSavingsByYear: number[],
-    annualSavingsByYear: number[],
-    config: typeof defaultFinancialConfig
+    annualSavingsByYear: number[]
   ) {
     const totalSavingsOverAnalysisPeriod = cumulativeSavingsByYear[cumulativeSavingsByYear.length - 1] || 0;
     const averageAnnualSavings = annualSavingsByYear.reduce((sum, savings) => sum + savings, 0) / annualSavingsByYear.length;

@@ -4,12 +4,6 @@
  */
 
 import {
-  AIUnitBreakdownInput,
-  EnergyCalculationInput,
-  LL97CalculationInput,
-  FinancialCalculationInput,
-  NOICalculationInput,
-  PropertyValueCalculationInput,
   ServiceName
 } from './service-inputs';
 
@@ -144,10 +138,7 @@ export interface OverrideValidationResult {
 }
 
 // Helper functions for override handling
-export function validateOverrides<T extends ServiceName>(
-  serviceName: T,
-  overrides: ServiceOverridesByName<T>
-): OverrideValidationResult {
+export function validateOverrides(): OverrideValidationResult {
   const result: OverrideValidationResult = {
     valid: true,
     errors: [],

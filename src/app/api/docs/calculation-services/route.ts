@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -6,7 +6,7 @@ import yaml from 'js-yaml';
 /**
  * Serve the OpenAPI/Swagger specification for calculation services
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const swaggerPath = path.join(process.cwd(), 'src/lib/swagger/calculation-services.swagger.yaml');
     const swaggerContent = fs.readFileSync(swaggerPath, 'utf8');

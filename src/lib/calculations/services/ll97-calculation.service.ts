@@ -14,11 +14,8 @@ import {
 } from '../types';
 import {
   LL97_CONSTANTS,
-  getGridEmissionsFactor,
-  getCompliancePeriod,
-  getBECreditCoefficient,
 } from '../constants/ll97-constants';
-import { parsePropertyUse, normalizePropertyType, PropertyUse } from '../utils/property-use-parser';
+import { parsePropertyUse, normalizePropertyType } from '../utils/property-use-parser';
 import * as fs from 'fs';
 import * as path from 'path';
 
