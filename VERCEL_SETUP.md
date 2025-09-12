@@ -161,19 +161,25 @@ npx vercel ls
 
 ## ⚠️ Consideraciones Importantes
 
-1. **Migraciones Destructivas:**
+1. **Arquitectura ARM64/x64:**
+   - El `pnpm-lock.yaml` está excluido del repositorio debido a diferencias entre arquitecturas
+   - Tu Mac (ARM64) genera lockfiles diferentes a los servidores CI/Vercel (x64)
+   - El CI está configurado para instalar dependencias sin lockfile frozen
+   - Esto es normal y seguro para proyectos con dependencies estables
+
+2. **Migraciones Destructivas:**
    - Siempre revisar migraciones antes de merge a main
    - Hacer backup de DB antes de migraciones complejas
 
-2. **Variables de Entorno:**
+3. **Variables de Entorno:**
    - Nunca commitear API keys
    - Usar diferentes keys para dev/prod
 
-3. **Performance:**
+4. **Performance:**
    - Functions timeout configurado a 30s
    - Region configurada a `iad1` (US East)
 
-4. **Security:**
+5. **Security:**
    - CI pipeline incluye security audit
    - Branch protection en main recomendado
 

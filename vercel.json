@@ -1,7 +1,7 @@
 {
   "buildCommand": "pnpm run vercel-build",
   "outputDirectory": ".next",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "devCommand": "pnpm run dev",
   "framework": "nextjs",
   "regions": ["iad1"],
