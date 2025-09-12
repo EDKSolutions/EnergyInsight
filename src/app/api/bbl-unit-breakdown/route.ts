@@ -82,9 +82,9 @@ const unitBreakdownService = new UnitBreakdownService();
  *                   energyReductionPercentage: 35.67
  *                   totalRetrofitCost: 136400.00
  *                   annualBuildingThermsHeatingPTAC: 51000.00
- *                   annualBuildingKwhCoolingPTAC: 320000.00
- *                   annualBuildingKwhHeatingPTHP: 42857.14
- *                   annualBuildingKwhCoolingPTHP: 320000.00
+ *                   annualBuildingkWhCoolingPTAC: 320000.00
+ *                   annualBuildingkWhHeatingPTHP: 42857.14
+ *                   annualBuildingkWhCoolingPTHP: 320000.00
  *                   annualBuildingCostPTAC: 154000.00
  *                   annualBuildingCostPTHP: 90714.28
  *                   annualEnergySavings: 63285.72

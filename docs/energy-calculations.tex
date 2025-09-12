@@ -351,15 +351,6 @@ The total annual building energy consumption for PTHP:
 \code{annualBuildingMMBtuTotalPTHP} = \code{annualBuildingMMBtuCoolingPTHP} + \code{annualBuildingMMBtuHeatingPTHP}
 \end{equation}
 
-\subsection{PTHP Building Totals for Cost Calculations}
-
-\begin{equation}
-\code{annualBuildingKwhHeatingPTHP} = N_{ptacUnits} \times \code{annualUnitKwhHeatingPTHP}
-\end{equation}
-
-\begin{equation}
-\code{annualBuildingKwhCoolingPTHP} = N_{ptacUnits} \times \code{annualUnitKwhCoolingPTHP}
-\end{equation}
 
 \section{Energy Reduction Analysis}
 
@@ -392,7 +383,9 @@ Where:
 
 \section{Energy Cost Savings Calculation}
 
-The building energy totals for PTAC need to be expressed in kWh and therms so we can calculate price:
+To calculate costs, we need building totals in kWh and therms.
+
+\subsection{PTAC Building Totals for Cost Calculations}
 
 \begin{equation}
 \code{annualBuildingThermsHeatingPTAC} = N_{ptacUnits} \times \code{annualUnitThermsHeatingPTAC}
@@ -401,6 +394,23 @@ The building energy totals for PTAC need to be expressed in kWh and therms so we
 \begin{equation}
 \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times \code{annualUnitKwhCoolingPTAC}
 \end{equation}
+
+Where \code{annualUnitKwhCoolingPTAC} = 16,000 kWh per unit per year.
+
+\subsection{PTHP Building Totals for Cost Calculations}
+
+For PTHP systems, the kWh values needed for cost calculations are:
+
+\begin{itemize}
+    \item \code{annualBuildingkWhHeatingPTHP}: Already calculated in Section 4.1.1 using EFLH methodology
+    \item \code{annualBuildingKwhCoolingPTHP}: Same as PTAC cooling (PTHP cooling efficiency assumed equivalent)
+\end{itemize}
+
+\begin{equation}
+\code{annualBuildingKwhCoolingPTHP} = \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times 16,000
+\end{equation}
+
+\subsection{Cost Calculations}
 
 The annual energy cost savings from switching to PTHP systems is calculated as:
 
@@ -424,15 +434,24 @@ Where:
     \item \code{priceThermHour}: \$1.45 per therm for natural gas (NYC average)\footnote{Heating oil is priced at \$2.60-\$2.77 per therm, but most buildings use natural gas.}
 \end{itemize}
 
-\section{LL97 Emissions Savings and BE Credit}
+\section{LL97 Emissions Savings and Annual Fee Calculation}
+
+\vspace{0.3cm}
+\noindent\fbox{%
+\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}%
+{\textbf{Important Timing Note:} LL97 penalties are not assessed until 2026. Buildings completing upgrades in 2024 or 2025 will not face penalties during the upgrade year. Energy savings and LL97 fee avoidance calculations only apply from 2026 onwards.}%
+}
+\vspace{0.3cm}
 
 \subsection{Current Building Emissions and Budget}
 
-The building's current emissions are obtained from LL84 reporting:
+The building's current emissions are obtained from LL84 reporting, specifically from the \code{total\_location\_based\_ghg} field in the NYC Local Law 84 dataset\footnote{NYC Open Data API: https://data.cityofnewyork.us/resource/5zyy-y8am.json using \code{total\_location\_based\_ghg} field. This field contains the total GHG emissions in metric tons CO2e calculated using location-based emissions factors.}:
 
 \begin{align}
-\code{totalBuildingEmissionsLL84} &= \text{Current building emissions (metric tons CO2e)}
+\code{totalBuildingEmissionsLL84} &= \text{LL84}[\text{total\_location\_based\_ghg}]
 \end{align}
+
+The property use breakdown is obtained from the \code{list\_of\_all\_property\_use} field, which contains a comma-separated string of property types with their corresponding square footage. For example: ``Office (264550.0), Retail Store (21700.0), Parking (13000.0)''. This string is parsed to extract individual property use types and their associated square footage for emissions budget calculations.
 
 The emissions budget for the building is calculated as the sum of type-specific emissions limits applied to corresponding square footage\footnote{Key LL97 property type limits (tCO2e/sf) across four compliance periods: Office (2024-29: 0.00846, 2030-34: 0.00453, 2035-39: 0.00165234, 2040-49: 0.000581893), Multifamily Housing (2024-29: 0.00892, 2030-34: 0.00453), Hospital (2024-29: 0.02551, 2030-34: 0.01542). Complete mapping available in ll97\_espm\_to\_bc\_caps\_with\_2035\_2049.json.}:
 
@@ -440,75 +459,41 @@ The emissions budget for the building is calculated as the sum of type-specific 
 \code{emissionsBudget} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit}_i
 \end{align}
 
-\subsection{Current Fee Calculation}
+\subsection{Annual Fee Calculation with BE Credit Integration}
 
-LL97 has two compliance periods with different emissions budgets. The annual fee for exceeding the emissions budget is calculated separately for each period:
+LL97 has four compliance periods with different emissions budgets. For buildings implementing PTHP upgrades, the annual fee calculation includes Beneficial Electrification (BE) credits that reduce penalties. The calculation process follows these steps for each period:
 
-\subsubsection{2024-2029 Compliance Period}
+1. Calculate base emissions budget for the period
+2. Determine adjusted building emissions after retrofit
+3. Calculate BE credits (if applicable)
+4. Apply BE credits to reduce adjusted emissions
+5. Calculate final annual fee based on credited emissions
+
+\subsubsection{Base Emissions Budgets by Period}
+
+\textbf{2024-2029 Compliance Period}
 \begin{align}
 \code{emissionsBudget2024to2029} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2024to2029}_i
 \end{align}
 
-\begin{align}
-\code{annualFeeExceedingBudget2024to2029} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
-\end{align}
-
-\subsubsection{2030-2034 Compliance Period}
+\textbf{2030-2034 Compliance Period}
 \begin{align}
 \code{emissionsBudget2030to2034} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2030to2034}_i
 \end{align}
 
-\begin{align}
-\code{annualFeeExceedingBudget2030to2034} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
-\end{align}
-
-Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and the 2030-2034 period has more stringent (lower) emissions limits than the 2024-2029 period.
-
-\subsubsection{2035-2039 Compliance Period}
+\textbf{2035-2039 Compliance Period}
 \begin{align}
 \code{emissionsBudget2035to2039} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2035to2039}_i
 \end{align}
 
-\begin{align}
-\code{annualFeeExceedingBudget2035to2039} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2035to2039}) \times \code{feePerTonCO2e}
-\end{align}
-
-\subsubsection{2040-2049 Compliance Period}
+\textbf{2040-2049 Compliance Period}
 \begin{align}
 \code{emissionsBudget2040to2049} &= \sum_{i} \code{squareFootageByType}_i \times \code{emissionsLimit2040to2049}_i
 \end{align}
 
-\begin{align}
-\code{annualFeeExceedingBudget2040to2049} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
-&\quad - \code{emissionsBudget2040to2049}) \times \code{feePerTonCO2e}
-\end{align}
-
 Where \code{feePerTonCO2e} = \$268 per tCO2e over budget, and each subsequent period has more stringent (lower) emissions limits.
 
-\subsection{BE Credit Section (Beneficial Electrification)}
-
-\subsubsection{BE Credit Calculation}
-
-The BE credit is calculated based on heating electrification only, using annual heating kWh and time-dependent coefficients:
-
-\begin{align}
-\code{beCreditBefore2027} &= \code{annualBuildingkWhHeatingPTHP} \times 0.0013
-\end{align}
-
-\begin{align}
-\code{beCredit2027to2029} &= \code{annualBuildingkWhHeatingPTHP} \times 0.00065
-\end{align}
-
-Where:
-\begin{itemize}
-    \item Before January 1, 2027: Coefficient = 0.0013 tCO₂e/kWh
-    \item 2027-2029: Coefficient = 0.00065 tCO₂e/kWh
-\end{itemize}
-
-\subsubsection{Adjusted Building Emissions Calculation}
+\subsubsection{Adjusted Building Emissions After Retrofit}
 
 To accurately assess the LL97 fee impact of the PTAC→PTHP retrofit, we must calculate the building's adjusted emissions that reflect the actual post-retrofit energy consumption and emissions profile, rather than using the baseline LL84 emissions\footnote{Using raw LL84 emissions would not account for the actual emissions reduction from switching from gas heating to electric heat pumps, which varies by time period due to changing grid electricity emissions factors.}.
 
@@ -527,6 +512,7 @@ Where the emissions factors are:
     \begin{itemize}
         \item \code{efGrid2024to2029}: 0.000288962 tCO₂e/kWh
         \item \code{efGrid2030to2034}: 0.000145 tCO₂e/kWh
+        \item \code{efGrid2035toFuture}: 0.000145 tCO₂e/kWh (assumed same as 2030-2034, pending further research\footnote{The grid electricity emissions factor for periods beyond 2034 requires additional research to determine accurate projections based on grid decarbonization plans and renewable energy adoption rates.})
     \end{itemize}
 \end{itemize}
 
@@ -547,16 +533,36 @@ This gives us period-specific adjusted emissions:
 \begin{align}
 \code{adjustedTotalBuildingEmissions2035to2039} &= \code{totalBuildingEmissionsLL84} \nonumber \\
 &\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
-&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
+&\quad + (\code{annualBuildingKwhHeatingPTHP} \times \code{efGrid2035toFuture})
 \end{align}
 
 \begin{align}
 \code{adjustedTotalBuildingEmissions2040to2049} &= \code{totalBuildingEmissionsLL84} \nonumber \\
 &\quad - (\code{annualBuildingMMBtuHeatingPTAC} \times 0.05311) \nonumber \\
-&\quad + (\code{annualBuildingKwhHeatingPTHP} \times 0.000145)
+&\quad + (\code{annualBuildingKwhHeatingPTHP} \times \code{efGrid2035toFuture})
 \end{align}
 
-\subsubsection{Annual Fee with BE Credit (Before 2027)}
+\subsubsection{Beneficial Electrification (BE) Credit Calculation}
+
+The BE credit is calculated based on heating electrification only, using annual heating kWh and time-dependent coefficients:
+
+\begin{align}
+\code{beCreditBefore2027} &= \code{annualBuildingkWhHeatingPTHP} \times 0.0013
+\end{align}
+
+\begin{align}
+\code{beCredit2027to2029} &= \code{annualBuildingkWhHeatingPTHP} \times 0.00065
+\end{align}
+
+Where:
+\begin{itemize}
+    \item Before January 1, 2027: Coefficient = 0.0013 tCO₂e/kWh
+    \item 2027-2029: Coefficient = 0.00065 tCO₂e/kWh
+\end{itemize}
+
+\subsubsection{Final Annual Fee Calculation with BE Credits}
+
+\textbf{Annual Fee for 2024-2026 (with BE Credit)}
 
 For buildings upgrading before January 1, 2027:
 
@@ -569,7 +575,7 @@ For buildings upgrading before January 1, 2027:
 &\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee with BE Credit (2027-2029)}
+\textbf{Annual Fee for 2027-2029 (with Reduced BE Credit)}
 
 For buildings upgrading between 2027-2029:
 
@@ -582,7 +588,7 @@ For buildings upgrading between 2027-2029:
 &\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee for 2030-2034}
+\textbf{Annual Fee for 2030-2034 (No BE Credit)}
 
 For the 2030-2034 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
 
@@ -591,7 +597,7 @@ For the 2030-2034 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee for 2035-2039}
+\textbf{Annual Fee for 2035-2039 (No BE Credit)}
 
 For the 2035-2039 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
 
@@ -600,7 +606,7 @@ For the 2035-2039 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2035to2039}) \times \code{feePerTonCO2e}
 \end{align}
 
-\subsubsection{Annual Fee for 2040-2049}
+\textbf{Annual Fee for 2040-2049 (No BE Credit)}
 
 For the 2040-2049 period, there is no BE credit available, so the fee is calculated using the adjusted emissions for this period:
 
@@ -609,12 +615,43 @@ For the 2040-2049 period, there is no BE credit available, so the fee is calcula
 &\quad - \code{emissionsBudget2040to2049}) \times \code{feePerTonCO2e}
 \end{align}
 
-For both periods, we assume the same grid electricity emissions factor as the 2030-2034 period\footnote{Future grid electricity emissions factors post-2034 are not yet determined. This assumption provides continuity for financial modeling while maintaining the conservative approach of using known emissions factors.}.
+For both periods, we use the \code{efGrid2035toFuture} emissions factor as defined above.
+
+\subsubsection{Baseline Annual Fees (No Upgrade)}
+
+For comparison, the baseline annual fees without any retrofit are calculated using the original LL84 emissions:
+
+\begin{align}
+\code{annualFeeExceedingBudget2024to2029} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2024to2029}) \times \code{feePerTonCO2e}
+\end{align}
+
+\begin{align}
+\code{annualFeeExceedingBudget2030to2034} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2030to2034}) \times \code{feePerTonCO2e}
+\end{align}
+
+\begin{align}
+\code{annualFeeExceedingBudget2035to2039} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2035to2039}) \times \code{feePerTonCO2e}
+\end{align}
+
+\begin{align}
+\code{annualFeeExceedingBudget2040to2049} &= (\code{totalBuildingEmissionsLL84} \nonumber\\
+&\quad - \code{emissionsBudget2040to2049}) \times \code{feePerTonCO2e}
+\end{align}
 
 
 \section{Financial Analysis of PTHP Upgrade}
 
-In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 6) and the LL97 fee avoidance. The following 4 subsections show how calculating this varies depending on which period you are in, noting that LL97 compliance continues post-2035 with ongoing fee avoidance benefits.
+\vspace{0.3cm}
+\noindent\fbox{%
+\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}%
+{\textbf{Timing Configuration:} The financial analysis now supports configurable loan start year (default: 2025). Energy savings begin the year after loan origination (default: 2026). LL97 fee avoidance calculations only apply from 2026 onwards, regardless of loan start year.}%
+}
+\vspace{0.3cm}
+
+In order to calculate the financial viability of upgrading from PTAC to PTHP systems, we first need to calculate how much money you will be saving each year from the time you upgrade. This annual savings is composed of two main components: the energy savings (\code{annualSavingsEnergy} from Section 7) and the LL97 fee avoidance. The following 4 subsections show how calculating this varies depending on which period you are in, noting that LL97 compliance continues post-2035 with ongoing fee avoidance benefits.
 
 \subsection{LL97 Fee Avoidance Calculations}
 
@@ -665,7 +702,8 @@ Code Chunk 1: Function to calculate annual savings in a given year
 function getAnnualSavings(year: number): number {
   const energySavings = annualSavingsEnergy;
   
-  if (year >= 2024 && year <= 2026) {
+  // LL97 penalties only apply from 2026 onwards
+  if (year >= 2026 && year <= 2026) {
     return energySavings + annualLL97FeeAvoidance2024to2027;
   } else if (year >= 2027 && year <= 2029) {
     return energySavings + annualLL97FeeAvoidance2027to2029;
@@ -673,22 +711,26 @@ function getAnnualSavings(year: number): number {
     return energySavings + annualLL97FeeAvoidance2030to2034;
   } else if (year >= 2035 && year <= 2039) {
     return energySavings + annualLL97FeeAvoidance2035to2039;
-  } else {
+  } else if (year >= 2040) {
     return energySavings + annualLL97FeeAvoidance2040to2049;
+  } else {
+    return energySavings; // Only energy savings before 2026
   }
 }
 \end{lstlisting}
 
 Code Chunk 2: Example usage of calculating annual savings
 \begin{lstlisting}
-// Loan term years for a static example - upgrade completes in 2025, savings start in 2026
+// Loan term years for a static example - loan starts in 2025 (configurable), savings start in 2026
+const loanStartYear = 2025; // Configurable loan start year
+const savingsStartYear = loanStartYear + 1; // Savings start year after loan origination
 const loanYears = [2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040];
 const cumulativeSavingsByYear = [];
 let cumulativeSavings = 0;
 
 for (const year of loanYears) {
-  // No savings in 2025 (upgrade year), savings begin in 2026
-  const annualSavings = year === 2025 ? 0 : getAnnualSavings(year);
+  // No savings during loan start year, savings begin in savingsStartYear
+  const annualSavings = year < savingsStartYear ? 0 : getAnnualSavings(year);
   cumulativeSavings += annualSavings;
   
   cumulativeSavingsByYear.push(cumulativeSavings);

@@ -18,23 +18,17 @@ export const useCalculationEdit = () => {
   const initializeEdit = (calculation: CalculationResult) => {
     updateMultipleFields({
       id: calculation.id, // Add the ID to the store
-      buildingName: calculation.buildingName,
       address: calculation.address,
       yearBuilt: calculation.yearBuilt,
       annualEnergy: calculation.annualEnergy,
       buildingValue: calculation.buildingValue,
       capRate: calculation.capRate,
-      maintenanceCost: calculation.maintenanceCost,
-      occupancyRate: calculation.occupancyRate,
       ptacUnits: calculation.ptacUnits,
-      siteEUI: calculation.siteEUI,
       stories: calculation.stories,
       totalResidentialUnits: calculation.totalResidentialUnits,
       totalSquareFeet: calculation.totalSquareFeet,
       unitMixBreakDown: calculation.unitMixBreakDown,
       buildingClass: calculation.buildingClass,
-      taxClass: calculation.taxClass,
-      zoning: calculation.zoning,
       boro: calculation.boro,
     });
     setEditMode(true);

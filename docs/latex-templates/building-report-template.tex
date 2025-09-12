@@ -1,0 +1,480 @@
+\documentclass[11pt,letterpaper]{article}
+
+% Packages
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+% Setup (simplified without fancyhdr)
+\pagestyle{plain}
+
+% Custom commands (match energy-calculations.tex)
+\newcommand{\code}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\highlight}[1]{\textcolor{blue}{\textbf{#1}}}
+
+% Colors
+\definecolor{primaryblue}{RGB}{0,102,204}
+\definecolor{secondarygreen}{RGB}{0,153,76}
+\definecolor{accentorange}{RGB}{255,102,0}
+
+\begin{document}
+
+% Start directly with content (no title page or TOC)
+\section{Building Overview}
+
+\subsection{Building Characteristics}
+This analysis covers the conversion of {{PTAC_UNITS}} PTAC units to PTHP systems at {{ADDRESS}}, {{BOROUGH}}.
+
+\textbf{Building Details:}
+\begin{center}
+\begin{tabular}{ll}
+\hline
+\textbf{Database Variable} & \textbf{Value} \\
+\hline
+\code{yearBuilt} & {{YEAR_BUILT}} \\
+\code{stories} & {{STORIES}} \\
+\code{buildingClass} & {{BUILDING_CLASS}} \\
+\code{totalSquareFeet} & {{TOTAL_SQ_FT}} \\
+\code{totalResidentialUnits} & {{TOTAL_UNITS}} \\
+\code{ptacUnits} & {{PTAC_UNITS}} \\
+\code{capRate} & {{CAP_RATE}}\% \\
+\code{isRentStabilized} & {{IS_RENT_STABILIZED}} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Unit Mix Breakdown}
+\textbf{Source:} {{UNIT_BREAKDOWN_SOURCE}}
+
+\begin{center}
+\begin{tabular}{lc}
+\hline
+Unit Type & Count \\
+\hline
+Studio & {{STUDIO_UNITS}} \\
+One Bedroom & {{ONE_BED_UNITS}} \\
+Two Bedroom & {{TWO_BED_UNITS}} \\
+Three+ Bedroom & {{THREE_PLUS_UNITS}} \\
+\hline
+\end{tabular}
+\end{center}
+
+% Section 2: Current PTAC Energy Analysis
+\section{Current PTAC Energy Consumption}
+
+\subsection{Heating Energy (Natural Gas)}
+Annual building heating consumption:
+\begin{align}
+\text{Annual Therms} &= {{PTAC_UNITS}} \times 255 \text{ therms/unit} \\
+&= {{ANNUAL_BUILDING_THERMS_PTAC}} \text{ therms} \quad \code{annualBuildingThermsHeatingPTAC}
+\end{align}
+
+\begin{align}
+\text{Annual MMBtu} &= {{ANNUAL_BUILDING_THERMS_PTAC}} \times 0.1 \text{ MMBtu/therm} \\
+&= {{ANNUAL_BUILDING_MMBTU_HEATING_PTAC}} \text{ MMBtu} \quad \code{annualBuildingMMBtuHeatingPTAC}
+\end{align}
+
+\subsection{Cooling Energy (Electricity)}
+Annual building cooling consumption:
+\begin{align}
+\text{Annual kWh} &= {{PTAC_UNITS}} \times 16{,}000 \text{ kWh/unit} \\
+&= {{ANNUAL_BUILDING_KWH_COOLING_PTAC}} \text{ kWh} \quad \code{annualBuildingkWhCoolingPTAC}
+\end{align}
+
+\begin{align}
+\text{Annual MMBtu} &= {{ANNUAL_BUILDING_KWH_COOLING_PTAC}} \times 0.003412 \text{ MMBtu/kWh} \\
+&= {{ANNUAL_BUILDING_MMBTU_COOLING_PTAC}} \text{ MMBtu} \quad \code{annualBuildingMMBtuCoolingPTAC}
+\end{align}
+
+\subsection{Total PTAC Energy}
+\begin{align}
+\text{Total MMBtu} &= {{ANNUAL_BUILDING_MMBTU_HEATING_PTAC}} + {{ANNUAL_BUILDING_MMBTU_COOLING_PTAC}} \\
+&= {{ANNUAL_BUILDING_MMBTU_TOTAL_PTAC}} \text{ MMBtu}
+\end{align}
+
+\subsection{PTAC Energy Costs}
+Annual operating costs:
+\begin{align}
+\text{Heating Cost} &= {{ANNUAL_BUILDING_THERMS_PTAC}} \times \$1.45/\text{therm} \\
+&= \${{HEATING_COST_PTAC}} \quad \code{heatingCostPTAC}
+\end{align}
+
+\begin{align}
+\text{Cooling Cost} &= {{ANNUAL_BUILDING_KWH_COOLING_PTAC}} \times \$0.24/\text{kWh} \\
+&= \${{COOLING_COST_PTAC}} \quad \code{coolingCostPTAC}
+\end{align}
+
+\begin{align}
+\text{Total PTAC Cost} &= \${{HEATING_COST_PTAC}} + \${{COOLING_COST_PTAC}} \\
+&= \${{ANNUAL_BUILDING_COST_PTAC}} \quad \code{annualBuildingCostPTAC}
+\end{align}
+
+% Section 3: PTHP Energy Analysis
+\section{PTHP System Energy Consumption}
+
+\subsection{EFLH Calculation}
+For this {{YEAR_BUILT}} building with {{STORIES}} stories, the Equivalent Full Load Hours (EFLH) is {{EFLH_HOURS}} hours \quad \code{eflhHours}.
+
+\subsection{PTHP Heating Energy}
+Using the EFLH methodology for accurate heating calculations:
+\begin{align}
+\text{Annual kWh Heating} &= \frac{8 \text{ KBtu}}{3.412 \text{ kW/KBtu}} \times \frac{1}{1.51 \text{ COP}} \times {{EFLH_HOURS}} \times {{PTAC_UNITS}} \\
+&= {{ANNUAL_BUILDING_KWH_HEATING_PTHP}} \text{ kWh} \quad \code{annualBuildingkWhHeatingPTHP}
+\end{align}
+
+\begin{align}
+\text{Annual MMBtu Heating} &= {{ANNUAL_BUILDING_KWH_HEATING_PTHP}} \times 0.003412 \\
+&= {{ANNUAL_BUILDING_MMBTU_HEATING_PTHP}} \text{ MMBtu} \quad \code{annualBuildingMMBtuHeatingPTHP}
+\end{align}
+
+\subsection{PTHP Cooling Energy}
+Cooling consumption remains the same as PTAC:
+\begin{align}
+\text{Annual kWh Cooling} &= {{ANNUAL_BUILDING_KWH_COOLING_PTHP}} \text{ kWh} \quad \code{annualBuildingkWhCoolingPTHP} \\
+\text{Annual MMBtu Cooling} &= {{ANNUAL_BUILDING_MMBTU_COOLING_PTHP}} \text{ MMBtu} \quad \code{annualBuildingMMBtuCoolingPTHP}
+\end{align}
+
+\subsection{Total PTHP Energy}
+\begin{align}
+\text{Total MMBtu} &= {{ANNUAL_BUILDING_MMBTU_HEATING_PTHP}} + {{ANNUAL_BUILDING_MMBTU_COOLING_PTHP}} \\
+&= {{ANNUAL_BUILDING_MMBTU_TOTAL_PTHP}} \text{ MMBtu} \quad \code{annualBuildingMMBtuTotalPTHP}
+\end{align}
+
+\subsection{PTHP Energy Costs}
+All energy from electricity:
+\begin{align}
+\text{Total kWh} &= {{ANNUAL_BUILDING_KWH_HEATING_PTHP}} + {{ANNUAL_BUILDING_KWH_COOLING_PTHP}} \\
+&= {{TOTAL_KWH_PTHP}} \text{ kWh} \quad \code{totalKWhPTHP}
+\end{align}
+
+\begin{align}
+\text{Total PTHP Cost} &= {{TOTAL_KWH_PTHP}} \times \$0.24/\text{kWh} \\
+&= \${{ANNUAL_BUILDING_COST_PTHP}} \quad \code{annualBuildingCostPTHP}
+\end{align}
+
+% Section 4: Energy Savings
+\section{Energy Savings Analysis}
+
+\subsection{Energy Reduction}
+\begin{align}
+\text{Energy Reduction} &= \frac{{{ANNUAL_BUILDING_MMBTU_TOTAL_PTAC}} - {{ANNUAL_BUILDING_MMBTU_TOTAL_PTHP}}}{{{ANNUAL_BUILDING_MMBTU_TOTAL_PTAC}}} \times 100\% \\
+&= {{ENERGY_REDUCTION_PCT}}\% \quad \code{energyReductionPercentage}
+\end{align}
+
+\subsection{Annual Cost Savings}
+\begin{align}
+\text{Annual Savings} &= \${{ANNUAL_BUILDING_COST_PTAC}} - \${{ANNUAL_BUILDING_COST_PTHP}} \\
+&= \${{ANNUAL_ENERGY_SAVINGS}} \quad \code{annualEnergySavings}
+\end{align}
+
+% Section 5: Retrofit Cost
+\section{Retrofit Cost Analysis}
+
+\begin{align}
+\text{Unit Cost} &= (\$1{,}100 + \$450) \times 1.10 = \$1{,}705/\text{unit} \\
+\text{Total Cost} &= {{PTAC_UNITS}} \times \$1{,}705 \\
+&= \${{TOTAL_RETROFIT_COST}} \quad \code{totalRetrofitCost}
+\end{align}
+
+% Section 6: LL97 Compliance Analysis
+\section{LL97 Compliance \& Carbon Reduction}
+
+\subsection{Current Building Emissions}
+Based on LL84 data, current emissions: {{TOTAL_BUILDING_EMISSIONS_LL84}} tCO₂e \quad \code{totalBuildingEmissionsLL84}
+
+\subsection{Emissions Budgets by Period}
+\begin{tabular}{lc}
+\hline
+Compliance Period & Budget (tCO₂e) \\
+\hline
+2024-2029 & {{EMISSIONS_BUDGET_2024_2029}} \\
+2030-2034 & {{EMISSIONS_BUDGET_2030_2034}} \\
+2035-2039 & {{EMISSIONS_BUDGET_2035_2039}} \\
+2040-2049 & {{EMISSIONS_BUDGET_2040_2049}} \\
+\hline
+\end{tabular}
+
+\subsection{BE Credit Analysis}
+Beneficial Electrification credits from heating electrification:
+\begin{align}
+\text{BE Credit (2024-2027)} &= {{ANNUAL_BUILDING_KWH_HEATING_PTHP}} \times 0.0013 = {{BE_CREDIT_BEFORE_2027}} \text{ tCO₂e} \quad \code{beCreditBefore2027} \\
+\text{BE Credit (2027-2029)} &= {{ANNUAL_BUILDING_KWH_HEATING_PTHP}} \times 0.00065 = {{BE_CREDIT_2027_2029}} \text{ tCO₂e} \quad \code{beCredit2027to2029}
+\end{align}
+
+\subsection{LL97 Fee Analysis}
+\textbf{Without Upgrade (Annual Fees):}
+\begin{itemize}
+\item 2024-2029: \${{ANNUAL_FEE_NO_UPGRADE_2024_2029}}
+\item 2030-2034: \${{ANNUAL_FEE_NO_UPGRADE_2030_2034}}
+\item 2035-2039: \${{ANNUAL_FEE_NO_UPGRADE_2035_2039}}
+\item 2040-2049: \${{ANNUAL_FEE_NO_UPGRADE_2040_2049}}
+\end{itemize}
+
+\textbf{With Upgrade \& BE Credits (Annual Fees):}
+\begin{itemize}
+\item Before 2027: \${{ADJUSTED_ANNUAL_FEE_BEFORE_2027}}
+\item 2027-2029: \${{ADJUSTED_ANNUAL_FEE_2027_2029}}
+\item 2030-2034: \${{ADJUSTED_ANNUAL_FEE_2030_2034}}
+\item 2035-2039: \${{ADJUSTED_ANNUAL_FEE_2035_2039}}
+\item 2040-2049: \${{ADJUSTED_ANNUAL_FEE_2040_2049}}
+\end{itemize}
+
+% Section 7: Financial Analysis
+\section{Financial Analysis}
+
+\subsection{Payback Analysis}
+Simple payback period: {{PAYBACK_PERIOD}} \quad \code{simplePaybackPeriod}
+
+\subsection{Loan Analysis}
+\textbf{Loan Terms:}
+\begin{itemize}
+\item Principal: \${{TOTAL_RETROFIT_COST}}
+\item Term: 15 years
+\item Interest Rate: 6.0\%
+\item Monthly Payment: \${{MONTHLY_PAYMENT}}
+\item Total Interest: \${{TOTAL_INTEREST_PAID}}
+\end{itemize}
+
+\subsection{LL97 Fee Avoidance}
+\textbf{Annual Fee Avoidance:}
+\begin{itemize}
+\item 2024-2027: \${{ANNUAL_LL97_FEE_AVOIDANCE_2024_2027}}
+\item 2027-2029: \${{ANNUAL_LL97_FEE_AVOIDANCE_2027_2029}}
+\item 2030-2034: \${{ANNUAL_LL97_FEE_AVOIDANCE_2030_2034}}
+\item 2035-2039: \${{ANNUAL_LL97_FEE_AVOIDANCE_2035_2039}}
+\item 2040-2049: \${{ANNUAL_LL97_FEE_AVOIDANCE_2040_2049}}
+\end{itemize}
+
+% Section 8: NOI Impact
+\section{Net Operating Income Impact}
+
+\subsection{Current Building NOI}
+Estimated current NOI: \${{ANNUAL_BUILDING_NOI}} \quad \code{annualBuildingNOI}
+
+\textbf{Rent Stabilized Status:} {{IS_RENT_STABILIZED_DISPLAY}} \quad \code{isRentStabilized}
+
+\subsection{NOI Enhancement}
+Operating expense savings from reduced energy costs contribute to NOI improvement.
+
+% Section 9: Financial Projections
+\section{Financial Projections}
+
+\subsection{Loan Balance vs Savings}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Loan Balance vs. Cumulative Savings}},
+    xlabel={Year},
+    ylabel={Amount},
+    xmin=2025, xmax=2042,
+    ymin={{LOAN_CHART_Y_MIN}}, ymax={{LOAN_CHART_Y_MAX}},
+    legend pos=north east,
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}},
+    xtick={2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042}
+]
+
+% Loan balance with proper amortization curve
+\addplot[color=blue!70!black, line width=2pt, smooth] coordinates {
+    {{LOAN_BALANCE_COORDINATES}}
+};
+
+% Cumulative savings - no savings in 2025 (upgrade year), savings begin in 2026
+\addplot[color=green!60!black, line width=2pt, smooth] coordinates {
+    {{CUMULATIVE_SAVINGS_COORDINATES}}
+};
+
+% Add marker at payback point  
+\addplot[only marks, mark=*, mark size=4pt, color=red] coordinates {({{PAYBACK_PERIOD}}, {{TOTAL_RETROFIT_COST}})};
+
+% Add professional annotation with arrow - use template variable
+\node[anchor=south east, align=center, font=\small\sffamily] at (axis cs:2036,{{LOAN_CHART_ANNOTATION_Y}}) {
+    \textcolor{black}{\textsc{Simple Payback}}\\
+    \textcolor{black}{\textsc{Period Reached}}
+};
+
+% Upgrade completion vertical line and label
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,0) -- (axis cs:2025,{{LOAN_CHART_Y_MAX}});
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{LOAN_CHART_LABEL_Y}}) {Upgrade Completed};
+
+\legend{Remaining Loan Balance, Cumulative Savings}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\textbf{Savings and Loan Balance Data by Year:}
+\begin{center}
+\begin{tabular}{lccc}
+\hline
+Year & Annual Savings & Cumulative Savings & Loan Balance \\
+\hline
+{{CUMULATIVE_SAVINGS_DATA_TABLE}}
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{NOI Impact by Scenario}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Net Operating Income by Scenario}},
+    xlabel={Year},
+    ylabel={NOI (\$Millions)},
+    xmin=2025, xmax=2048,
+    ymin={{NOI_Y_MIN}}, ymax={{NOI_Y_MAX}},
+    legend pos=south east,
+    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}M},
+    xtick={2025,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={2025,2026,2028,2030,2032,2034,2036,2038,2040,2042,2044,2046,2048}
+]
+
+% NOI with PTHP upgrade - enhanced NOI from energy savings
+\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
+    {{NOI_WITH_UPGRADE_COORDINATES}}
+};
+
+% NOI without upgrade - reduced NOI due to LL97 fees
+\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
+    {{NOI_NO_UPGRADE_COORDINATES}}
+};
+
+% Period markers
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,{{NOI_Y_MIN}}) -- (axis cs:2025,{{NOI_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,{{NOI_Y_MIN}}) -- (axis cs:2030,{{NOI_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,{{NOI_Y_MIN}}) -- (axis cs:2035,{{NOI_Y_MAX}});
+
+% Upgrade completion label
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{NOI_Y_MAX}}) {Upgrade Completed};
+
+% Period labels  
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2030,{{NOI_Y_MAX}}) {Higher Penalties};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2035,{{NOI_Y_MAX}}) {Maximum Penalties};
+
+\legend{NOI with Upgrade, NOI without Upgrade}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\textbf{NOI Data by Year (\$Millions):}
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+Year & NOI with Upgrade & NOI without Upgrade \\
+\hline
+{{NOI_DATA_TABLE}}
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Property Value Enhancement}
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={\textbf{Property Value by Scenario}},
+    xlabel={Year},
+    ylabel={Property Value (\$Millions)},
+    xmin=2025, xmax=2040,
+    ymin={{PROPERTY_VALUE_Y_MIN}}, ymax={{PROPERTY_VALUE_Y_MAX}},
+    legend pos=south east,
+    legend style={draw=black, fill=white, fill opacity=0.8, text opacity=1},
+    grid=major,
+    grid style={line width=0.1pt, draw=gray!30},
+    major grid style={line width=0.2pt, draw=gray!50},
+    width=14cm,
+    height=10cm,
+    axis background/.style={fill=gray!5},
+    scaled y ticks=false,
+    y tick label style={/pgf/number format/fixed,/pgf/number format/1000 sep=\,},
+    yticklabel={\$\pgfmathprintnumber{\tick}M},
+    xtick={2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040},
+    x tick label style={rotate=90, anchor=east, /pgf/number format/fixed,/pgf/number format/1000 sep=},
+    xticklabels={\textbf{2025},2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040}
+]
+
+% Property value with PTHP upgrade - upgrade completes in 2025, value increases in 2026
+\addplot[color=green!60!black, line width=3pt, smooth] coordinates {
+    {{PROPERTY_VALUE_WITH_UPGRADE_COORDINATES}}
+};
+
+% Property value without upgrade - dramatic drop in 2026 when LL97 fees kick in
+\addplot[color=red!70!black, line width=3pt, smooth] coordinates {
+    {{PROPERTY_VALUE_NO_UPGRADE_COORDINATES}}
+};
+
+% Period markers
+\draw[color=blue, line width=2pt, dashed] (axis cs:2025,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2025,{{PROPERTY_VALUE_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2030,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2030,{{PROPERTY_VALUE_Y_MAX}});
+\draw[color=orange, line width=1.5pt, dashed] (axis cs:2035,{{PROPERTY_VALUE_Y_MIN}}) -- (axis cs:2035,{{PROPERTY_VALUE_Y_MAX}});
+
+% Upgrade completion label
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90, color=blue] at (axis cs:2025,{{PROPERTY_VALUE_Y_MAX}}) {Upgrade Completed};
+
+% Period labels
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2032,{{PROPERTY_VALUE_Y_MAX}}) {Higher LL97 Penalties};
+\node[anchor=south, font=\scriptsize\sffamily, rotate=90] at (axis cs:2037.5,{{PROPERTY_VALUE_Y_MAX}}) {Continued LL97};
+
+% Highlight the value gap - use template variables for positioning
+\fill[yellow!30, opacity=0.5] (axis cs:2030,{{PROPERTY_VALUE_GAP_Y_MIN}}) rectangle (axis cs:2040,{{PROPERTY_VALUE_GAP_Y_MAX}});
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,{{PROPERTY_VALUE_GAP_CENTER}}) {\textbf{Property Value Gap}};
+\node[anchor=center, font=\small\sffamily, color=black] at (axis cs:2035,{{PROPERTY_VALUE_GAP_LABEL}}) {\textbf{\${{NET_PROPERTY_VALUE_GAIN}}}};
+
+\legend{Property Value with Upgrade, Property Value without Upgrade}
+
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+\textbf{Property Value Data by Year (\$Millions):}
+\begin{center}
+\begin{tabular}{lcc}
+\hline
+Year & Value with Upgrade & Value without Upgrade \\
+\hline
+{{PROPERTY_VALUE_DATA_TABLE}}
+\hline
+\end{tabular}
+\end{center}
+
+% Summary
+\section{Executive Summary}
+
+This analysis demonstrates the financial and environmental benefits of converting {{PTAC_UNITS}} PTAC units to PTHP systems at {{ADDRESS}}.
+
+\textbf{Key Results:}
+\begin{itemize}
+\item \textbf{Energy Reduction:} {{ENERGY_REDUCTION_PCT}}\% annual energy use reduction
+\item \textbf{Annual Savings:} \${{ANNUAL_ENERGY_SAVINGS}} in energy costs
+\item \textbf{Payback Period:} {{PAYBACK_PERIOD}} years
+\item \textbf{LL97 Compliance:} Significant fee avoidance across all periods
+\item \textbf{Property Value:} \${{NET_PROPERTY_VALUE_GAIN}} value enhancement
+\end{itemize}
+
+The retrofit investment of \${{TOTAL_RETROFIT_COST}} provides strong returns through energy savings, LL97 fee avoidance, and property value enhancement.
+
+\end{document}

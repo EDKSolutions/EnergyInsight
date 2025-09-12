@@ -16,7 +16,8 @@
     "latex:build": "cd docs && make",
     "latex:watch": "cd docs && make watch",
     "latex:clean": "cd docs && make clean",
-    "latex:open": "cd docs && make build-open"
+    "latex:open": "cd docs && make build-open",
+    "latex:compile-report": "./scripts/compile-latex-report.sh"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.13.1",
@@ -28,6 +29,7 @@
     "@langchain/openai": "^0.6.2",
     "@prisma/client": "^6.15.0",
     "@prisma/extension-accelerate": "^2.0.2",
+    "@types/js-yaml": "^4.0.9",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-react": "^5.18.0",
     "@types/uuid": "^10.0.0",
@@ -37,6 +39,7 @@
     "class-validator": "^0.14.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.2.0",
     "langchain": "^0.3.30",

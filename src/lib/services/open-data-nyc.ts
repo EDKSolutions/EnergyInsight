@@ -1,10 +1,12 @@
+import type { BoroughCode } from '@/lib/calculations/constants/noi-constants';
+
 export interface PlutoData {
   bbl: string;
   bldgclass: string;
   resarea: number;
   unitsres: number;
   unitstotal?: number;
-  borough: string;
+  borough: BoroughCode; // NYC borough codes: MN, BK, QN, BX, SI
   lotarea?: number;
   bldgarea?: number;
   yearbuilt?: number;
@@ -34,6 +36,8 @@ export interface LocalLaw84Data {
   source_eui?: string;
   weather_normalized_source_eui?: string;
   total_ghg_emissions?: string;
+  total_location_based_ghg?: string;
+  list_of_all_property_use?: string;
   electricity_use?: string;
   natural_gas_use?: string;
   district_steam_use?: string;

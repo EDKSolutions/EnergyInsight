@@ -17,29 +17,16 @@ const Property = ({ c }: { c: CalculationResult }) => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Building Name:</span>
-          <div className="text-gray-900 text-sm dark:text-gray-100">{c.buildingName}</div>
-          
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Address:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.address}</div>
         </div>
         <div className="flex gap-2 items-center justify-between">
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Building Class:</span>
           <div className="text-gray-900 text-sm dark:text-gray-100">{c.buildingClass}</div>
         </div>
         <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Address:</span>
-          <div className="text-gray-900 text-sm dark:text-gray-100">{c.address}</div>
-        </div>
-        <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Tax Class:</span>
-          <div className="text-gray-900 text-sm dark:text-gray-100">{c.taxClass}</div>
-        </div>
-        <div className="flex gap-2 items-center justify-between">
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Year Built:</span>
           <div className="text-gray-900 text-sm dark:text-gray-100">{c.yearBuilt}</div>
-        </div>
-        <div className="flex gap-2 items-center justify-between">
-          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Zoning:</span>
-          <div className="text-gray-900 text-sm dark:text-gray-100">{c.zoning}</div>
         </div>
         <div className="flex gap-2 items-center justify-between">
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Stories:</span>
@@ -48,6 +35,18 @@ const Property = ({ c }: { c: CalculationResult }) => {
         <div className="flex gap-2 items-center justify-between">
           <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Borough:</span>
           <div className="text-gray-900 text-sm dark:text-gray-100">{c.boro}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Total Square Feet:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.totalSquareFeet.toLocaleString()}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">Total Units:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.totalResidentialUnits}</div>
+        </div>
+        <div className="flex gap-2 items-center justify-between">
+          <span className="text-sm font-semibold text-gray-500 dark:text-gray-200">PTAC Units:</span>
+          <div className="text-gray-900 text-sm dark:text-gray-100">{c.ptacUnits}</div>
         </div>
       </div>
     </div>

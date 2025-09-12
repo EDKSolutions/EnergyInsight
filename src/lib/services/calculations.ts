@@ -4,6 +4,7 @@ import { getPlutoDataByBbl, getLocalLaw84DataByBbl, PlutoData, LocalLaw84Data } 
 import { UnitBreakdownService } from '../ai/services/unit-breakdown.service';
 import { CreateCalculationInputDto } from '../types/dtos';
 import { UnitBreakdownResult, PlutoRecord } from '../ai/types';
+import { calculationDependencyManager } from '../calculations/services/calculation-dependency-manager';
 
 const unitBreakdownService = new UnitBreakdownService();
 
@@ -61,6 +62,17 @@ export async function createCalculation(
       plutoData,
       ll84Data,
     );
+
+    // Execute all calculation services to populate the new database fields
+    console.log('Executing all calculation services for new calculation:', calculation.id);
+    try {
+      await calculationDependencyManager.executeAllServices(calculation.id);
+      console.log('Successfully executed all calculation services');
+    } catch (error) {
+      console.error('Error executing calculation services:', error);
+      // Don't throw - we still want to return the calculation even if services fail
+      // The services can be re-run later via the API endpoints
+    }
 
     return calculation;
   } catch (error) {
@@ -137,68 +149,57 @@ async function saveCalculationToDatabase(
   ll84Data: LocalLaw84Data | null,
 ) {
   console.log('Saving calculation to database');
+  console.log('PLUTO data types:', {
+    yearbuilt: typeof plutoData.yearbuilt,
+    yearbuiltValue: plutoData.yearbuilt,
+    numfloors: typeof plutoData.numfloors,
+    numfloorsValue: plutoData.numfloors,
+    bldgarea: typeof plutoData.bldgarea,
+    bldgareaValue: plutoData.bldgarea,
+    unitsres: typeof plutoData.unitsres,
+    unitsresValue: plutoData.unitsres
+  });
+  
   const calculation = await prisma.calculations.create({
     data: {
-      // Building analysis results
-      ptacUnits: analysisResult.ptacUnits.toString(),
-      capRate: analysisResult.capRate,
-      buildingValue: analysisResult.buildingValue,
+      // AI Unit Breakdown Results
+      ptacUnits: analysisResult.ptacUnits,
+      capRate: parseFloat(analysisResult.capRate),
+      buildingValue: parseFloat(analysisResult.buildingValue),
       unitMixBreakDown: JSON.stringify(analysisResult.unitBreakdown),
-      energyProfile: analysisResult.energyProfile,
-      siteEUI: analysisResult.siteEUI,
-      occupancyRate: analysisResult.occupancyRate,
-      maintenanceCost: analysisResult.maintenanceCost,
 
-      // Section 2.2 - Building-Level PTAC Calculations
-      annualBuildingMMBtuCoolingPTAC:
-        analysisResult.annualBuildingMMBtuCoolingPTAC,
-      annualBuildingMMBtuHeatingPTAC:
-        analysisResult.annualBuildingMMBtuHeatingPTAC,
-      annualBuildingMMBtuTotalPTAC:
-        analysisResult.annualBuildingMMBtuTotalPTAC,
+      // Store AI analysis metadata
+      unitBreakdownSource: 'AI-Assumed',
+      aiAnalysisNotes: analysisResult.notes,
 
-      // Section 3 - PTHP Building Calculations
-      annualBuildingMMBtuHeatingPTHP:
-        analysisResult.annualBuildingMMBtuHeatingPTHP,
-      annualBuildingMMBtuCoolingPTHP:
-        analysisResult.annualBuildingMMBtuCoolingPTHP,
-      annualBuildingMMBtuTotalPTHP:
-        analysisResult.annualBuildingMMBtuTotalPTHP,
-
-      // Section 4 - Energy Reduction Analysis
-      energyReductionPercentage: analysisResult.energyReductionPercentage,
-
-      // Section 5 - Retrofit Cost Calculation
-      totalRetrofitCost: analysisResult.totalRetrofitCost,
-
-      // Section 6 - Energy Cost Savings Calculation
-      annualBuildingThermsHeatingPTAC:
-        analysisResult.annualBuildingThermsHeatingPTAC,
-      annualBuildingKwhCoolingPTAC:
-        analysisResult.annualBuildingKwhCoolingPTAC,
-      annualBuildingKwhHeatingPTHP:
-        analysisResult.annualBuildingKwhHeatingPTHP,
-      annualBuildingKwhCoolingPTHP:
-        analysisResult.annualBuildingKwhCoolingPTHP,
-      annualBuildingCostPTAC: analysisResult.annualBuildingCostPTAC,
-      annualBuildingCostPTHP: analysisResult.annualBuildingCostPTHP,
-      annualEnergySavings: analysisResult.annualEnergySavings,
-
+      // Building characteristics from PLUTO - these should always be present
       bbl: bbl,
-      buildingName: addressData.address,
       address: addressData.address,
-      yearBuilt: plutoData.yearbuilt?.toString() || '',
-      stories: plutoData.numfloors?.toString() || '',
-      buildingClass: plutoData.bldgclass || '',
-      taxClass: '',
-      zoning: plutoData.zone || '',
-      boro: plutoData.borough || '',
-      totalSquareFeet: plutoData.bldgarea?.toString() || '',
-      totalResidentialUnits: plutoData.unitsres?.toString() || '',
+      yearBuilt: typeof plutoData.yearbuilt === 'string' ? parseInt(plutoData.yearbuilt) : plutoData.yearbuilt || (() => { throw new Error('yearbuilt missing from PLUTO data') })(),
+      stories: typeof plutoData.numfloors === 'string' ? parseInt(plutoData.numfloors) : plutoData.numfloors || (() => { throw new Error('numfloors missing from PLUTO data') })(),
+      buildingClass: plutoData.bldgclass || (() => { throw new Error('bldgclass missing from PLUTO data') })(),
+      boro: plutoData.borough || (() => { throw new Error('borough missing from PLUTO data') })(),
+      totalSquareFeet: typeof plutoData.bldgarea === 'string' ? parseFloat(plutoData.bldgarea) : plutoData.bldgarea || (() => { throw new Error('bldgarea missing from PLUTO data') })(),
+      totalResidentialUnits: typeof plutoData.unitsres === 'string' ? parseInt(plutoData.unitsres) : plutoData.unitsres || (() => { throw new Error('unitsres missing from PLUTO data') })(),
+      
+      // Extract LL84 emissions data
+      totalBuildingEmissionsLL84: ll84Data?.total_location_based_ghg 
+        ? parseFloat(ll84Data.total_location_based_ghg)
+        : (ll84Data?.total_ghg_emissions 
+          ? parseFloat(ll84Data.total_ghg_emissions)
+          : null),
+      
       rawPlutoData: JSON.parse(JSON.stringify(plutoData)),
       rawLL84Data: ll84Data
         ? JSON.parse(JSON.stringify(ll84Data))
         : undefined,
+      
+      // Initialize service metadata
+      serviceVersions: {
+        'ai-breakdown': '1.0.0',
+      },
+      lastCalculatedService: 'ai-breakdown',
+
       users: {
         create: {
           userId,

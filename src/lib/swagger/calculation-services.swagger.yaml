@@ -1,0 +1,907 @@
+openapi: 3.0.0
+info:
+  title: EDK Calculation Services API
+  description: API for managing energy calculation services for NYC building retrofits
+  version: 1.0.0
+  contact:
+    name: EDK API Support
+    email: support@edk.com
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://production-domain.com/api
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        message:
+          type: string
+          description: Detailed error description
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          description: Validation error details
+
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field that failed validation
+        message:
+          type: string
+          description: Validation error message
+
+    ValidationWarning:
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field with warning
+        message:
+          type: string
+          description: Warning message
+
+    EnergyCalculationData:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculated:
+          type: string
+          format: date-time
+        serviceVersion:
+          type: string
+        eflhHours:
+          type: number
+          description: Equivalent Full Load Hours
+        annualBuildingMMBtuCoolingPTAC:
+          type: number
+        annualBuildingMMBtuHeatingPTAC:
+          type: number
+        annualBuildingMMBtuTotalPTAC:
+          type: number
+        annualBuildingThermsHeatingPTAC:
+          type: number
+        annualBuildingkWhCoolingPTAC:
+          type: number
+        annualBuildingCostPTAC:
+          type: number
+        annualBuildingkWhHeatingPTHP:
+          type: number
+        annualBuildingMMBtuHeatingPTHP:
+          type: number
+        annualBuildingMMBtuCoolingPTHP:
+          type: number
+        annualBuildingMMBtuTotalPTHP:
+          type: number
+        annualBuildingkWhCoolingPTHP:
+          type: number
+        annualBuildingCostPTHP:
+          type: number
+        energyReductionPercentage:
+          type: number
+        totalRetrofitCost:
+          type: number
+        annualEnergySavings:
+          type: number
+
+    EnergyCalculationOverrides:
+      type: object
+      properties:
+        ptacUnits:
+          type: integer
+          minimum: 1
+        yearBuilt:
+          type: integer
+          minimum: 1800
+        numFloors:
+          type: integer
+          minimum: 1
+        annualUnitThermsHeatingPTAC:
+          type: number
+          minimum: 0
+        annualUnitKwhCoolingPTAC:
+          type: number
+          minimum: 0
+        annualUnitMMBtuHeatingPTAC:
+          type: number
+          minimum: 0
+        annualUnitMMBtuCoolingPTAC:
+          type: number
+          minimum: 0
+        heatingCapacityPTHP:
+          type: number
+          minimum: 0
+        pthpCOP:
+          type: number
+          minimum: 0
+        pthpUnitCost:
+          type: number
+          minimum: 0
+        pthpInstallationCost:
+          type: number
+          minimum: 0
+        pthpContingency:
+          type: number
+          minimum: 0
+        priceKwhHour:
+          type: number
+          minimum: 0
+        priceThermHour:
+          type: number
+          minimum: 0
+
+    LL97CalculationData:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculated:
+          type: string
+          format: date-time
+        serviceVersion:
+          type: string
+        emissionsBudget2024to2029:
+          type: number
+        emissionsBudget2030to2034:
+          type: number
+        emissionsBudget2035to2039:
+          type: number
+        emissionsBudget2040to2049:
+          type: number
+        totalBuildingEmissionsLL84:
+          type: number
+        annualFeeExceedingBudget2024to2029:
+          type: number
+        annualFeeExceedingBudget2030to2034:
+          type: number
+        annualFeeExceedingBudget2035to2039:
+          type: number
+        annualFeeExceedingBudget2040to2049:
+          type: number
+        beCreditBefore2027:
+          type: number
+        beCredit2027to2029:
+          type: number
+        adjustedTotalBuildingEmissions2024to2029:
+          type: number
+        adjustedTotalBuildingEmissions2030to2034:
+          type: number
+        adjustedTotalBuildingEmissions2035to2039:
+          type: number
+        adjustedTotalBuildingEmissions2040to2049:
+          type: number
+        adjustedAnnualFeeBefore2027:
+          type: number
+        adjustedAnnualFee2027to2029:
+          type: number
+        adjustedAnnualFee2030to2034:
+          type: number
+        adjustedAnnualFee2035to2039:
+          type: number
+        adjustedAnnualFee2040to2049:
+          type: number
+
+    LL97CalculationOverrides:
+      type: object
+      properties:
+        buildingClass:
+          type: string
+        totalSquareFeet:
+          type: number
+          minimum: 1
+        totalBuildingEmissionsLL84:
+          type: number
+          minimum: 0
+        annualBuildingMMBtuHeatingPTAC:
+          type: number
+          minimum: 0
+        annualBuildingkWhHeatingPTHP:
+          type: number
+          minimum: 0
+        feePerTonCO2e:
+          type: number
+          minimum: 0
+        efGas:
+          type: number
+          minimum: 0
+        efGrid2024to2029:
+          type: number
+          minimum: 0
+        efGrid2030to2034:
+          type: number
+          minimum: 0
+        beCoefficientBefore2027:
+          type: number
+          minimum: 0
+        beCoefficient2027to2029:
+          type: number
+          minimum: 0
+
+    FinancialCalculationData:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculated:
+          type: string
+          format: date-time
+        serviceVersion:
+          type: string
+        annualLL97FeeAvoidance2024to2027:
+          type: number
+        annualLL97FeeAvoidance2027to2029:
+          type: number
+        annualLL97FeeAvoidance2030to2034:
+          type: number
+        annualLL97FeeAvoidance2035to2039:
+          type: number
+        annualLL97FeeAvoidance2040to2049:
+          type: number
+        simplePaybackPeriod:
+          type: number
+          description: Simple payback period in years (-1 if not achieved)
+        cumulativeSavingsByYear:
+          type: array
+          items:
+            type: number
+        loanBalanceByYear:
+          type: array
+          items:
+            type: number
+        monthlyPayment:
+          type: number
+        totalInterestPaid:
+          type: number
+        totalSavingsOverAnalysisPeriod:
+          type: number
+        averageAnnualSavings:
+          type: number
+        netPresentValue:
+          type: number
+        returnOnInvestment:
+          type: number
+
+    FinancialCalculationOverrides:
+      type: object
+      properties:
+        totalRetrofitCost:
+          type: number
+          minimum: 0
+        annualEnergySavings:
+          type: number
+        loanTermYears:
+          type: integer
+          minimum: 1
+          maximum: 30
+        annualInterestRate:
+          type: number
+          minimum: 0
+          maximum: 1
+        analysisStartYear:
+          type: integer
+        analysisEndYear:
+          type: integer
+        upgradeYear:
+          type: integer
+
+    NOICalculationData:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculated:
+          type: string
+          format: date-time
+        serviceVersion:
+          type: string
+        potentialRentalIncomeImpact:
+          type: number
+        utilitiesIncludedInRent:
+          type: boolean
+        rentIncreasePercentage:
+          type: number
+        operatingExpenseSavings:
+          type: number
+        noiImpact:
+          type: number
+        effectiveGrossIncomeChange:
+          type: number
+        netOperatingIncomeChange:
+          type: number
+        estimatedCurrentNOI:
+          type: number
+        newNOI:
+          type: number
+        noiYieldOnInvestment:
+          type: number
+        roiFromNOI:
+          type: number
+        noiPaybackPeriod:
+          type: number
+
+    NOICalculationOverrides:
+      type: object
+      properties:
+        buildingValue:
+          type: number
+          minimum: 1
+        capRate:
+          type: number
+          minimum: 0
+        totalRetrofitCost:
+          type: number
+          minimum: 0
+        annualEnergySavings:
+          type: number
+        rentIncreasePercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+        utilitiesIncludedInRent:
+          type: boolean
+        operatingExpenseRatio:
+          type: number
+          minimum: 0
+          maximum: 1
+        vacancyRate:
+          type: number
+          minimum: 0
+          maximum: 50
+
+    PropertyValueCalculationData:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculated:
+          type: string
+          format: date-time
+        serviceVersion:
+          type: string
+        noiBasedValueIncrease:
+          type: number
+        greenPremiumValueIncrease:
+          type: number
+        energyEfficiencyValueIncrease:
+          type: number
+        totalPropertyValueIncrease:
+          type: number
+        currentPropertyValue:
+          type: number
+        newPropertyValue:
+          type: number
+        valueCreationROI:
+          type: number
+        propertyAppreciationPercentage:
+          type: number
+        additionalLoanCapacity:
+          type: number
+        netBenefit:
+          type: number
+        valuePaybackPeriod:
+          type: number
+        refinancingBenefit:
+          type: number
+        dscrImprovement:
+          type: number
+        creditworthinessImprovement:
+          type: number
+
+    PropertyValueCalculationOverrides:
+      type: object
+      properties:
+        currentPropertyValue:
+          type: number
+          minimum: 1
+        totalRetrofitCost:
+          type: number
+          minimum: 0
+        netOperatingIncomeChange:
+          type: number
+        energyReductionPercentage:
+          type: number
+          minimum: 0
+          maximum: 100
+        capRate:
+          type: number
+          minimum: 0
+        greenPremiumPercentage:
+          type: number
+          minimum: 0
+          maximum: 20
+        energyEfficiencyPremium:
+          type: number
+          minimum: 0
+          maximum: 20
+        marketAppreciationRate:
+          type: number
+          minimum: 0
+          maximum: 20
+
+    ServiceExecutionStatus:
+      type: object
+      properties:
+        calculationId:
+          type: string
+          format: uuid
+        lastCalculatedService:
+          type: string
+          nullable: true
+        lastUpdated:
+          type: string
+          format: date-time
+        services:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              executed:
+                type: boolean
+              version:
+                type: string
+                nullable: true
+        allServicesExecuted:
+          type: boolean
+
+    ServiceExecutionRequest:
+      type: object
+      properties:
+        executeAll:
+          type: boolean
+          default: true
+          description: Execute all services in dependency order
+        fromService:
+          type: string
+          enum: [energy, ll97, financial, noi, property-value]
+          description: Start execution from this service (requires executeAll to be false)
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        calculationId:
+          type: string
+          format: uuid
+        warnings:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationWarning'
+
+paths:
+  /calculations/{calculationId}/energy:
+    get:
+      summary: Get energy calculation data
+      description: Retrieve energy calculation results for a specific calculation
+      tags: [Energy Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Energy calculation data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnergyCalculationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update energy calculation with overrides
+      description: Update energy calculation parameters and cascade to dependent services
+      tags: [Energy Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnergyCalculationOverrides'
+      responses:
+        '200':
+          description: Calculation updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calculations/{calculationId}/ll97:
+    get:
+      summary: Get LL97 calculation data
+      description: Retrieve Local Law 97 compliance calculation results
+      tags: [LL97 Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: LL97 calculation data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LL97CalculationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update LL97 calculation with overrides
+      description: Update LL97 calculation parameters and cascade to dependent services
+      tags: [LL97 Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LL97CalculationOverrides'
+      responses:
+        '200':
+          description: Calculation updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calculations/{calculationId}/financial:
+    get:
+      summary: Get financial calculation data
+      description: Retrieve financial analysis results including payback and loan analysis
+      tags: [Financial Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Financial calculation data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinancialCalculationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update financial calculation with overrides
+      description: Update financial calculation parameters and cascade to dependent services
+      tags: [Financial Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinancialCalculationOverrides'
+      responses:
+        '200':
+          description: Calculation updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calculations/{calculationId}/noi:
+    get:
+      summary: Get NOI calculation data
+      description: Retrieve Net Operating Income impact analysis results
+      tags: [NOI Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: NOI calculation data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NOICalculationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update NOI calculation with overrides
+      description: Update NOI calculation parameters and cascade to dependent services
+      tags: [NOI Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NOICalculationOverrides'
+      responses:
+        '200':
+          description: Calculation updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calculations/{calculationId}/property-value:
+    get:
+      summary: Get property value calculation data
+      description: Retrieve property value impact analysis results
+      tags: [Property Value Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Property value calculation data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyValueCalculationData'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    put:
+      summary: Update property value calculation with overrides
+      description: Update property value calculation parameters (final service, no cascading)
+      tags: [Property Value Calculations]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyValueCalculationOverrides'
+      responses:
+        '200':
+          description: Calculation updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /calculations/{calculationId}/execute:
+    get:
+      summary: Get service execution status
+      description: Check which calculation services have been executed
+      tags: [Service Execution]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Service execution status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceExecutionStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    post:
+      summary: Execute calculation services
+      description: Execute all calculation services or start from a specific service
+      tags: [Service Execution]
+      parameters:
+        - name: calculationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceExecutionRequest'
+      responses:
+        '200':
+          description: Services executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  calculationId:
+                    type: string
+                    format: uuid
+                  fromService:
+                    type: string
+                    nullable: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  responses:
+    Unauthorized:
+      description: Unauthorized - valid JWT token required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+tags:
+  - name: Energy Calculations
+    description: PTAC to PTHP energy conversion calculations
+  - name: LL97 Calculations  
+    description: Local Law 97 emissions compliance calculations
+  - name: Financial Calculations
+    description: Financial analysis including payback and loan calculations
+  - name: NOI Calculations
+    description: Net Operating Income impact analysis
+  - name: Property Value Calculations
+    description: Property value impact analysis
+  - name: Service Execution
+    description: Service execution and status management
