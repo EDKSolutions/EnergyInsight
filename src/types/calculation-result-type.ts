@@ -21,6 +21,9 @@ export interface CalculationResult {
   totalRetrofitCost: string;
   priceKwhHour?: string;
   priceThermHour?: string;
+  pthpUnitCost?: string;
+  pthpInstallationCost?: string;
+  pthpContingency?: string;
   boro: string;
   buildingClass: string;
   buildingValue: number;

@@ -151,6 +151,16 @@ model Calculations {
   /// @example 1.45
   priceThermHour Float? // Natural gas price per therm in dollars (NYC average: $1.45)
 
+  // Retrofit Cost Overrides (overrideable constants)
+  /// @example 1100.00
+  pthpUnitCost Float? // PTHP unit cost override in dollars (default: 1100)
+
+  /// @example 450.00
+  pthpInstallationCost Float? // Installation cost override per unit in dollars (default: 450)
+
+  /// @example 0.10
+  pthpContingency Float? // Contingency percentage override (default: 0.10 = 10%)
+
   // EFLH Data for accurate PTHP heating calculations
   /// @DtoReadOnly
   /// @example 738
