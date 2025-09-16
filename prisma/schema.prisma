@@ -144,6 +144,13 @@ model Calculations {
   /// @example 31642.86
   annualEnergySavings Float? // PTAC cost - PTHP cost
 
+  // Energy Pricing (overrideable constants)
+  /// @example 0.24
+  priceKwhHour Float? // Electricity price per kilowatt-hour in dollars (NYC average: $0.24)
+
+  /// @example 1.45
+  priceThermHour Float? // Natural gas price per therm in dollars (NYC average: $1.45)
+
   // EFLH Data for accurate PTHP heating calculations
   /// @DtoReadOnly
   /// @example 738

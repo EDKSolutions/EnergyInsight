@@ -2,24 +2,21 @@
 
 ## Prompt
 
-"Create a comprehensive energy analysis dashboard for a NYC building's PTAC to PTHP conversion project. Display the results in a clean, tabbed interface with the following structure:
+Create a comprehensive energy analysis dashboard for a NYC building's PTAC to PTHP conversion project. Display the results in a clean, tabbed interface with the following structure:
 
 ### Tab 1: 🏢 Building Overview
 
 **Property Overview Section:**
-- Address: [Full address with city, state, ZIP]
-- Building Class: [From PLUTO data]
+- Address: [address]
+- BBL [bbl]
+- Building Class: [buildingClass]
 - Year Built: [yearBuilt]
 - Borough: [boro]
-- Stories: [numFloors]
-- Total Square Feet: [resArea]
-- Total Units: [unitsRes]
-- PTAC Units: [ptacUnits - calculated from unit mix]
+- Stories: [stories]
+- Total Square Feet: [totalSquareFeet]
+- Total Units: [totalResidentialUnits]
+- PTAC Units: [ptacUnits]
 
-**Key Metrics Cards (3 cards):**
-1. Total Floor Area: [resArea] sq ft (Verified from PLUTO)
-2. Total Units: [unitsRes] units, [property type] (Verified)
-3. PTAC Units: [ptacUnits] units, Avg age: [current year - yearBuilt] years (AI Estimate)
 
 **Unit Mix Breakdown Section:**
 Display as visual cards with percentages:
@@ -28,10 +25,11 @@ Display as visual cards with percentages:
 - 2 Bedroom: [two_bed] units ([two_bed/unitsRes * 100]%) *(overridable)*
 - 3+ Bedroom: [three_plus] units ([three_plus/unitsRes * 100]%) *(overridable)*
 
+
 **Expandable Section: PLUTO and LL84 Raw Data**
-- Show raw JSON data from PLUTO API
-- Show LL84 emissions data: totalBuildingEmissionsLL84
-- Include site_eui if available
+- Show raw JSON data from PLUTO API [rawPlutoData]
+- Show LL84 emissions data: totalBuildingEmissionsLL84 [rawLL84Data]
+
 
 ### Tab 2: ⚡ Energy & Cost Analysis
 

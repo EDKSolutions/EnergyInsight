@@ -30,6 +30,8 @@ export const useCalculationEdit = () => {
       unitMixBreakDown: calculation.unitMixBreakDown,
       buildingClass: calculation.buildingClass,
       boro: calculation.boro,
+      priceKwhHour: calculation.priceKwhHour,
+      priceThermHour: calculation.priceThermHour,
     });
     setEditMode(true);
   };

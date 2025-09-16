@@ -19,6 +19,8 @@ export interface CalculationResult {
   annualBuildingThermsHeatingPTAC: string;
   annualEnergySavings: string;
   totalRetrofitCost: string;
+  priceKwhHour?: string;
+  priceThermHour?: string;
   boro: string;
   buildingClass: string;
   buildingValue: number;
@@ -32,5 +34,5 @@ export interface CalculationResult {
   totalSquareFeet: number;
   unitMixBreakDown: string;
   updatedAt: string;
-  [key: string]: string | number | unknown[];
+  [key: string]: string | number | unknown[] | undefined;
 } 

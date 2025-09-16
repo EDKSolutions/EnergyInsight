@@ -1,5 +1,6 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
+import { numberWithCommas } from '@/lib/utils'
 
 const Comparation = ({ c }: { c: CalculationResult }) => {
   return (
@@ -27,18 +28,32 @@ const Comparation = ({ c }: { c: CalculationResult }) => {
           </thead>
           <tbody className='[&_tr:last-child]:border-0'>
             <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Building MMBtu</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingMMBtuTotalPTAC}</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingMMBtuTotalPTHP}</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{(Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)).toFixed(2)}</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)) / Number(c.annualBuildingMMBtuTotalPTAC) * 100).toFixed(2)}%</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Building Energy</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingMMBtuTotalPTAC).toFixed(1))} MMBtu</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingMMBtuTotalPTHP).toFixed(1))} MMBtu</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas((Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)).toFixed(1))} MMBtu</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingMMBtuTotalPTAC) - Number(c.annualBuildingMMBtuTotalPTHP)) / Number(c.annualBuildingMMBtuTotalPTAC) * 100).toFixed(1)}%</td>
             </tr>
             <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
               <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Energy Cost</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingCostPTAC}</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{c.annualBuildingCostPTHP}</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{(Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)).toFixed(2)}</td>  
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)) / Number(c.annualBuildingCostPTAC) * 100).toFixed(2)}%</td>  
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>${numberWithCommas(Number(c.annualBuildingCostPTAC).toFixed(0))}</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>${numberWithCommas(Number(c.annualBuildingCostPTHP).toFixed(0))}</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>${numberWithCommas((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)).toFixed(0))}</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)) / Number(c.annualBuildingCostPTAC) * 100).toFixed(1)}%</td>
+            </tr>
+            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Cooling Energy</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingkWhCoolingPTAC).toFixed(0))} kWh</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingkWhCoolingPTHP).toFixed(0))} kWh</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>-</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>0%</td>
+            </tr>
+            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Heating Energy</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingThermsHeatingPTAC).toFixed(0))} therms</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>{numberWithCommas(Number(c.annualBuildingkWhHeatingPTHP).toFixed(0))} kWh</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>Fuel Switch</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>Electric</td>
             </tr>
           </tbody>
         </table>
