@@ -48,7 +48,7 @@ export interface EnergyCalculationInput extends BaseServiceInput {
   
   // Overridable energy constants (all optional with defaults)
   annualUnitThermsHeatingPTAC?: number;      // Default: 255
-  annualUnitKwhCoolingPTAC?: number;         // Default: 16000
+  annualUnitKwhCoolingPTAC?: number;         // Default: 1600
   annualUnitMMBtuHeatingPTAC?: number;       // Default: 25.5
   annualUnitMMBtuCoolingPTAC?: number;       // Default: 5.459427
   heatingCapacityPTHP?: number;              // Default: 8 KBtu
@@ -149,6 +149,7 @@ export interface NOICalculationInput extends BaseServiceInput {
   utilitiesIncludedInRent?: boolean;
   operatingExpenseRatio?: number;
   vacancyRate?: number;
+  noiAnnualGrowthRate?: number;           // Default: 0.03 (3% annual growth for inflation/appreciation)
 }
 
 // 6. Property Value Service Input (Section 10)

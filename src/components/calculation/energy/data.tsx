@@ -13,7 +13,7 @@ const Data = () => {
             <p className='mb-2'>The system uses fundamental constants for PTAC units in original units and their MMBtu equivalents.</p>
             <ul className="list-disc list-inside space-y-1">
               <li>255 therms per year per unit for heating</li>
-              <li>16,000 kWh per year per unit for cooling</li>
+              <li>1,600 kWh per year per unit for cooling</li>
               <li>
                 25.5 MMBtu per year per unit for heating <br />
                 <span className=" text-gray-500 dark:text-gray-400 ml-5">
@@ -22,7 +22,7 @@ const Data = () => {
               </li>
               <li>5.459427 MMBtu/kWh per year unit for cooling <br/>
                 <span className=" text-gray-500 dark:text-gray-400 ml-5">
-                  - Converted from 16,000 kWh x 0.003412 MMBtu/kWh = 5.459427 MMBtu
+                  - Converted from 1,600 kWh x 0.003412 MMBtu/kWh = 5.459427 MMBtu
                 </span>
               </li>
             </ul>

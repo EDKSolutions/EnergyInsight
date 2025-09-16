@@ -55,6 +55,9 @@ export const RENT_STABILIZATION_CRITERIA = {
   // Additional heuristics: not condo, not coop
 } as const;
 
+// NOI Growth Rate Constants
+export const DEFAULT_NOI_GROWTH_RATE = 0.03; // 3% annual growth for inflation/appreciation
+
 // RGB Study Data Structure Categories
 export const RGB_STUDY_CATEGORIES = {
   tenure: {
