@@ -204,7 +204,7 @@ export const swaggerDefinition = {
               type: 'number',
               format: 'float',
               nullable: true,
-              example: 160000.00,
+              example: 1600,
               description: 'Annual building electric cooling consumption in kWh for PTAC systems'
             },
             annualBuildingKwhHeatingPTHP: {
@@ -218,7 +218,7 @@ export const swaggerDefinition = {
               type: 'number',
               format: 'float',
               nullable: true,
-              example: 160000.00,
+              example: 1600,
               description: 'Annual building electric cooling consumption in kWh for PTHP systems'
             },
             annualBuildingCostPTAC: {
