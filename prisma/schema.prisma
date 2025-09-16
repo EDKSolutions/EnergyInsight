@@ -235,6 +235,9 @@ model Calculations {
   /// @example {"Pre-school/Daycare": 1500.0, "Multifamily Housing": 210278.0, "Parking": 13000.0}
   propertyUseBreakdown                     Json?
   /// @DtoReadOnly
+  /// @example {"propertyTypes": [{"type": "Multifamily Housing", "squareFeet": 210278, "limits": {"2024-2029": 0.00675}, "contributions": {"2024-2029": 1419.4}}], "totals": {"2024-2029": 1500.2}}
+  emissionsLimitsBreakdown                 Json?
+  /// @DtoReadOnly
   createdAt                                DateTime           @default(now())
   /// @DtoReadOnly  
   updatedAt                                DateTime           @updatedAt

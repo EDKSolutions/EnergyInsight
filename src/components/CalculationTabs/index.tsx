@@ -18,7 +18,7 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
           <TabTrigger value="energy-cost">💸 Energy Cost</TabTrigger>
           <TabTrigger value="retrofit-roi">🏗️ Retrofit Cost</TabTrigger>
           <TabTrigger value="ll97">📊 LL97 Compliance</TabTrigger>
-          <TabTrigger value="emissions-compliance">🌍 Emissions & Compliance</TabTrigger>
+          <TabTrigger value="emissions-compliance">🌍 Emissions Reduction</TabTrigger>
           <TabTrigger value="scenarios">🧪 Scenarios</TabTrigger>
         </TabList>
         <TabContent value="building-overview">
@@ -34,7 +34,7 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
           <LL97 c={c} />
         </TabContent>
         <TabContent value="emissions-compliance">
-          <Emissions />
+          <Emissions c={c} />
         </TabContent>
         <TabContent value="scenarios">
           <Scenarios />

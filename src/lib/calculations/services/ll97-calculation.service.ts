@@ -12,6 +12,7 @@ import {
   LL97CalculationOutput,
   LL97CalculationOverrides,
   OverrideValidationResult,
+  EmissionsLimitsBreakdown,
 } from '../types';
 import {
   LL97_CONSTANTS,
@@ -157,7 +158,7 @@ export class LL97CalculationService extends BaseCalculationService<
   private calculateEmissionsBudgets(input: LL97CalculationInput) {
     // Parse property use breakdown from LL84 data
     const propertyUses = parsePropertyUse(input.propertyUseBreakdown);
-    
+
     if (propertyUses.length === 0) {
       console.warn('No property use breakdown available, falling back to building class estimation');
       return this.calculateFallbackEmissionsBudgets(input);
@@ -168,29 +169,72 @@ export class LL97CalculationService extends BaseCalculationService<
     let emissionsBudget2035to2039 = 0;
     let emissionsBudget2040to2049 = 0;
 
+    // Build detailed breakdown for frontend display
+    const breakdownData: EmissionsLimitsBreakdown = {
+      propertyTypes: [],
+      totals: {
+        "2024-2029": 0,
+        "2030-2034": 0,
+        "2035-2039": 0,
+        "2040-2049": 0
+      }
+    };
+
     // Calculate emissions budget for each property type and sum them
     for (const propertyUse of propertyUses) {
       const emissionsLimit = this.findEmissionsLimit(propertyUse.propertyType);
-      
+
       if (emissionsLimit) {
         // Convert from tCO2e/sf to building total (multiply by square footage)
-        emissionsBudget2024to2029 += propertyUse.squareFeet * emissionsLimit.limit_2024_2029;
-        emissionsBudget2030to2034 += propertyUse.squareFeet * emissionsLimit.limit_2030_2034;
-        emissionsBudget2035to2039 += propertyUse.squareFeet * emissionsLimit.limit_2035_2039;
-        emissionsBudget2040to2049 += propertyUse.squareFeet * emissionsLimit.limit_2040_2049;
+        const contribution2024to2029 = propertyUse.squareFeet * emissionsLimit.limit_2024_2029;
+        const contribution2030to2034 = propertyUse.squareFeet * emissionsLimit.limit_2030_2034;
+        const contribution2035to2039 = propertyUse.squareFeet * emissionsLimit.limit_2035_2039;
+        const contribution2040to2049 = propertyUse.squareFeet * emissionsLimit.limit_2040_2049;
+
+        emissionsBudget2024to2029 += contribution2024to2029;
+        emissionsBudget2030to2034 += contribution2030to2034;
+        emissionsBudget2035to2039 += contribution2035to2039;
+        emissionsBudget2040to2049 += contribution2040to2049;
+
+        // Add to breakdown data
+        breakdownData.propertyTypes.push({
+          type: propertyUse.propertyType,
+          squareFeet: propertyUse.squareFeet,
+          limits: {
+            "2024-2029": emissionsLimit.limit_2024_2029,
+            "2030-2034": emissionsLimit.limit_2030_2034,
+            "2035-2039": emissionsLimit.limit_2035_2039,
+            "2040-2049": emissionsLimit.limit_2040_2049
+          },
+          contributions: {
+            "2024-2029": contribution2024to2029,
+            "2030-2034": contribution2030to2034,
+            "2035-2039": contribution2035to2039,
+            "2040-2049": contribution2040to2049
+          }
+        });
       } else {
         // Throw error instead of falling back - we want to identify missing property types
         throw new Error(`No emissions limit found for property type: ${propertyUse.propertyType}. Please update the LL97 property type mapping.`);
       }
     }
-    
+
+    // Set totals in breakdown
+    breakdownData.totals = {
+      "2024-2029": emissionsBudget2024to2029,
+      "2030-2034": emissionsBudget2030to2034,
+      "2035-2039": emissionsBudget2035to2039,
+      "2040-2049": emissionsBudget2040to2049
+    };
+
     console.log(`[${this.serviceName}] Calculated emissions budgets from ${propertyUses.length} property types`);
-    
+
     return {
       emissionsBudget2024to2029,
       emissionsBudget2030to2034,
       emissionsBudget2035to2039,
       emissionsBudget2040to2049,
+      emissionsLimitsBreakdown: breakdownData,
     };
   }
 
@@ -414,6 +458,9 @@ export class LL97CalculationService extends BaseCalculationService<
         emissionsBudget2030to2034: output.emissionsBudget2030to2034,
         emissionsBudget2035to2039: output.emissionsBudget2035to2039,
         emissionsBudget2040to2049: output.emissionsBudget2040to2049,
+
+        // Emissions limits breakdown
+        emissionsLimitsBreakdown: output.emissionsLimitsBreakdown,
 
         // Current emissions
         totalBuildingEmissionsLL84: output.totalBuildingEmissionsLL84,

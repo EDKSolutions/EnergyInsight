@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CalculationResult } from '@/types/calculation-result-type';
 import PropertyUseBreakdown from './property-use-breakdown';
+import EmissionsLimitsBreakdownComponent from './emissions-limits-breakdown';
 import EmissionsBudgetCard from './emissions-budget-card';
 import BECreditVisualization from './be-credit-visualization';
-import EmissionsComparison from './emissions-comparison';
-import FeeImpact from './fee-impact';
 import { getCompliancePeriods } from './utils';
 
 interface LL97Props {
@@ -13,6 +12,10 @@ interface LL97Props {
 
 const LL97: React.FC<LL97Props> = ({ c }) => {
   const periods = getCompliancePeriods(c);
+  const [isBECreditExpanded, setIsBECreditExpanded] = useState(false);
+  const [isPropertyUseExpanded, setIsPropertyUseExpanded] = useState(false);
+  const [isEmissionsLimitsExpanded, setIsEmissionsLimitsExpanded] = useState(false);
+  const [isEmissionsBudgetsExpanded, setIsEmissionsBudgetsExpanded] = useState(false);
 
   return (
     <div className="flex flex-col gap-6">
@@ -37,74 +40,214 @@ const LL97: React.FC<LL97Props> = ({ c }) => {
         </div>
       </div>
 
-      {/* Property Use Breakdown */}
-      <PropertyUseBreakdown c={c} />
+      {/* Property Use Breakdown - Collapsible */}
+      <div className="bg-white rounded-lg shadow-lg">
+        {/* Header - Clickable to expand/collapse */}
+        <div
+          className="p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+          onClick={() => setIsPropertyUseExpanded(!isPropertyUseExpanded)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-blue-600">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Property Use Breakdown</h3>
+                <p className="text-sm text-gray-600">Building composition by property type and square footage</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500">
+                {isPropertyUseExpanded ? 'Click to collapse' : 'Click to expand'}
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`text-gray-400 transition-transform duration-200 ${isPropertyUseExpanded ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
 
-      {/* Emissions Budget Cards */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Emissions Budgets by Compliance Period</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {periods.map((period, index) => (
-            <EmissionsBudgetCard key={index} period={period} c={c} />
-          ))}
+        {/* Expandable Content */}
+        <div className={`overflow-hidden transition-all duration-300 ${isPropertyUseExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-6 pb-6">
+            <PropertyUseBreakdown c={c} />
+          </div>
         </div>
       </div>
 
-      {/* BE Credit Visualization */}
-      <BECreditVisualization c={c} />
-
-      {/* Emissions Comparison */}
-      <EmissionsComparison c={c} />
-
-      {/* Fee Impact Summary */}
-      <FeeImpact c={c} />
-
-      {/* Call to Action */}
-      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6">
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-green-600 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-white">
-              <path d="M9 11l3 3 8-8"></path>
-              <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9"></path>
-            </svg>
+      {/* Emissions Limits Calculation Breakdown */}
+      <div className="bg-white rounded-lg shadow-lg">
+        {/* Header - Clickable to expand/collapse */}
+        <div
+          className="p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+          onClick={() => setIsEmissionsLimitsExpanded(!isEmissionsLimitsExpanded)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-indigo-600">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <path d="M9 9h6v6H9z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Emissions Limits Calculation</h3>
+                <p className="text-sm text-gray-600">How your building's emissions budgets are determined</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500">
+                {isEmissionsLimitsExpanded ? 'Click to collapse' : 'Click to expand'}
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`text-gray-400 transition-transform duration-200 ${isEmissionsLimitsExpanded ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Why Upgrade to PTHP Now?
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>Immediate Compliance:</strong> Achieve LL97 compliance starting in 2026</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>Penalty Avoidance:</strong> Eliminate or reduce costly LL97 penalties</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>BE Credits:</strong> Time-limited credits available until 2029</span>
-                </div>
+        </div>
+
+        {/* Expandable Content */}
+        <div className={`overflow-hidden transition-all duration-300 ${isEmissionsLimitsExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-6 pb-6">
+            <EmissionsLimitsBreakdownComponent c={c} />
+          </div>
+        </div>
+      </div>
+
+      {/* Emissions Budget Cards - Collapsible */}
+      <div className="bg-white rounded-lg shadow-lg">
+        {/* Header - Clickable to expand/collapse */}
+        <div
+          className="p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+          onClick={() => setIsEmissionsBudgetsExpanded(!isEmissionsBudgetsExpanded)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-purple-600">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>Future-Proof:</strong> Benefit from ongoing grid decarbonization</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>Energy Savings:</strong> Reduce operational costs while complying</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span><strong>Property Value:</strong> Maintain competitive market position</span>
-                </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Emissions Budgets by Compliance Period</h3>
+                <p className="text-sm text-gray-600">Your building's emissions limits and compliance status</p>
               </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500">
+                {isEmissionsBudgetsExpanded ? 'Click to collapse' : 'Click to expand'}
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`text-gray-400 transition-transform duration-200 ${isEmissionsBudgetsExpanded ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Expandable Content */}
+        <div className={`overflow-hidden transition-all duration-300 ${isEmissionsBudgetsExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-6 pb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {periods.map((period, index) => (
+                <EmissionsBudgetCard key={index} period={period} c={c} />
+              ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* BE Credit Visualization - Collapsible */}
+      <div className="bg-white rounded-lg shadow-lg">
+        {/* Header - Clickable to expand/collapse */}
+        <div
+          className="p-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+          onClick={() => setIsBECreditExpanded(!isBECreditExpanded)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-green-600">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Beneficial Electrification Credits</h3>
+                <p className="text-sm text-gray-600">Time-limited emissions credits for heating electrification</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500">
+                {isBECreditExpanded ? 'Click to collapse' : 'Click to expand'}
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`text-gray-400 transition-transform duration-200 ${isBECreditExpanded ? 'rotate-180' : ''}`}
+              >
+                <polyline points="6,9 12,15 18,9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Expandable Content */}
+        <div className={`overflow-hidden transition-all duration-300 ${isBECreditExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="px-6 pb-6">
+            {/* Remove outer wrapper from BECreditVisualization since we're providing it */}
+            <div className="space-y-6">
+              <BECreditVisualization c={c} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   );
 };

@@ -11,18 +11,8 @@ const BECreditVisualization: React.FC<BECreditVisualizationProps> = ({ c }) => {
   const heatingkWh = c.annualBuildingkWhHeatingPTHP ? parseFloat(c.annualBuildingkWhHeatingPTHP.toString()) : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-green-100 rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-green-600">
-            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-          </svg>
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">Beneficial Electrification Credits</h3>
-          <p className="text-sm text-gray-600">Time-limited emissions credits for heating electrification</p>
-        </div>
-      </div>
+    <div>
+      {/* Header is now provided by parent component */}
 
       {/* Current Status */}
       <div className="mb-6">

@@ -90,6 +90,7 @@ export async function getUserCalculations(userId: string) {
     const calculations = await prisma.userCalculations.findMany({
       where: { userId },
       include: { calculation: true },
+      orderBy: { calculation: { createdAt: 'desc' } },
     });
     console.log(
       `Found ${calculations.length} calculations for user ${userId}`,
