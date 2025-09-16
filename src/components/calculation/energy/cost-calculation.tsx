@@ -39,12 +39,24 @@ const CostCalculation = ({ c }: { c: CalculationResult }) => {
           <line x1="8" x2="8" y1="14" y2="14"></line>
           <line x1="12" x2="12" y1="14" y2="14"></line>
         </svg>
-        <h1 className="text-2xl font-bold text-left">Cost Calculations</h1>
+        <h1 className="text-2xl font-bold text-left">Cost Calculations Breakdown</h1>
       </div>
 
       {/* Energy Pricing Section */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Energy Pricing (NYC Averages)</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300">Energy Pricing</h2>
+          {(!c.priceKwhHour || !c.priceThermHour) && (
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+              Using Defaults
+            </div>
+          )}
+          {(c.priceKwhHour && c.priceThermHour) && (
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-fit bg-green-500/10 text-green-500 border-green-500/20">
+              From Calculation
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">

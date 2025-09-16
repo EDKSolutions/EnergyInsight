@@ -249,6 +249,10 @@ export class EnergyCalculationService extends BaseCalculationService<
 
         // Section 6 - Energy Cost Savings
         annualEnergySavings: output.annualEnergySavings,
+
+        // Energy pricing used in calculations (for user reference and overrides)
+        priceKwhHour: output.configurationUsed.priceKwhHour,
+        priceThermHour: output.configurationUsed.priceThermHour,
       },
     });
 
