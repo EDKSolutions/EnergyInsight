@@ -6,6 +6,7 @@ import Emissions from '@/components/calculation/emissions';
 import Energy from '@/components/calculation/energy';
 import Retrofit from '@/components/calculation/retrofit';
 import Scenarios from '@/components/calculation/scenarios';
+import LL97 from '@/components/calculation/ll97';
 import { Tabs, TabList, TabTrigger, TabContent } from '@/components/ui/tabs';
 
 const CalculationTabs = ({ c }: { c: CalculationResult }) => {
@@ -16,6 +17,7 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
           <TabTrigger value="building-overview">🏢 Building Overview</TabTrigger>
           <TabTrigger value="energy-cost">💸 Energy Cost</TabTrigger>
           <TabTrigger value="retrofit-roi">🏗️ Retrofit Cost</TabTrigger>
+          <TabTrigger value="ll97">📊 LL97 Compliance</TabTrigger>
           <TabTrigger value="emissions-compliance">🌍 Emissions & Compliance</TabTrigger>
           <TabTrigger value="scenarios">🧪 Scenarios</TabTrigger>
         </TabList>
@@ -27,6 +29,9 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
         </TabContent>
         <TabContent value="retrofit-roi">
           <Retrofit c={c} />
+        </TabContent>
+        <TabContent value="ll97">
+          <LL97 c={c} />
         </TabContent>
         <TabContent value="emissions-compliance">
           <Emissions />

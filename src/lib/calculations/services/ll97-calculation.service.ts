@@ -385,9 +385,30 @@ export class LL97CalculationService extends BaseCalculationService<
   async saveResultsToDatabase(calculationId: string, output: LL97CalculationOutput): Promise<void> {
     console.log(`[${this.serviceName}] Saving LL97 results to database for ${calculationId}`);
 
+    // Get the current calculation to extract propertyUseBreakdown from rawLL84Data
+    const calculation = await prisma.calculations.findUnique({
+      where: { id: calculationId },
+      select: { rawLL84Data: true }
+    });
+
+    let propertyUseBreakdown: any = null;
+    if (calculation?.rawLL84Data) {
+      try {
+        const ll84Data = calculation.rawLL84Data as Record<string, unknown>;
+        if (ll84Data.list_of_all_property_use) {
+          propertyUseBreakdown = ll84Data.list_of_all_property_use;
+        }
+      } catch (error) {
+        console.warn('Failed to extract property use breakdown from raw LL84 data:', error);
+      }
+    }
+
     await prisma.calculations.update({
       where: { id: calculationId },
       data: {
+        // Property use breakdown from LL84 data
+        propertyUseBreakdown,
+
         // Emissions budgets
         emissionsBudget2024to2029: output.emissionsBudget2024to2029,
         emissionsBudget2030to2034: output.emissionsBudget2030to2034,

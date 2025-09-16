@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -28,10 +22,10 @@ model UserIdentityProvider {
   provider   String
   providerId String
   userId     String
-  user       User      @relation(fields: [userId], references: [id])
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   deletedAt  DateTime?
+  user       User      @relation(fields: [userId], references: [id])
 }
 
 /// @DtoCreateOptional
@@ -39,320 +33,222 @@ model UserIdentityProvider {
 model Calculations {
   /// @DtoReadOnly
   /// @example "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6"
-  id String @id @default(uuid())
-
-  // === IDENTITY & LOCATION ===
+  id                                       String             @id @default(uuid())
   /// @example "1234567890"  
-  bbl String
-
+  bbl                                      String
   /// @example "123 Main Street, Manhattan"  
-  address String
-
+  address                                  String
   /// @example "Manhattan"
-  boro String
-
-  // === BUILDING CHARACTERISTICS ===
+  boro                                     String
   /// @example 1930
-  yearBuilt Int
-
+  yearBuilt                                Int
   /// @example 6
-  stories Int
-
+  stories                                  Int
   /// @example "R4"
-  buildingClass String
-
+  buildingClass                            String
   /// @example 10000.0
-  totalSquareFeet Float
-
+  totalSquareFeet                          Float
   /// @example 10
-  totalResidentialUnits Int
-
+  totalResidentialUnits                    Int
   /// @example 8
-  ptacUnits Int
-
+  ptacUnits                                Int
   /// @example true
-  isRentStabilized Boolean?
-
-  // === UNIT & FINANCIAL PROFILE ===
+  isRentStabilized                         Boolean?
   /// @example "{\"studio\": 2, \"one_bed\": 4, \"two_bed\": 3, \"three_plus\": 1}"
-  unitMixBreakDown String
-
+  unitMixBreakDown                         String
   /// @example 5.5
-  capRate Float
-
+  capRate                                  Float
   /// @example 1000000.0
-  buildingValue Float
-
-  // === ENERGY CALCULATIONS (PTAC/PTHP) ===
+  buildingValue                            Float
   /// @DtoReadOnly
   /// @example 1234.56
-  annualBuildingMMBtuCoolingPTAC Float? // N_ptacUnits × annualUnitMMBtuCoolingPTAC
-
+  annualBuildingMMBtuCoolingPTAC           Float?
   /// @DtoReadOnly  
   /// @example 2550.00
-  annualBuildingMMBtuHeatingPTAC Float? // N_ptacUnits × annualUnitMMBtuHeatingPTAC
-
+  annualBuildingMMBtuHeatingPTAC           Float?
   /// @DtoReadOnly
   /// @example 3784.56  
-  annualBuildingMMBtuTotalPTAC Float? // Sum of cooling + heating MMBtu
-
-  // PTHP Building Calculations
+  annualBuildingMMBtuTotalPTAC             Float?
   /// @DtoReadOnly
   /// @example 1200.50
-  annualBuildingMMBtuHeatingPTHP Float? // PTAC heating MMBtu / COP
-
+  annualBuildingMMBtuHeatingPTHP           Float?
   /// @DtoReadOnly  
   /// @example 1234.56
-  annualBuildingMMBtuCoolingPTHP Float? // Same as PTAC cooling MMBtu
-
+  annualBuildingMMBtuCoolingPTHP           Float?
   /// @DtoReadOnly
   /// @example 2435.06
-  annualBuildingMMBtuTotalPTHP Float? // Sum of PTHP cooling + heating MMBtu
-
-  // Energy Reduction Analysis
+  annualBuildingMMBtuTotalPTHP             Float?
   /// @DtoReadOnly
   /// @example 35.67
-  energyReductionPercentage Float? // (PTAC - PTHP) / PTAC × 100
-
-  // Retrofit Cost Calculation  
+  energyReductionPercentage                Float?
   /// @DtoReadOnly
   /// @example 68200.00
-  totalRetrofitCost Float? // (unitCost + installCost) × units × (1 + contingency)
-
-  // Energy Cost Savings Calculation
+  totalRetrofitCost                        Float?
   /// @DtoReadOnly
   /// @example 25500.00
-  annualBuildingThermsHeatingPTAC Float? // N_ptacUnits × annualUnitThermsHeatingPTAC
-
+  annualBuildingThermsHeatingPTAC          Float?
   /// @DtoReadOnly
   /// @example 1600  
-  annualBuildingkWhCoolingPTAC Float? // N_ptacUnits × annualUnitKwhCoolingPTAC
-
+  annualBuildingkWhCoolingPTAC             Float?
   /// @DtoReadOnly
   /// @example 1600
-  annualBuildingkWhCoolingPTHP Float? // Same as PTAC cooling
-
+  annualBuildingkWhCoolingPTHP             Float?
   /// @DtoReadOnly  
   /// @example 77000.00
-  annualBuildingCostPTAC Float? // Cost calculation for PTAC system
-
+  annualBuildingCostPTAC                   Float?
   /// @DtoReadOnly
   /// @example 45357.14  
-  annualBuildingCostPTHP Float? // Cost calculation for PTHP system
-
+  annualBuildingCostPTHP                   Float?
   /// @DtoReadOnly
   /// @example 31642.86
-  annualEnergySavings Float? // PTAC cost - PTHP cost
-
-  // Energy Pricing (overrideable constants)
-  /// @example 0.24
-  priceKwhHour Float? // Electricity price per kilowatt-hour in dollars (NYC average: $0.24)
-
-  /// @example 1.45
-  priceThermHour Float? // Natural gas price per therm in dollars (NYC average: $1.45)
-
-  // Retrofit Cost Overrides (overrideable constants)
-  /// @example 1100.00
-  pthpUnitCost Float? // PTHP unit cost override in dollars (default: 1100)
-
-  /// @example 450.00
-  pthpInstallationCost Float? // Installation cost override per unit in dollars (default: 450)
-
-  /// @example 0.10
-  pthpContingency Float? // Contingency percentage override (default: 0.10 = 10%)
-
-  // EFLH Data for accurate PTHP heating calculations
+  annualEnergySavings                      Float?
   /// @DtoReadOnly
   /// @example 738
-  eflhHours Int? // Equivalent Full Load Hours from PLUTO lookup
-
+  eflhHours                                Int?
   /// @DtoReadOnly
   /// @example 145000.50
-  annualBuildingkWhHeatingPTHP Float? // More accurate PTHP heating using EFLH
-
-  // AI Unit Breakdown Results
+  annualBuildingkWhHeatingPTHP             Float?
   /// @DtoReadOnly
   /// @example "AI-Assumed"
-  unitBreakdownSource String? // "AI-Assumed" or "User-Provided"
-  
+  unitBreakdownSource                      String?
   /// @DtoReadOnly
-  aiAnalysisNotes String? // AI reasoning for unit breakdown
-
-  // === LL97 EMISSIONS & COMPLIANCE ===
+  aiAnalysisNotes                          String?
   /// @DtoReadOnly
   /// @example 245.50
-  emissionsBudget2024to2029 Float? // tCO2e emissions budget 2024-2029
-  
+  emissionsBudget2024to2029                Float?
   /// @DtoReadOnly
   /// @example 189.25
-  emissionsBudget2030to2034 Float? // tCO2e emissions budget 2030-2034
-  
+  emissionsBudget2030to2034                Float?
   /// @DtoReadOnly
   /// @example 69.75
-  emissionsBudget2035to2039 Float? // tCO2e emissions budget 2035-2039
-  
+  emissionsBudget2035to2039                Float?
   /// @DtoReadOnly
   /// @example 24.60
-  emissionsBudget2040to2049 Float? // tCO2e emissions budget 2040-2049
-  
+  emissionsBudget2040to2049                Float?
   /// @DtoReadOnly
   /// @example 1250.50
-  totalBuildingEmissionsLL84 Float? // Current building emissions from LL84 data
-  
+  totalBuildingEmissionsLL84               Float?
   /// @DtoReadOnly
   /// @example 268750.00
-  annualFeeExceedingBudget2024to2029 Float? // Annual LL97 fee 2024-2029 without upgrade
-  
+  annualFeeExceedingBudget2024to2029       Float?
   /// @DtoReadOnly
   /// @example 284250.00
-  annualFeeExceedingBudget2030to2034 Float? // Annual LL97 fee 2030-2034 without upgrade
-  
+  annualFeeExceedingBudget2030to2034       Float?
   /// @DtoReadOnly
   /// @example 317450.00
-  annualFeeExceedingBudget2035to2039 Float? // Annual LL97 fee 2035-2039 without upgrade
-  
+  annualFeeExceedingBudget2035to2039       Float?
   /// @DtoReadOnly
   /// @example 328650.00
-  annualFeeExceedingBudget2040to2049 Float? // Annual LL97 fee 2040-2049 without upgrade
-  
+  annualFeeExceedingBudget2040to2049       Float?
   /// @DtoReadOnly
   /// @example 188.65
-  beCreditBefore2027 Float? // Beneficial Electrification credit before 2027
-  
+  beCreditBefore2027                       Float?
   /// @DtoReadOnly
   /// @example 94.33
-  beCredit2027to2029 Float? // Beneficial Electrification credit 2027-2029
-  
+  beCredit2027to2029                       Float?
   /// @DtoReadOnly
   /// @example 1195.25
-  adjustedTotalBuildingEmissions2024to2029 Float? // Building emissions after PTHP upgrade 2024-2029
-  
+  adjustedTotalBuildingEmissions2024to2029 Float?
   /// @DtoReadOnly
   /// @example 1180.50
-  adjustedTotalBuildingEmissions2030to2034 Float? // Building emissions after PTHP upgrade 2030-2034
-  
+  adjustedTotalBuildingEmissions2030to2034 Float?
   /// @DtoReadOnly
   /// @example 1180.50
-  adjustedTotalBuildingEmissions2035to2039 Float? // Building emissions after PTHP upgrade 2035-2039
-  
+  adjustedTotalBuildingEmissions2035to2039 Float?
   /// @DtoReadOnly
   /// @example 1180.50
-  adjustedTotalBuildingEmissions2040to2049 Float? // Building emissions after PTHP upgrade 2040-2049
-  
+  adjustedTotalBuildingEmissions2040to2049 Float?
   /// @DtoReadOnly
   /// @example 15250.00
-  adjustedAnnualFeeBefore2027 Float? // LL97 fee with upgrade and BE credit before 2027
-  
+  adjustedAnnualFeeBefore2027              Float?
   /// @DtoReadOnly
   /// @example 25450.00
-  adjustedAnnualFee2027to2029 Float? // LL97 fee with upgrade and BE credit 2027-2029
-  
+  adjustedAnnualFee2027to2029              Float?
   /// @DtoReadOnly
   /// @example 83650.00
-  adjustedAnnualFee2030to2034 Float? // LL97 fee with upgrade 2030-2034
-  
+  adjustedAnnualFee2030to2034              Float?
   /// @DtoReadOnly
   /// @example 296750.00
-  adjustedAnnualFee2035to2039 Float? // LL97 fee with upgrade 2035-2039
-  
+  adjustedAnnualFee2035to2039              Float?
   /// @DtoReadOnly
   /// @example 307950.00
-  adjustedAnnualFee2040to2049 Float? // LL97 fee with upgrade 2040-2049
-
-  // === FINANCIAL ANALYSIS ===
+  adjustedAnnualFee2040to2049              Float?
   /// @DtoReadOnly
   /// @example 253500.00
-  annualLL97FeeAvoidance2024to2027 Float? // Annual fee savings 2024-2027
-  
+  annualLL97FeeAvoidance2024to2027         Float?
   /// @DtoReadOnly
   /// @example 242800.00
-  annualLL97FeeAvoidance2027to2029 Float? // Annual fee savings 2027-2029
-  
+  annualLL97FeeAvoidance2027to2029         Float?
   /// @DtoReadOnly
   /// @example 200600.00
-  annualLL97FeeAvoidance2030to2034 Float? // Annual fee savings 2030-2034
-  
+  annualLL97FeeAvoidance2030to2034         Float?
   /// @DtoReadOnly
   /// @example 20700.00
-  annualLL97FeeAvoidance2035to2039 Float? // Annual fee savings 2035-2039
-  
+  annualLL97FeeAvoidance2035to2039         Float?
   /// @DtoReadOnly
   /// @example 20700.00
-  annualLL97FeeAvoidance2040to2049 Float? // Annual fee savings 2040-2049
-  
+  annualLL97FeeAvoidance2040to2049         Float?
   /// @DtoReadOnly
   /// @example 2037
-  simplePaybackPeriod Int? // Year when cumulative savings equal retrofit cost
-  
+  simplePaybackPeriod                      Int?
   /// @DtoReadOnly
-  cumulativeSavingsByYear Json? // Array of cumulative savings by year
-  
+  cumulativeSavingsByYear                  Json?
   /// @DtoReadOnly
-  loanBalanceByYear Json? // Array of remaining loan balance by year
-  
+  loanBalanceByYear                        Json?
   /// @DtoReadOnly
   /// @example 4223.50
-  monthlyPayment Float? // Monthly loan payment
-  
+  monthlyPayment                           Float?
   /// @DtoReadOnly
   /// @example 260235.00
-  totalInterestPaid Float? // Total interest paid over loan term
-
-  // === NOI ANALYSIS ===
+  totalInterestPaid                        Float?
   /// @DtoReadOnly
   /// @example 1200000.00
-  annualBuildingNOI Float? // Annual Building Net Operating Income
-  
+  annualBuildingNOI                        Float?
   /// @DtoReadOnly
-  noiByYearNoUpgrade Json? // Year-by-year NOI without upgrade: [{year: 2024, noi: 1200000}, ...]
-  
+  noiByYearNoUpgrade                       Json?
   /// @DtoReadOnly
-  noiByYearWithUpgrade Json? // Year-by-year NOI with upgrade: [{year: 2024, noi: 1250000}, ...]
-
-  // Section 10 - Property Value Analysis
+  noiByYearWithUpgrade                     Json?
   /// @DtoReadOnly
   /// @example 22500000.00
-  propertyValueNoUpgrade Float? // Property value without upgrade
-  
+  propertyValueNoUpgrade                   Float?
   /// @DtoReadOnly
   /// @example 30150000.00
-  propertyValueWithUpgrade Float? // Property value with upgrade
-  
+  propertyValueWithUpgrade                 Float?
   /// @DtoReadOnly
   /// @example 7650000.00
-  netPropertyValueGain Float? // Net property value increase from upgrade
-  
+  netPropertyValueGain                     Float?
   /// @DtoReadOnly
-  propertyValueByYearNoUpgrade Json? // Year-by-year property value without upgrade: [{year: 2024, value: 30000000}, ...]
-  
+  propertyValueByYearNoUpgrade             Json?
   /// @DtoReadOnly
-  propertyValueByYearWithUpgrade Json? // Year-by-year property value with upgrade: [{year: 2024, value: 31250000}, ...]
-
-  // === SERVICE METADATA ===
+  propertyValueByYearWithUpgrade           Json?
   /// @DtoReadOnly
-  overriddenFields Json? // Object tracking which fields have been overridden
-  
+  overriddenFields                         Json?
   /// @DtoReadOnly
-  lastCalculatedService String? // Which service was last calculated
-  
+  lastCalculatedService                    String?
   /// @DtoReadOnly
-  serviceVersions Json? // Service versions for tracking compatibility
-
+  serviceVersions                          Json?
   /// @example {"field1": "value1", "field2": "value2"}
-  rawPlutoData Json? // Raw PLUTO API response
-
-  /// @example {"field1": "value1", "field2": "value2"}  
-  rawLL84Data Json? // Raw LL84 API response
-
-  // === TIMESTAMPS ===
+  rawPlutoData                             Json?
+  /// @example {"field1": "value1", "field2": "value2"}
+  rawLL84Data                              Json?
   /// @DtoReadOnly
-  createdAt DateTime @default(now())
-
+  /// @example {"Pre-school/Daycare": 1500.0, "Multifamily Housing": 210278.0, "Parking": 13000.0}
+  propertyUseBreakdown                     Json?
+  /// @DtoReadOnly
+  createdAt                                DateTime           @default(now())
   /// @DtoReadOnly  
-  updatedAt DateTime @updatedAt
-
-  /// @DtoRelationIgnore
-  users UserCalculations[]
+  updatedAt                                DateTime           @updatedAt
+  /// @example 0.24
+  priceKwhHour                             Float?
+  /// @example 1.45
+  priceThermHour                           Float?
+  /// @example 0.10
+  pthpContingency                          Float?
+  /// @example 450.00
+  pthpInstallationCost                     Float?
+  /// @example 1100.00
+  pthpUnitCost                             Float?
+  users                                    UserCalculations[]
 
   @@index([bbl])
 }
@@ -361,9 +257,9 @@ model UserCalculations {
   id            String       @id @default(uuid())
   userId        String
   calculationId String
-  calculation   Calculations @relation(fields: [calculationId], references: [id])
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  calculation   Calculations @relation(fields: [calculationId], references: [id])
 
   @@unique([userId, calculationId])
 }

@@ -32,6 +32,7 @@ export interface CalculationResult {
   ptacUnits: number;
   rawLL84Data: unknown[];
   rawPlutoData: unknown[];
+  propertyUseBreakdown?: unknown;
   stories: number;
   totalResidentialUnits: number;
   totalSquareFeet: number;
