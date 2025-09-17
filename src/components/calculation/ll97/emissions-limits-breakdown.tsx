@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CalculationResult } from '@/types/calculation-result-type';
 import { EmissionsLimitsBreakdown } from '@/lib/calculations/types/service-outputs';
 import { formatEmissions } from './utils';
@@ -35,7 +35,7 @@ const EmissionsLimitsBreakdownComponent: React.FC<EmissionsLimitsBreakdownProps>
               </div>
               <p className="mt-2">
                 Each property type has specific emissions limits (tCO₂e per square foot) that become more stringent over time.
-                Your building's total limit is the sum of each property type's square footage multiplied by its respective limit.
+                Your building&apos;s total limit is the sum of each property type&apos;s square footage multiplied by its respective limit.
               </p>
             </div>
           </div>
@@ -95,7 +95,7 @@ const EmissionsLimitsBreakdownComponent: React.FC<EmissionsLimitsBreakdownProps>
           <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-3">
             <p className="text-xs text-gray-600">
               <strong>Note:</strong> Emissions limits are set by NYC Local Law 97 and vary by property type and compliance period.
-              These limits become progressively more stringent to support the city's carbon neutrality goals.
+              These limits become progressively more stringent to support the city&apos;s carbon neutrality goals.
             </p>
           </div>
     </div>

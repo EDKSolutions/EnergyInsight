@@ -109,7 +109,7 @@ const LL97: React.FC<LL97Props> = ({ c }) => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Emissions Limits Calculation</h3>
-                <p className="text-sm text-gray-600">How your building's emissions budgets are determined</p>
+                <p className="text-sm text-gray-600">How your building&apos;s emissions budgets are determined</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ const LL97: React.FC<LL97Props> = ({ c }) => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">Emissions Budgets by Compliance Period</h3>
-                <p className="text-sm text-gray-600">Your building's emissions limits and compliance status</p>
+                <p className="text-sm text-gray-600">Your building&apos;s emissions limits and compliance status</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

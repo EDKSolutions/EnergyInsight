@@ -160,7 +160,7 @@ export class NOICalculationService extends BaseCalculationService<
   ) {
     const analysisYears = STANDARD_ANALYSIS_PERIOD.analysisYears; // 20-year analysis period
     const startYear = STANDARD_ANALYSIS_PERIOD.getCurrentYear(); // Start from current year
-    const baseYear = startYear; // NOI growth starts from current year
+    // const baseYear = startYear; // NOI growth starts from current year (not used in current implementation)
     
     const noiByYearNoUpgrade = [];
     const noiByYearWithUpgrade = [];
@@ -168,8 +168,8 @@ export class NOICalculationService extends BaseCalculationService<
     for (let i = 0; i < analysisYears; i++) {
       const year = startYear + i;
 
-      const noiNoUpgrade = this.calculateAdjustedNOINoUpgrade(year, annualBuildingNOI, ll97Fees, config.noiAnnualGrowthRate, baseYear);
-      const noiWithUpgrade = this.calculateAdjustedNOIUpgrade(year, annualBuildingNOI, energySavings, ll97Fees, upgradeYear, config.noiAnnualGrowthRate, baseYear);
+      const noiNoUpgrade = this.calculateAdjustedNOINoUpgrade(year, annualBuildingNOI, ll97Fees);
+      const noiWithUpgrade = this.calculateAdjustedNOIUpgrade(year, annualBuildingNOI, energySavings, ll97Fees, upgradeYear);
 
       noiByYearNoUpgrade.push({ year, noi: noiNoUpgrade });
       noiByYearWithUpgrade.push({ year, noi: noiWithUpgrade });
@@ -244,9 +244,7 @@ export class NOICalculationService extends BaseCalculationService<
   private calculateAdjustedNOINoUpgrade(
     year: number,
     baseYearNOI: number,
-    ll97Fees: Record<string, number>,
-    growthRate: number,
-    baseYear: number
+    ll97Fees: Record<string, number>
   ): number {
     // COMPOUND GROWTH DISABLED: Apply compound growth from base year
     // const yearsOfGrowth = year - baseYear;
@@ -279,9 +277,7 @@ export class NOICalculationService extends BaseCalculationService<
     baseYearNOI: number,
     energySavings: number,
     ll97Fees: Record<string, number>,
-    upgradeYear: number,
-    growthRate: number,
-    baseYear: number
+    upgradeYear: number
   ): number {
     // COMPOUND GROWTH DISABLED: Apply compound growth to base NOI from base year
     // const yearsOfGrowth = year - baseYear;

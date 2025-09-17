@@ -67,13 +67,13 @@ export const NOIChart: React.FC<NOIChartProps> = ({
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Helper function to get value from data
-    const getValue = (d: any) =>
-      valueType === 'noi' ? d.noi : d.value;
+    const getValue = (d: NOIData | PropertyValueData) =>
+      valueType === 'noi' ? (d as NOIData).noi : (d as PropertyValueData).value;
 
     // Scales
     const xScale = d3
       .scaleLinear()
-      .domain(d3.extent(withoutUpgrade, (d: any) => d.year) as [number, number])
+      .domain(d3.extent(withoutUpgrade, (d: NOIData | PropertyValueData) => d.year) as [number, number])
       .range([0, width]);
 
     const allValues = [...withoutUpgrade.map(getValue), ...withUpgrade.map(getValue)];
@@ -111,7 +111,7 @@ export const NOIChart: React.FC<NOIChartProps> = ({
 
     // Line generators
     const line = d3
-      .line<any>()
+      .line<NOIData | PropertyValueData>()
       .x((d) => xScale(d.year))
       .y((d) => yScale(getValue(d)))
       .curve(d3.curveMonotoneX);

@@ -38,5 +38,5 @@ export interface CalculationResult {
   totalSquareFeet: number;
   unitMixBreakDown: string;
   updatedAt: string;
-  [key: string]: string | number | unknown[] | undefined;
+  [key: string]: string | number | unknown[] | unknown | undefined;
 } 

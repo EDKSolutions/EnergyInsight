@@ -17,7 +17,6 @@ import {
   calculateMonthlyPayment,
   generateLoanBalanceArray,
   calculateSimplePaybackPeriod,
-  generateAnalysisYears,
   defaultFinancialConfig,
   CumulativeSavingsData,
   STANDARD_ANALYSIS_PERIOD,

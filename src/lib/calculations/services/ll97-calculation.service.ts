@@ -435,12 +435,12 @@ export class LL97CalculationService extends BaseCalculationService<
       select: { rawLL84Data: true }
     });
 
-    let propertyUseBreakdown: any = null;
+    let propertyUseBreakdown: Record<string, unknown> | null = null;
     if (calculation?.rawLL84Data) {
       try {
         const ll84Data = calculation.rawLL84Data as Record<string, unknown>;
         if (ll84Data.list_of_all_property_use) {
-          propertyUseBreakdown = ll84Data.list_of_all_property_use;
+          propertyUseBreakdown = ll84Data.list_of_all_property_use as Record<string, unknown>;
         }
       } catch (error) {
         console.warn('Failed to extract property use breakdown from raw LL84 data:', error);
@@ -451,7 +451,7 @@ export class LL97CalculationService extends BaseCalculationService<
       where: { id: calculationId },
       data: {
         // Property use breakdown from LL84 data
-        propertyUseBreakdown,
+        propertyUseBreakdown: propertyUseBreakdown ? JSON.parse(JSON.stringify(propertyUseBreakdown)) : undefined,
 
         // Emissions budgets
         emissionsBudget2024to2029: output.emissionsBudget2024to2029,
@@ -460,7 +460,7 @@ export class LL97CalculationService extends BaseCalculationService<
         emissionsBudget2040to2049: output.emissionsBudget2040to2049,
 
         // Emissions limits breakdown
-        emissionsLimitsBreakdown: output.emissionsLimitsBreakdown,
+        emissionsLimitsBreakdown: output.emissionsLimitsBreakdown ? JSON.parse(JSON.stringify(output.emissionsLimitsBreakdown)) : undefined,
 
         // Current emissions
         totalBuildingEmissionsLL84: output.totalBuildingEmissionsLL84,

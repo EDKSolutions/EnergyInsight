@@ -16,7 +16,7 @@ interface LoanChartProps {
 
 export const LoanChart: React.FC<LoanChartProps> = ({ savingsData, loanBalanceData, events }) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: any } | null>(null);
+  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: (CumulativeSavingsData | LoanBalanceData) & { type?: string } } | null>(null);
   const [hoveredPayback, setHoveredPayback] = useState<{ x: number; y: number; year: number } | null>(null);
 
   useEffect(() => {
@@ -273,11 +273,11 @@ export const LoanChart: React.FC<LoanChartProps> = ({ savingsData, loanBalanceDa
           <div className="font-semibold text-gray-900 dark:text-gray-100">Year {hoveredPoint.data.year}</div>
           {hoveredPoint.data.type === 'savings' ? (
             <>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Annual Savings: ${hoveredPoint.data.annualSavings?.toLocaleString()}</div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Cumulative Savings: ${hoveredPoint.data.cumulativeSavings?.toLocaleString()}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Annual Savings: ${'annualSavings' in hoveredPoint.data ? hoveredPoint.data.annualSavings?.toLocaleString() : 'N/A'}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">Cumulative Savings: ${'cumulativeSavings' in hoveredPoint.data ? hoveredPoint.data.cumulativeSavings?.toLocaleString() : 'N/A'}</div>
             </>
           ) : (
-            <div className="text-sm text-gray-600 dark:text-gray-300">Loan Balance: ${hoveredPoint.data.balance?.toLocaleString()}</div>
+            <div className="text-sm text-gray-600 dark:text-gray-300">Loan Balance: ${'balance' in hoveredPoint.data ? hoveredPoint.data.balance?.toLocaleString() : 'N/A'}</div>
           )}
         </div>
       )}
@@ -298,7 +298,7 @@ export const LoanChart: React.FC<LoanChartProps> = ({ savingsData, loanBalanceDa
             Year {hoveredPayback.year} is when cumulative energy savings equal the initial retrofit investment cost.
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            This is the point where the project "pays for itself" through accumulated savings.
+            This is the point where the project &quot;pays for itself&quot; through accumulated savings.
           </div>
         </div>
       )}

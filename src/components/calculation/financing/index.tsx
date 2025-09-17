@@ -9,7 +9,8 @@ import {
   CumulativeSavingsData,
   LoanBalanceData,
   generateLoanBalanceArray,
-  LoanConfig
+  FinancialAnalysisConfig,
+  defaultFinancialConfig
 } from '@/lib/calculations/constants/financial-constants';
 import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle';
 
@@ -56,7 +57,8 @@ const Financing: React.FC<FinancingProps> = ({ c }) => {
     const initialLoanAmount = parseFloat(c.totalRetrofitCost?.toString() || '0');
 
     if (initialLoanAmount > 0 && dbCumulativeSavingsData.length > 0) {
-      const loanConfig: LoanConfig = {
+      const loanConfig: FinancialAnalysisConfig = {
+        ...defaultFinancialConfig,
         loanTermYears: effectiveLoanTerm,
         annualInterestRate: effectiveInterestRate,
         capRate: LOAN_CONSTANTS.defaultCapRate,
