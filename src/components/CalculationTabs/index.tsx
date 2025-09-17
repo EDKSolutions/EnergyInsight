@@ -5,7 +5,6 @@ import Calculation from '@/components/calculation/buildingOverview';
 import Emissions from '@/components/calculation/emissions';
 import Energy from '@/components/calculation/energy';
 import Retrofit from '@/components/calculation/retrofit';
-import Scenarios from '@/components/calculation/scenarios';
 import LL97 from '@/components/calculation/ll97';
 import Financing from '@/components/calculation/financing';
 import NOI from '@/components/calculation/noi';
@@ -20,12 +19,11 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
           <TabTrigger value="building-overview">🏢 Building Overview</TabTrigger>
           <TabTrigger value="energy-cost">💸 Energy Cost</TabTrigger>
           <TabTrigger value="retrofit-roi">🏗️ Retrofit Cost</TabTrigger>
+          <TabTrigger value="ll97">📊 LL97</TabTrigger>
+          <TabTrigger value="emissions-compliance">🌍 Emissions Reduction</TabTrigger>
           <TabTrigger value="financing">💰 Financing</TabTrigger>
           <TabTrigger value="noi">📈 NOI</TabTrigger>
           <TabTrigger value="property-value">🏘️ Property Value</TabTrigger>
-          <TabTrigger value="ll97">📊 LL97 Compliance</TabTrigger>
-          <TabTrigger value="emissions-compliance">🌍 Emissions Reduction</TabTrigger>
-          <TabTrigger value="scenarios">🧪 Scenarios</TabTrigger>
         </TabList>
         <TabContent value="building-overview">
           <Calculation c={c} />
@@ -50,9 +48,6 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
         </TabContent>
         <TabContent value="emissions-compliance">
           <Emissions c={c} />
-        </TabContent>
-        <TabContent value="scenarios">
-          <Scenarios />
         </TabContent>
       </Tabs>
     </div>

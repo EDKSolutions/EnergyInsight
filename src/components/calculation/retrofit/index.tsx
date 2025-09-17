@@ -3,6 +3,7 @@ import { CalculationResult } from '@/types/calculation-result-type'
 import { useCalculationEdit } from '@/hooks/useCalculationEdit'
 import EditableInputField from '@/components/shared/EditableInputField'
 import { numberWithCommas } from '@/lib/utils'
+import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle'
 
 const Retrofit = ({ c }: { c: CalculationResult }) => {
   const { getFieldValue } = useCalculationEdit();
@@ -23,6 +24,7 @@ const Retrofit = ({ c }: { c: CalculationResult }) => {
 
   return (
     <div className="space-y-6">
+      <EditAssumptionsToggle c={c} />
       <div className="rounded-lg border bg-white text-card-foreground shadow-sm p-6">
         <div className="flex gap-2 items-center leading-none mb-6">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">

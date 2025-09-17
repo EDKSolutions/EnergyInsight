@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { CalculationResult } from '@/types/calculation-result-type';
 import { NOIChart } from './NOIChart';
 import { NOIParameterCard } from './NOIParameterCard';
+import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle';
 
 interface NOIData {
   year: number;
@@ -63,6 +64,7 @@ const NOI: React.FC<NOIProps> = ({ c }) => {
 
   return (
     <div className="space-y-6">
+      <EditAssumptionsToggle c={c} />
       {/* NOI Parameter Card */}
       <NOIParameterCard
         currentNOI={effectiveAnnualNOI}

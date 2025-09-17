@@ -5,6 +5,7 @@ import { CalculationResult } from '@/types/calculation-result-type';
 import { PropertyValueChart } from './PropertyValueChart';
 import { CapRateCard } from './CapRateCard';
 import { LOAN_CONSTANTS } from '@/lib/calculations/constants/financial-constants';
+import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle';
 
 interface PropertyValueData {
   year: number;
@@ -64,6 +65,7 @@ const PropertyValue: React.FC<PropertyValueProps> = ({ c }) => {
 
   return (
     <div className="space-y-6">
+      <EditAssumptionsToggle c={c} />
       {/* Cap Rate Parameter Card */}
       <CapRateCard
         currentCapRate={effectiveCapRate}

@@ -11,6 +11,7 @@ import {
   generateLoanBalanceArray,
   LoanConfig
 } from '@/lib/calculations/constants/financial-constants';
+import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle';
 
 interface FinancingProps {
   c: CalculationResult;
@@ -76,6 +77,7 @@ const Financing: React.FC<FinancingProps> = ({ c }) => {
 
   return (
     <div className="space-y-6">
+      <EditAssumptionsToggle c={c} />
       {/* Parameter Override Cards */}
       <FinancingParameterCards
         currentInterestRate={effectiveInterestRate}

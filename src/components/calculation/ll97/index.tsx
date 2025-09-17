@@ -5,6 +5,7 @@ import EmissionsLimitsBreakdownComponent from './emissions-limits-breakdown';
 import EmissionsBudgetCard from './emissions-budget-card';
 import BECreditVisualization from './be-credit-visualization';
 import { getCompliancePeriods } from './utils';
+import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle';
 
 interface LL97Props {
   c: CalculationResult;
@@ -19,6 +20,7 @@ const LL97: React.FC<LL97Props> = ({ c }) => {
 
   return (
     <div className="flex flex-col gap-6">
+      <EditAssumptionsToggle c={c} />
       {/* Introduction */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-center gap-3 mb-3">
