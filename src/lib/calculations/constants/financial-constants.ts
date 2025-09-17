@@ -10,7 +10,19 @@ export const LOAN_CONSTANTS = {
   defaultCapRate: 0.04,            // Default cap rate for property valuation (4%)
 } as const;
 
-// Analysis Time Periods
+// Standard Analysis Period Configuration
+export const STANDARD_ANALYSIS_PERIOD = {
+  analysisYears: 20,
+  getCurrentYear: () => new Date().getFullYear(),
+  getAnalysisYears: () => {
+    const currentYear = new Date().getFullYear();
+    return Array.from({length: 20}, (_, i) => currentYear + i);
+  },
+  getAnalysisStartYear: () => new Date().getFullYear(),
+  getAnalysisEndYear: () => new Date().getFullYear() + 19,
+} as const;
+
+// Analysis Time Periods (Legacy - use STANDARD_ANALYSIS_PERIOD for new code)
 export const ANALYSIS_PERIODS = {
   analysisStartYear: 2024,  // Start year for financial analysis
   analysisEndYear: 2050,    // End year for financial analysis (26-year period)

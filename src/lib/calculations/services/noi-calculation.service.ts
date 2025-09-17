@@ -13,10 +13,10 @@ import {
   OverrideValidationResult,
   ServiceName,
 } from '../types';
-import { isRentStabilized, BoroughCode } from '../constants/noi-constants';
+import { isRentStabilized, BoroughCode, DEFAULT_NOI_GROWTH_RATE } from '../constants/noi-constants';
 import { noiDataService } from './noi-data.service';
 import { FEES_ASSESSED_THIS_YEAR } from './financial-calculation.service';
-import { ANALYSIS_PERIODS } from '../constants/financial-constants';
+import { ANALYSIS_PERIODS, STANDARD_ANALYSIS_PERIOD } from '../constants/financial-constants';
 
 export class NOICalculationService extends BaseCalculationService<
   NOICalculationInput,
@@ -38,6 +38,7 @@ export class NOICalculationService extends BaseCalculationService<
       utilitiesIncludedInRent: input.utilitiesIncludedInRent ?? false,
       operatingExpenseRatio: input.operatingExpenseRatio ?? 0.35,
       vacancyRate: input.vacancyRate ?? 5.0,
+      noiAnnualGrowthRate: input.noiAnnualGrowthRate ?? DEFAULT_NOI_GROWTH_RATE,
     };
     
     const isRentStabilized = this.determineRentStabilizationStatus(input);
@@ -133,27 +134,43 @@ export class NOICalculationService extends BaseCalculationService<
   }
 
   /**
+   * IMPORTANT: NOI COMPOUND GROWTH DISABLED
+   *
+   * The compound growth calculation (3% annual) has been commented out
+   * to better visualize the impact of energy savings over time.
+   *
+   * With compound growth, the curves converge because:
+   * - Both scenarios grow from the same base at 3% annually
+   * - Energy savings remain flat while base NOI grows exponentially
+   * - The proportional benefit decreases from 2% to <1% over 30 years
+   *
+   * To re-enable compound growth, uncomment the Math.pow() calculations
+   * in calculateAdjustedNOINoUpgrade() and calculateAdjustedNOIUpgrade()
+   */
+
+  /**
    * Generate year-by-year NOI calculations following LaTeX specification
    */
   private generateNOIByYear(
     annualBuildingNOI: number,
     energySavings: number,
     ll97Fees: Record<string, number>,
-    config: { rentIncreasePercentage: number; utilitiesIncludedInRent: boolean; operatingExpenseRatio: number; vacancyRate: number },
+    config: { rentIncreasePercentage: number; utilitiesIncludedInRent: boolean; operatingExpenseRatio: number; vacancyRate: number; noiAnnualGrowthRate: number },
     upgradeYear: number
   ) {
-    const analysisYears = 25; // 25-year analysis period
-    const startYear = upgradeYear;
+    const analysisYears = STANDARD_ANALYSIS_PERIOD.analysisYears; // 20-year analysis period
+    const startYear = STANDARD_ANALYSIS_PERIOD.getCurrentYear(); // Start from current year
+    // const baseYear = startYear; // NOI growth starts from current year (not used in current implementation)
     
     const noiByYearNoUpgrade = [];
     const noiByYearWithUpgrade = [];
     
     for (let i = 0; i < analysisYears; i++) {
       const year = startYear + i;
-      
+
       const noiNoUpgrade = this.calculateAdjustedNOINoUpgrade(year, annualBuildingNOI, ll97Fees);
       const noiWithUpgrade = this.calculateAdjustedNOIUpgrade(year, annualBuildingNOI, energySavings, ll97Fees, upgradeYear);
-      
+
       noiByYearNoUpgrade.push({ year, noi: noiNoUpgrade });
       noiByYearWithUpgrade.push({ year, noi: noiWithUpgrade });
     }
@@ -220,34 +237,60 @@ export class NOICalculationService extends BaseCalculationService<
 
   /**
    * Calculate adjusted NOI without upgrade (LaTeX implementation)
-   * NOI = annualBuildingNOI - LL97 penalties for the year
+   * NOI = baseYearNOI - LL97 penalties for the year
+   *
+   * NOTE: Compound growth calculation commented out for better visualization
    */
-  private calculateAdjustedNOINoUpgrade(year: number, annualBuildingNOI: number, ll97Fees: Record<string, number>): number {
+  private calculateAdjustedNOINoUpgrade(
+    year: number,
+    baseYearNOI: number,
+    ll97Fees: Record<string, number>
+  ): number {
+    // COMPOUND GROWTH DISABLED: Apply compound growth from base year
+    // const yearsOfGrowth = year - baseYear;
+    // const grownNOI = baseYearNOI * Math.pow(1 + growthRate, yearsOfGrowth);
+
+    // Use flat NOI instead of compound growth
+    const flatNOI = baseYearNOI;
+
+    // Subtract appropriate LL97 fees
     if (year >= FEES_ASSESSED_THIS_YEAR && year <= 2029) {
-      return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2024to2029;
+      return flatNOI - ll97Fees.annualFeeExceedingBudget2024to2029;
     } else if (year >= 2030 && year <= 2034) {
-      return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2030to2034;
+      return flatNOI - ll97Fees.annualFeeExceedingBudget2030to2034;
     } else if (year >= 2035 && year <= 2039) {
-      return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2035to2039;
+      return flatNOI - ll97Fees.annualFeeExceedingBudget2035to2039;
     } else if (year >= 2040) {
-      return annualBuildingNOI - ll97Fees.annualFeeExceedingBudget2040to2049;
+      return flatNOI - ll97Fees.annualFeeExceedingBudget2040to2049;
     }
-    return annualBuildingNOI;
+    return flatNOI;
   }
 
   /**
    * Calculate adjusted NOI with upgrade (LaTeX implementation)
-   * NOI = annualBuildingNOI + energySavings - reduced LL97 penalties
+   * NOI = baseYearNOI + energySavings - reduced LL97 penalties
+   *
+   * NOTE: Compound growth calculation commented out for better visualization
    */
   private calculateAdjustedNOIUpgrade(
-    year: number, 
-    annualBuildingNOI: number, 
-    energySavings: number, 
+    year: number,
+    baseYearNOI: number,
+    energySavings: number,
     ll97Fees: Record<string, number>,
     upgradeYear: number
   ): number {
+    // COMPOUND GROWTH DISABLED: Apply compound growth to base NOI from base year
+    // const yearsOfGrowth = year - baseYear;
+    // const grownNOI = baseYearNOI * Math.pow(1 + growthRate, yearsOfGrowth);
+
+    // Use flat NOI instead of compound growth
+    const flatNOI = baseYearNOI;
+
+    // Energy savings apply flat (no growth) after upgrade year
+    const appliedEnergySavings = year > upgradeYear ? energySavings : 0;
+
+    // Calculate reduced LL97 penalties
     let reducedLL97Penalties = 0;
-    
     if (year >= FEES_ASSESSED_THIS_YEAR && year <= 2026) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFeeBefore2027;
     } else if (year >= 2027 && year <= 2029) {
@@ -259,11 +302,8 @@ export class NOICalculationService extends BaseCalculationService<
     } else if (year >= 2040) {
       reducedLL97Penalties = ll97Fees.adjustedAnnualFee2040to2049;
     }
-    
-    // Energy savings only apply AFTER the upgrade year
-    const appliedEnergySavings = year > upgradeYear ? energySavings : 0;
-    
-    return annualBuildingNOI + appliedEnergySavings - reducedLL97Penalties;
+
+    return flatNOI + appliedEnergySavings - reducedLL97Penalties;
   }
 
   // REMOVED: calculateRentalIncomeImpact() - simplified to use direct energy savings

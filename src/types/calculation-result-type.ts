@@ -19,6 +19,11 @@ export interface CalculationResult {
   annualBuildingThermsHeatingPTAC: string;
   annualEnergySavings: string;
   totalRetrofitCost: string;
+  priceKwhHour?: string;
+  priceThermHour?: string;
+  pthpUnitCost?: string;
+  pthpInstallationCost?: string;
+  pthpContingency?: string;
   boro: string;
   buildingClass: string;
   buildingValue: number;
@@ -27,10 +32,11 @@ export interface CalculationResult {
   ptacUnits: number;
   rawLL84Data: unknown[];
   rawPlutoData: unknown[];
+  propertyUseBreakdown?: unknown;
   stories: number;
   totalResidentialUnits: number;
   totalSquareFeet: number;
   unitMixBreakDown: string;
   updatedAt: string;
-  [key: string]: string | number | unknown[];
+  [key: string]: string | number | unknown[] | unknown | undefined;
 } 

@@ -156,6 +156,12 @@ export class EnergyCalculationService extends BaseCalculationService<
       ptacUnits: calculation.ptacUnits || 0,
       yearBuilt: calculation.yearBuilt || 1980,
       numFloors: calculation.stories || 6,
+      // Include database values for overridable constants if they exist
+      priceKwhHour: calculation.priceKwhHour ?? undefined,
+      priceThermHour: calculation.priceThermHour ?? undefined,
+      pthpUnitCost: calculation.pthpUnitCost ?? undefined,
+      pthpInstallationCost: calculation.pthpInstallationCost ?? undefined,
+      pthpContingency: calculation.pthpContingency ?? undefined,
     };
 
     // Apply overrides if provided
@@ -249,6 +255,10 @@ export class EnergyCalculationService extends BaseCalculationService<
 
         // Section 6 - Energy Cost Savings
         annualEnergySavings: output.annualEnergySavings,
+
+        // Energy pricing used in calculations (for user reference and overrides)
+        priceKwhHour: output.configurationUsed.priceKwhHour,
+        priceThermHour: output.configurationUsed.priceThermHour,
       },
     });
 

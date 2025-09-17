@@ -68,6 +68,32 @@ export interface EnergyCalculationOutput extends BaseServiceOutput {
   };
 }
 
+// Emissions Limits Breakdown interface for LL97
+export interface EmissionsLimitsBreakdown {
+  propertyTypes: Array<{
+    type: string;
+    squareFeet: number;
+    limits: {
+      "2024-2029": number;  // tCO2e/sqft
+      "2030-2034": number;
+      "2035-2039": number;
+      "2040-2049": number;
+    };
+    contributions: {
+      "2024-2029": number;   // squareFeet × limit
+      "2030-2034": number;
+      "2035-2039": number;
+      "2040-2049": number;
+    };
+  }>;
+  totals: {
+    "2024-2029": number;
+    "2030-2034": number;
+    "2035-2039": number;
+    "2040-2049": number;
+  };
+}
+
 // 3. LL97 Service Output (Section 7)
 export interface LL97CalculationOutput extends BaseServiceOutput {
   // Emissions budgets by period
@@ -75,6 +101,9 @@ export interface LL97CalculationOutput extends BaseServiceOutput {
   emissionsBudget2030to2034: number;
   emissionsBudget2035to2039: number;
   emissionsBudget2040to2049: number;
+
+  // Detailed breakdown of how emissions limits are calculated
+  emissionsLimitsBreakdown?: EmissionsLimitsBreakdown;
   
   // Current building emissions
   totalBuildingEmissionsLL84: number;

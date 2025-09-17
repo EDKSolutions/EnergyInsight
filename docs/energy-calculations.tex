@@ -245,14 +245,14 @@ The system uses fundamental constants for PTAC units in original units and their
 
 \begin{itemize}
     \item \code{annualUnitThermsHeatingPTAC}: 255 therms per year per unit for heating
-    \item \code{annualUnitKwhCoolingPTAC}: 16,000 kWh per year per unit for cooling
+    \item \code{annualUnitKwhCoolingPTAC}: 1,600 kWh per year per unit for cooling
     \item \code{annualUnitMMBtuHeatingPTAC}: 25.5 MMBtu per year per unit for heating
         \begin{itemize}
             \item Converted from 255 therms × 0.1 MMBtu/therm = 25.5 MMBtu
         \end{itemize}
     \item \code{annualUnitMMBtuCoolingPTAC}: 5.459427 MMBtu per year per unit for cooling
         \begin{itemize}
-            \item Converted from 16,000 kWh × 0.003412 MMBtu/kWh = 5.459427 MMBtu
+            \item Converted from 1,600 kWh × 0.003412 MMBtu/kWh = 5.459427 MMBtu
         \end{itemize}
 \end{itemize}
 
@@ -395,7 +395,7 @@ To calculate costs, we need building totals in kWh and therms.
 \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times \code{annualUnitKwhCoolingPTAC}
 \end{equation}
 
-Where \code{annualUnitKwhCoolingPTAC} = 16,000 kWh per unit per year.
+Where \code{annualUnitKwhCoolingPTAC} = 1,600 kWh per unit per year.
 
 \subsection{PTHP Building Totals for Cost Calculations}
 
@@ -407,7 +407,7 @@ For PTHP systems, the kWh values needed for cost calculations are:
 \end{itemize}
 
 \begin{equation}
-\code{annualBuildingKwhCoolingPTHP} = \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times 16,000
+\code{annualBuildingKwhCoolingPTHP} = \code{annualBuildingKwhCoolingPTAC} = N_{ptacUnits} \times 1,600
 \end{equation}
 
 \subsection{Cost Calculations}

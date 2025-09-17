@@ -79,7 +79,14 @@ The Prisma schema defines:
 ## Important Development Notes
 
 ### Database Workflow
-Always run `pnpm run db:generate` after schema changes to update the Prisma client. The build process includes this automatically.
+**IMPORTANT: Database Migration Rules**
+- When making schema changes, ALWAYS use proper migrations:
+  1. Create migration: `npx prisma migrate dev --name description-of-change`
+  2. Apply migration: `pnpm run db:migrate`
+  3. Generate client: `pnpm run db:generate`
+- NEVER use `pnpm run db:push` unless explicitly instructed by the user
+- If any migration step fails, STOP immediately and report the error to the user
+- Always run `pnpm run db:generate` after schema changes to update the Prisma client. The build process includes this automatically.
 
 ### Environment Dependencies
 The application requires multiple API keys:

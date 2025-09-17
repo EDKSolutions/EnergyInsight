@@ -15,8 +15,8 @@ export const EMISSIONS_FACTORS = {
   // Grid electricity emissions factors by period (tCO₂e/kWh)
   efGrid2024to2029: 0.000288962,
   efGrid2030to2034: 0.000145,
-  efGrid2035to2039: 0.000145, // Same as 2030-2034 (conservative assumption)
-  efGrid2040to2049: 0.000145, // Same as 2030-2034 (conservative assumption)
+  efGrid2035to2039: 0.0000866886,
+  efGrid2040to2049: 0,
 } as const;
 
 // Beneficial Electrification (BE) Credit Coefficients

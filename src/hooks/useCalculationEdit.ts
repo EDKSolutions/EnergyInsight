@@ -1,5 +1,6 @@
 import { useCalculationEditStore } from '@/store/useCalculationEditStore';
 import { CalculationResult } from '@/types/calculation-result-type';
+import { toast } from 'react-hot-toast';
 
 export const useCalculationEdit = () => {
   const {
@@ -30,8 +31,14 @@ export const useCalculationEdit = () => {
       unitMixBreakDown: calculation.unitMixBreakDown,
       buildingClass: calculation.buildingClass,
       boro: calculation.boro,
+      priceKwhHour: calculation.priceKwhHour,
+      priceThermHour: calculation.priceThermHour,
     });
     setEditMode(true);
+    toast('Ability to edit coming soon', {
+      icon: '⏳',
+      duration: 3000,
+    });
   };
 
   // Function to get current value of a field (edited or original)

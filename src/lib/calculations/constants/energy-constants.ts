@@ -7,11 +7,11 @@
 export const PTAC_CONSTANTS = {
   // Original unit values
   annualUnitThermsHeatingPTAC: 255, // therms per year per unit for heating
-  annualUnitKwhCoolingPTAC: 16000, // kWh per year per unit for cooling
+  annualUnitKwhCoolingPTAC: 1600, // kWh per year per unit for cooling
   
   // MMBtu equivalents (converted from original units)
   annualUnitMMBtuHeatingPTAC: 25.5, // 255 therms × 0.1 MMBtu/therm
-  annualUnitMMBtuCoolingPTAC: 5.459427, // 16,000 kWh × 0.003412 MMBtu/kWh
+  annualUnitMMBtuCoolingPTAC: 5.459427, // 1,600 kWh × 0.003412 MMBtu/kWh
 } as const;
 
 // Section 3 - PTHP Constants

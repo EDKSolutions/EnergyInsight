@@ -17,9 +17,9 @@ import {
   calculateMonthlyPayment,
   generateLoanBalanceArray,
   calculateSimplePaybackPeriod,
-  generateAnalysisYears,
   defaultFinancialConfig,
   CumulativeSavingsData,
+  STANDARD_ANALYSIS_PERIOD,
 } from '../constants/financial-constants';
 
 // LL97 fees won't be assessed until 2026
@@ -41,8 +41,8 @@ export class FinancialCalculationService extends BaseCalculationService<
       ...defaultFinancialConfig,
       loanTermYears: input.loanTermYears ?? defaultFinancialConfig.loanTermYears,
       annualInterestRate: input.annualInterestRate ?? defaultFinancialConfig.annualInterestRate,
-      analysisStartYear: input.analysisStartYear ?? defaultFinancialConfig.analysisStartYear,
-      analysisEndYear: input.analysisEndYear ?? defaultFinancialConfig.analysisEndYear,
+      analysisStartYear: input.analysisStartYear ?? STANDARD_ANALYSIS_PERIOD.getAnalysisStartYear(),
+      analysisEndYear: input.analysisEndYear ?? STANDARD_ANALYSIS_PERIOD.getAnalysisEndYear(),
       upgradeYear: input.upgradeYear ?? defaultFinancialConfig.upgradeYear,
       loanStartYear: input.loanStartYear ?? defaultFinancialConfig.loanStartYear,
     };
@@ -82,7 +82,7 @@ export class FinancialCalculationService extends BaseCalculationService<
 
     // Step 6: Generate visualization data
     const visualization = {
-      analysisYears: generateAnalysisYears(config),
+      analysisYears: STANDARD_ANALYSIS_PERIOD.getAnalysisYears(),
       annualSavingsByYear,
       loanBalanceByYear: loanAnalysis.loanBalanceByYear,
       cumulativeSavingsByYear: cumulativeSavingsData,
@@ -134,7 +134,7 @@ export class FinancialCalculationService extends BaseCalculationService<
     feeAvoidance: ReturnType<typeof this.calculateLL97FeeAvoidance>,
     config: typeof defaultFinancialConfig
   ) {
-    const analysisYears = generateAnalysisYears(config);
+    const analysisYears = STANDARD_ANALYSIS_PERIOD.getAnalysisYears();
     const cumulativeSavingsData: CumulativeSavingsData[] = [];
     let cumulativeSavings = 0;
 
