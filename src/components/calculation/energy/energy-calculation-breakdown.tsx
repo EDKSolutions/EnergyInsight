@@ -1,38 +1,7 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type'
 import { numberWithCommas } from '@/lib/utils'
-import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-
-interface CollapsibleSectionProps {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}
-
-const CollapsibleSection = ({ title, children, defaultOpen = false }: CollapsibleSectionProps) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  return (
-    <div className="border rounded-lg bg-white">
-      <button
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <h3 className="text-lg font-semibold">{title}</h3>
-        {isOpen ? (
-          <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-        ) : (
-          <ChevronRightIcon className="h-5 w-5 text-gray-500" />
-        )}
-      </button>
-      {isOpen && (
-        <div className="p-4 pt-0 border-t">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};
+import CollapsibleSection from '@/components/shared/CollapsibleSection'
 
 const FormulaCard = ({ title, formula, result, unit, description }: {
   title: string;
@@ -76,7 +45,7 @@ const EnergyCalculationBreakdown = ({ c }: { c: CalculationResult }) => {
 
         <div className="space-y-4">
           {/* PTAC System Calculations */}
-          <CollapsibleSection title="PTAC System Calculations" defaultOpen={true}>
+          <CollapsibleSection title="PTAC System Calculations" defaultOpen={false}>
             <div className="space-y-4">
               <h4 className="font-semibold text-gray-800">Per-Unit Consumption (Industry Standards)</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
