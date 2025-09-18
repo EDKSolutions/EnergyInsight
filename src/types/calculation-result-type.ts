@@ -38,5 +38,6 @@ export interface CalculationResult {
   totalSquareFeet: number;
   unitMixBreakDown: string;
   updatedAt: string;
+  aiAnalysisNotes?: string;
   [key: string]: string | number | unknown[] | unknown | undefined;
 } 
