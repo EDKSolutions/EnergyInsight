@@ -4,6 +4,7 @@ import { MenuIcon } from "@/assets/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { useSidebarContext } from "../sidebar/sidebar-context";
+import { DownloadButton } from "./DownloadButton";
 import { Notification } from "./notification";
 import { ThemeToggleSwitch } from "./theme-toggle";
 import { UserInfo } from "./user-info";
@@ -43,6 +44,8 @@ export function Header() {
       <div className="ml-auto flex items-center gap-2 min-[375px]:gap-4">
 
         <ThemeToggleSwitch />
+
+        <DownloadButton />
 
         <Notification />
 

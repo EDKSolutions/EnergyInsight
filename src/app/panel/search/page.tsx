@@ -41,12 +41,18 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="flex flex-col h-[80vh] bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
+    <div className="flex flex-col bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
       <div className="flex flex-col items-center justify-center pt-6 w-full">
         <h1 className="text-2xl font-bold text-center">Search for an address in New York</h1>
+
+        {/* Warning note about borough selection */}
+        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded w-[500px] text-center text-sm">
+          <strong>Note:</strong> Please make sure to select an address that includes the borough (Manhattan, Brooklyn, Queens, Bronx, or Staten Island) for accurate calculations. You may get a 422 error if you don't - we will fix this soon.
+        </div>
+
         <div className="flex items-center justify-center pt-6 w-[500px] gap-4">
           <AddressAutocomplete onSelect={handleAddressSelect} />
-          <button 
+          <button
             className="bg-primary hover:bg-primary/80 py-4 text-white px-4 rounded-md w-[160px] text-lg flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={handleCalculate}
             disabled={isLoading}
@@ -65,9 +71,9 @@ export default function SearchPage() {
             {error}
           </div>
         )}
-        <div className="flex flex-col items-center justify-center pt-6">
+        <div className="flex flex-col items-center justify-center pt-6 pb-6">
           <h3 className="text-lg font-medium text-gray-900 mb-3">Location on the map</h3>
-          <div className="w-[700px] min-h-[80vh]"> 
+          <div className="w-[700px] h-[400px]">
             <AddressMap address={selectedAddress} />
           </div>
         </div>
