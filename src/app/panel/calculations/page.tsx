@@ -4,6 +4,7 @@ import { nestApiClient } from '@/services/nest_back';
 import type { Calculation } from '@/types/calculations';
 import { useCalculationsStore } from '@/store/useCalculationsStore';
 import { useRouter } from 'next/navigation';
+import { ExportButtonWithOptions } from '@/components/calculations/ExportButton';
 
 export default function CalculationsPage() {
   // Importa useState y define el tipo CalculationResult si no está definido en otro lugar
@@ -20,7 +21,10 @@ export default function CalculationsPage() {
   }, [setCalculations]);
   return (
     <div className="flex flex-col h-[70vh] bg-white dark:bg-gray-dark md-p-6 2xl:p-10 p-4 rounded-lg shadow-lg w-full">
-      <h1 className="text-2xl font-bold text-center">Calculations</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Calculations</h1>
+        <ExportButtonWithOptions />
+      </div>
       <div className="flex flex-col items-center justify-center overflow-x-auto">
         <table className="w-full min-w-[700px] border-separate border-spacing-0 rounded-lg shadow-md bg-white dark:bg-gray-800">
           <thead className="sticky top-0 z-10 bg-gray-100 dark:bg-gray-900">
