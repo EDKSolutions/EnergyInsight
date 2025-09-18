@@ -6,6 +6,7 @@ import Data from '@/components/calculation/buildingOverview/data'
 import Cards from '@/components/calculation/buildingOverview/cards'
 import Calculate from '@/components/calculation/buildingOverview/calculate'
 import EditAssumptionsToggle from '@/components/shared/EditAssumptionsToggle'
+import AiAnalysisNotes from '@/components/calculation/buildingOverview/aiAnalysisNotes'
 
 const Calculation = ({ c }: { c: CalculationResult }) => {
   return (
@@ -13,8 +14,9 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
       <EditAssumptionsToggle c={c} showAiAssisted={true} />
       <Property c={c} />
       <Cards c={c} />
+      <AiAnalysisNotes c={c} />
       <Unit c={c} />
-      <Calculate 
+      <Calculate
         pluto={c.rawPlutoData}
         ll84={c.rawLL84Data}
       />
