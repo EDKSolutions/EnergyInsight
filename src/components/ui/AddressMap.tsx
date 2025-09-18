@@ -24,19 +24,24 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
   }, []);
 
   useEffect(() => {
-    if (!address || !mapRef.current || !isGoogleLoaded || typeof window === "undefined" || !window.google) {
+    if (!mapRef.current || !isGoogleLoaded || typeof window === "undefined" || !window.google) {
       return;
     }
 
     // Create the map if it doesn't exist
     if (!mapInstanceRef.current) {
       mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-        zoom: 15,
-        center: { lat: 40.7128, lng: -74.0060 }, // Center of New York
+        zoom: 12,
+        center: { lat: 40.6892, lng: -74.0445 }, // Statue of Liberty coordinates
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
         streetViewControl: false,
         fullscreenControl: false,
       });
+    }
+
+    // If no address is provided, just show the default map
+    if (!address) {
+      return;
     }
 
     // Geocode the address
@@ -75,25 +80,37 @@ const AddressMap: React.FC<AddressMapProps> = ({ address, className = "" }) => {
     });
   }, [address, isGoogleLoaded]);
 
-  if (!address) {
-    return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`} style={{ height: "300px" }}>
-        <p className="text-gray-500">Select an address to see the map</p>
-      </div>
-    );
-  }
+  // Initialize map when Google Maps loads, even without address
+  useEffect(() => {
+    if (!mapRef.current || !isGoogleLoaded || typeof window === "undefined" || !window.google) {
+      return;
+    }
+
+    // Create the map if it doesn't exist
+    if (!mapInstanceRef.current) {
+      mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
+        zoom: 12,
+        center: { lat: 40.6892, lng: -74.0445 }, // Statue of Liberty coordinates
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+        streetViewControl: false,
+        fullscreenControl: false,
+      });
+    }
+  }, [isGoogleLoaded]);
+
+  // Always show the map, even without an address
 
   if (!isGoogleLoaded) {
     return (
-      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className}`} style={{ height: "300px" }}>
+      <div className={`bg-gray-100 rounded-lg flex items-center justify-center ${className} h-full`}>
         <p className="text-gray-500">Loading map...</p>
       </div>
     );
   }
 
   return (
-    <div className={`rounded-lg overflow-hidden border ${className}`}>
-      <div ref={mapRef} style={{ height: "300px", width: "100%" }} />
+    <div className={`rounded-lg overflow-hidden border ${className} h-full`}>
+      <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
     </div>
   );
 };

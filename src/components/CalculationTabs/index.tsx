@@ -2,7 +2,6 @@
 import React from 'react'
 import { CalculationResult } from '@/types/calculation-result-type';
 import Calculation from '@/components/calculation/buildingOverview';
-import Emissions from '@/components/calculation/emissions';
 import Energy from '@/components/calculation/energy';
 import Retrofit from '@/components/calculation/retrofit';
 import LL97 from '@/components/calculation/ll97';
@@ -20,7 +19,6 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
           <TabTrigger value="energy-cost">💸 Energy Cost</TabTrigger>
           <TabTrigger value="retrofit-roi">🏗️ Retrofit Cost</TabTrigger>
           <TabTrigger value="ll97">📊 LL97</TabTrigger>
-          <TabTrigger value="emissions-compliance">🌍 Emissions Reduction</TabTrigger>
           <TabTrigger value="financing">💰 Financing</TabTrigger>
           <TabTrigger value="noi">📈 NOI</TabTrigger>
           <TabTrigger value="property-value">🏘️ Property Value</TabTrigger>
@@ -45,9 +43,6 @@ const CalculationTabs = ({ c }: { c: CalculationResult }) => {
         </TabContent>
         <TabContent value="ll97">
           <LL97 c={c} />
-        </TabContent>
-        <TabContent value="emissions-compliance">
-          <Emissions c={c} />
         </TabContent>
       </Tabs>
     </div>
