@@ -14,8 +14,8 @@ const Calculation = ({ c }: { c: CalculationResult }) => {
       <EditAssumptionsToggle c={c} showAiAssisted={true} />
       <Property c={c} />
       <Cards c={c} />
-      <AiAnalysisNotes c={c} />
       <Unit c={c} />
+      <AiAnalysisNotes c={c} />
       <Calculate
         pluto={c.rawPlutoData}
         ll84={c.rawLL84Data}

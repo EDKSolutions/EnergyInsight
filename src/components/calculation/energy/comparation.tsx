@@ -67,29 +67,6 @@ const Comparation = ({ c }: { c: CalculationResult }) => {
               </td>
             </tr>
             <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Energy Cost</td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
-                <div className="bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded inline-block">
-                  <span className="text-red-700 dark:text-red-300">${numberWithCommas(Number(c.annualBuildingCostPTAC).toFixed(0))}</span>
-                </div>
-              </td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
-                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
-                  <span className="text-green-700 dark:text-green-300">${numberWithCommas(Number(c.annualBuildingCostPTHP).toFixed(0))}</span>
-                </div>
-              </td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
-                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
-                  <span className="text-green-700 dark:text-green-300">${numberWithCommas((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)).toFixed(0))}</span>
-                </div>
-              </td>
-              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
-                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
-                  <span className="text-green-700 dark:text-green-300">{((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)) / Number(c.annualBuildingCostPTAC) * 100).toFixed(1)}%</span>
-                </div>
-              </td>
-            </tr>
-            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
               <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Heating Energy</td>
               <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
                 <div className="bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded inline-block">
@@ -109,6 +86,29 @@ const Comparation = ({ c }: { c: CalculationResult }) => {
               <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
                 <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
                   <span className="text-green-700 dark:text-green-300">Electric</span>
+                </div>
+              </td>
+            </tr>
+            <tr className='border-b transition-colors hover:bg-gray/50 data-[state=selected]:bg-muted'>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium'>Annual Energy Cost</td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
+                <div className="bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded inline-block">
+                  <span className="text-red-700 dark:text-red-300">${numberWithCommas(Number(c.annualBuildingCostPTAC).toFixed(0))}</span>
+                </div>
+              </td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
+                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
+                  <span className="text-green-700 dark:text-green-300">${numberWithCommas(Number(c.annualBuildingCostPTHP).toFixed(0))}</span>
+                </div>
+              </td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
+                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
+                  <span className="text-green-700 dark:text-green-300">${numberWithCommas((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)).toFixed(0))}</span>
+                </div>
+              </td>
+              <td className='p-4 align-middle [&:has([role=checkbox])]:pr-0 text-right'>
+                <div className="bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded inline-block">
+                  <span className="text-green-700 dark:text-green-300">{((Number(c.annualBuildingCostPTAC) - Number(c.annualBuildingCostPTHP)) / Number(c.annualBuildingCostPTAC) * 100).toFixed(1)}%</span>
                 </div>
               </td>
             </tr>

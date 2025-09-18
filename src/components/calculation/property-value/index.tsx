@@ -21,7 +21,10 @@ const PropertyValue: React.FC<PropertyValueProps> = ({ c }) => {
   const [capRateOverride, setCapRateOverride] = useState<number | null>(null);
 
   // Get effective cap rate value (override or database value)
-  const effectiveCapRate = capRateOverride ?? parseFloat(c.capRate?.toString() || LOAN_CONSTANTS.defaultCapRate.toString());
+  // Convert to decimal if stored as percentage (> 1.0 indicates percentage format)
+  const dbCapRate = parseFloat(c.capRate?.toString() || LOAN_CONSTANTS.defaultCapRate.toString());
+  const normalizedDbCapRate = dbCapRate > 1.0 ? dbCapRate / 100 : dbCapRate;
+  const effectiveCapRate = capRateOverride ?? normalizedDbCapRate;
 
   // Get property value data from database
   const propertyValueNoUpgradeData: PropertyValueData[] = (c.propertyValueByYearNoUpgrade as PropertyValueData[]) || [];
