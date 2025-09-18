@@ -47,7 +47,7 @@ export default function SearchPage() {
 
         {/* Warning note about borough selection */}
         <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded w-[500px] text-center text-sm">
-          <strong>Note:</strong> Please make sure to select an address that includes the borough (Manhattan, Brooklyn, Queens, Bronx, or Staten Island) for accurate calculations. You may get a 422 error if you don't - we will fix this soon.
+          <strong>Note:</strong> Please make sure to select an address that includes the borough (Manhattan, Brooklyn, Queens, Bronx, or Staten Island) for accurate calculations. You may get a 422 error if you don&apos;t - we will fix this soon.
         </div>
 
         <div className="flex items-center justify-center pt-6 w-[500px] gap-4">
